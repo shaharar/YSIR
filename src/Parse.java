@@ -16,7 +16,12 @@ public class Parse {
    }
 
    public void lettersCase (String token){
-       
+       if (token.charAt(0) >= 65 && token.charAt(0) <= 90){
+           terms.add(token.toLowerCase());
+       }
+       else {
+           capitalLetters.add(token.toUpperCase());
+       }
    }
 
 
