@@ -34,7 +34,7 @@ public class Parse {
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
    public void prices (String token, int idx){
-       
+
    }
 
 
