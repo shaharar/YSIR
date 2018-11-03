@@ -12,13 +12,49 @@ public class Parse {
 
    }
 
-   public void numParse (String text, int nextIdx){
-      int num = Integer.parseInt(text);
-      //num is less than 1000
+   public void numbersCase (String token, int nextIdx){
+      double num = Double.parseDouble(token);
+      //num is less than 1,000
       if(num < 1000){
-         //num has a fraction after it
-
-
+         //num has a fraction after it - like '34 2/3'
+         if(tokens[nextIdx].contains("/")){
+            terms.add(token + tokens[nextIdx]);
+         }
+         //like '50 Thousand'
+         else if(tokens[nextIdx].equals("Thousand")){
+            terms.add(token+"K");
+         }
+         //like '50 Million'
+         else if(tokens[nextIdx].equals("Million")){
+            terms.add(token+"M");
+         }
+         //like '50 Billion'
+         else if(tokens[nextIdx].equals("Billion")){
+            terms.add(token+"B");
+         }
+         //like '50 Trillion'
+         else if(tokens[nextIdx].equals("Trillion")){
+            terms.add((num*1000)+"B");
+         }
+         //just number - like '123'
+         else {
+            terms.add(token);
+         }
+      }
+      //num is up to 1,000
+      else{
+         //num between 1,000 to 999,000
+         if (num < 1000000){
+            terms.add((num/1000) +"K");
+         }
+         //num between 1,000,000 to 999,000,000
+         else if (num < 1000000000){
+            terms.add((num/1000000) +"M");
+         }
+         //num up to 1,000,000,000
+         else{
+            terms.add((num/1000000000) +"B");
+         }
       }
    }
 
