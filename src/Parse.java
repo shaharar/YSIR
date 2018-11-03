@@ -12,8 +12,50 @@ public class Parse {
 
    }
 
-   public void numParse (String text){
-
+   public void numbersCase (String token, int nextIdx){
+      double num = Double.parseDouble(token);
+      //num is less than 1,000
+      if(num < 1000){
+         //num has a fraction after it - like '34 2/3'
+         if(tokens[nextIdx].contains("/")){
+            terms.add(token + tokens[nextIdx]);
+         }
+         //Thousand after num - like '50 Thousand'
+         else if(tokens[nextIdx].equals("Thousand")){
+            terms.add(token+"K");
+         }
+         //Million after num - like '50 Million'
+         else if(tokens[nextIdx].equals("Million")){
+            terms.add(token+"M");
+         }
+         //Billion after num - like '50 Billion'
+         else if(tokens[nextIdx].equals("Billion")){
+            terms.add(token+"B");
+         }
+         //Trillion after num - like '50 Trillion'
+         else if(tokens[nextIdx].equals("Trillion")){
+            terms.add((num*1000)+"B");
+         }
+         //just number - like '123'
+         else {
+            terms.add(token);
+         }
+      }
+      //num is up to 1,000
+      else{
+         //num between 1,000 to 999,000
+         if (num < 1000000){
+            terms.add((num/1000) +"K");
+         }
+         //num between 1,000,000 to 999,000,000
+         else if (num < 1000000000){
+            terms.add((num/1000000) +"M");
+         }
+         //num up to 1,000,000,000
+         else{
+            terms.add((num/1000000000) +"B");
+         }
+      }
    }
 
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure
