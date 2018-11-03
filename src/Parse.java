@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 public class Parse {
     private String [] tokens; // the following data structure contains tokens
@@ -79,5 +80,53 @@ public class Parse {
 
    }
 
+   // the following function adds final terms to the data structure in one of these formats : MM-DD, YYYY-MM
+   public void dates (String token, int nextIdx){
+      String month = "";
+      if(!(Pattern.compile("[0-9]").matcher(token).find())){ //check if the token contains digits, if not - it represents the month
+         month = checkMonth(token);
+         //'Month YYYY' format -> 'YYYY-MM'
+         if((tokens[nextIdx].length() == 4)) {
+            terms.add(tokens[nextIdx] + "-" + month);
+         }
+         //'Month DD' format -> 'MM-DD'
+         else if((tokens[nextIdx].length() <= 2)){
+            terms.add(month + "-" + tokens[nextIdx]);
+         }
+      }
+      //'DD Month' format -> 'MM-DD'
+      else{
+         month = checkMonth(tokens[nextIdx]);
+         terms.add(month + "-" + token);
+      }
+   }
 
+   //help function for 'dates' - converts the Month from letters to digits.
+   private String checkMonth (String month){
+      if (month.equals("Jan") || month.equals("JAN") || month.equals("January") || month.equals("JANUARY"))
+         return "01";
+      else if (month.equals("Feb") || month.equals("FEB") || month.equals("February") || month.equals("FEBRUARY"))
+         return "02";
+      else if (month.equals("Mar") || month.equals("MAR") || month.equals("March") || month.equals("MARCH"))
+         return "03";
+      else if (month.equals("Apr") || month.equals("APR") || month.equals("April") || month.equals("APRIL"))
+         return "04";
+      else if (month.equals("May") || month.equals("MAY"))
+         return "05";
+      else if (month.equals("Jun") || month.equals("JUN") || month.equals("June") || month.equals("JUNE"))
+         return "06";
+      else if (month.equals("Jul") || month.equals("JUL") || month.equals("July") || month.equals("JULY"))
+         return "07";
+      else if (month.equals("Aug") || month.equals("AUG") || month.equals("August") || month.equals("AUGUST"))
+         return "08";
+      else if (month.equals("Sep") || month.equals("SEP") || month.equals("September") || month.equals("SEPTEMBER"))
+         return "09";
+      else if (month.equals("Oct") || month.equals("OCT") || month.equals("October") || month.equals("OCTOBER"))
+         return "10";
+      else if (month.equals("Nov") || month.equals("NOV") || month.equals("November") || month.equals("NOVEMBER"))
+         return "11";
+      else if (month.equals("Dec") || month.equals("DEC") || month.equals("December") || month.equals("DECEMBER"))
+         return "12";
+      return "";
+   }
 }
