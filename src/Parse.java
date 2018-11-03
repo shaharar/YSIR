@@ -20,19 +20,19 @@ public class Parse {
          if(tokens[nextIdx].contains("/")){
             terms.add(token + tokens[nextIdx]);
          }
-         //like '50 Thousand'
+         //Thousand after num - like '50 Thousand'
          else if(tokens[nextIdx].equals("Thousand")){
             terms.add(token+"K");
          }
-         //like '50 Million'
+         //Million after num - like '50 Million'
          else if(tokens[nextIdx].equals("Million")){
             terms.add(token+"M");
          }
-         //like '50 Billion'
+         //Billion after num - like '50 Billion'
          else if(tokens[nextIdx].equals("Billion")){
             terms.add(token+"B");
          }
-         //like '50 Trillion'
+         //Trillion after num - like '50 Trillion'
          else if(tokens[nextIdx].equals("Trillion")){
             terms.add((num*1000)+"B");
          }
