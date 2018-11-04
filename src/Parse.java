@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
@@ -12,8 +13,13 @@ public class Parse {
          if (Pattern.compile("[0-9]").matcher(token).find()){ //token contains digits
 
          }
-         else if (token.contains("[%,$]")){ //token contains symbols
+         else if (token.contains(".*[%$-].*")){ //token contains symbols
 
+         }
+         else{
+            //check if token is a stop word
+             ClassLoader cl = getClass().getClassLoader();
+            File stopWordsFile = new File (cl.getResource("../resources/stopWords.txt").getFile());
          }
       }
    }
