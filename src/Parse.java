@@ -81,7 +81,55 @@ public class Parse {
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
    public void prices(String token, int idx) {
-
+      double price;
+      if (token.startsWith("$"))
+      {
+         price = Double.parseDouble(token.replaceFirst("$", ""));
+      }
+      else if (token.contains("bn")){
+         price = Double.parseDouble(token.replace("bn", ""));
+      }
+      else if (token.contains("m")){
+         price = Double.parseDouble(token.replace("m", ""));
+      }
+      else
+      {
+         price = Double.parseDouble(token);
+      }
+      if (price >= 1000000 || tokens[idx + 1].equals("million") || tokens[idx + 1].equals("billion") || tokens[idx + 1].equals("trillion") || token.contains("bn") || token.contains("m") )
+      {
+         if (tokens[idx + 1].equals("million") || token.contains("m") )
+         {
+            terms.add(price + "M" + "Dollars");
+         }
+         else if (tokens[idx + 1].equals("billion") || token.contains("bn"))
+         {
+            terms.add((price * 1000) + "M" + "Dollars");
+         }
+         else if (tokens[idx + 1].equals("trillion"))
+         {
+            terms.add((price * 1000000) + "M" + "Dollars");
+         }
+         else
+         {
+            terms.add((price / 1000000) + "M" + "Dollars");
+         }
+      }
+      else
+      {
+         if (token.startsWith("$")){
+            price = Double.parseDouble(token.replaceFirst("$", ""));
+            terms.add(price + "Dollars");
+         }
+         else if (tokens[idx + 1].equals("Dollars"))
+         {
+            terms.add(price + "Dollars");
+         }
+         else if (tokens[idx + 2].equals("Dollars"))
+         {
+            terms.add(price + tokens[idx + 1] + "Dollars");
+         }
+      }
    }
 
    // the following function adds final terms to the data structure in one of these formats : MM-DD, YYYY-MM
