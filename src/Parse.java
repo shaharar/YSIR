@@ -66,7 +66,7 @@ public class Parse {
               rangesAndExpressions(token,i+1);
           }
 
-
+          //words
          else{
              if(!(stopWords.contains(token))){ //if token is not a stop word
                  if(months.contains(token)){
@@ -161,7 +161,7 @@ public class Parse {
    }
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
-   public void prices(String token, int idx) {
+   public void prices(String token, int nextIdx) {
       double price;
       if (token.startsWith("$"))
       {
@@ -171,17 +171,17 @@ public class Parse {
       {
          price = Double.parseDouble(token);
       }
-      if (price >= 1000000 || tokens[idx].equals("million") || tokens[idx].equals("billion") || tokens[idx].equals("trillion") || tokens[idx].equals("bn") || tokens[idx].equals("m") )
+      if (price >= 1000000 || tokens[nextIdx].equals("million") || tokens[nextIdx].equals("billion") || tokens[nextIdx].equals("trillion") || tokens[nextIdx].equals("bn") || tokens[nextIdx].equals("m") )
       {
-         if (tokens[idx].equals("million") || token.contains("m") )
+         if (tokens[nextIdx].equals("million") || token.contains("m") )
          {
             terms.add(price + "M" + "Dollars");
          }
-         else if (tokens[idx].equals("billion") || token.contains("bn"))
+         else if (tokens[nextIdx].equals("billion") || token.contains("bn"))
          {
             terms.add((price * 1000) + "M" + "Dollars");
          }
-         else if (tokens[idx].equals("trillion"))
+         else if (tokens[nextIdx].equals("trillion"))
          {
             terms.add((price * 1000000) + "M" + "Dollars");
          }
@@ -196,13 +196,13 @@ public class Parse {
             price = Double.parseDouble(token.replaceFirst("$", ""));
             terms.add(price + "Dollars");
          }
-         else if (tokens[idx].equals("Dollars"))
+         else if (tokens[nextIdx].equals("Dollars"))
          {
             terms.add(price + "Dollars");
          }
-         else if (tokens[idx + 1].equals("Dollars"))
+         else if (tokens[nextIdx + 1].equals("Dollars"))
          {
-            terms.add(price + tokens[idx + 1] + "Dollars");
+            terms.add(price + tokens[nextIdx + 1] + "Dollars");
          }
       }
    }
