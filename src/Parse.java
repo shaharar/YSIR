@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
@@ -9,6 +11,18 @@ public class Parse {
    private HashSet<String> stopWords = new HashSet<String>(); // the following data structure contains the stop words
 
    public void parseDocText(String docText) {
+       ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY",
+               "Feb", "FEB", "February", "FEBRUARY",
+               "Mar", "MAR", "March", "MARCH",
+               "Apr", "APR", "April", "APRIL",
+               "May", "MAY",
+               "Jun", "JUN", "June", "JUNE",
+               "Jul", "JUL", "July", "JULY",
+               "Aug", "AUG", "August", "AUGUST",
+               "Sep", "SEP", "September", "SEPTEMBER",
+               "Oct", "OCT", "October", "OCTOBER",
+               "Nov", "NOV", "November", "NOVEMBER",
+               "Dec", "DEC", "December", "DECEMBER"));
       tokens = docText.split(" |\\. |\\, ");
       String token;
       for (int i = 0; i < tokens.length; i++) {
@@ -34,8 +48,15 @@ public class Parse {
 
          else{
              if(!(stopWords.contains(token))){ //if token is not a stop word
-
-
+                 if(months.contains(token)){
+                     dates(token, i+1);
+                 }
+                 else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()){
+                     rangesAndExpressions(token, i+1);
+                 }
+                 else {
+                     lettersCase(token);
+                 }
              }
          }
       }
