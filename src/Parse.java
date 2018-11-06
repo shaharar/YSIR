@@ -1,4 +1,4 @@
-import java.io.File;
+import java.io.*;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
@@ -6,23 +6,56 @@ public class Parse {
    private String[] tokens; // the following data structure contains tokens
    private HashSet<String> capitalLetters = new HashSet<String>(); // the following data structure contains terms which start at capital letters all along the corpus
    private HashSet<String> terms = new HashSet<String>(); // the following data structure contains final terms
+   private HashSet<String> stopWords = new HashSet<String>(); // the following data structure contains the stop words
 
    public void parseDocText(String docText) {
       tokens = docText.split(" |\\. |\\, ");
-      for (String token:tokens) {
-         if (Pattern.compile("[0-9]").matcher(token).find()){ //token contains digits
+      String token;
+      for (int i = 0; i < tokens.length; i++) {
+          token = tokens[i];
+          //numbers
+         if (Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()){
+             String prevToken = tokens[i-1];
+             String nextToken = tokens[i+1];
+             
 
          }
-         else if (token.contains(".*[%$-].*")){ //token contains symbols
+         //symbols
+         else if (token.contains("%")) {
+             percentage(token);
+          }
+          else if (token.contains("$")) {
+              prices(token,i+1);
+          }
+          else if (token.contains("-")) {
+              rangesAndExpressions(token,i+1);
+          }
 
-         }
+
          else{
-            //check if token is a stop word
-             ClassLoader cl = getClass().getClassLoader();
-            File stopWordsFile = new File (cl.getResource("../resources/stopWords.txt").getFile());
+             if(!(stopWords.contains(token))){ //if token is not a stop word
+
+
+             }
          }
       }
    }
+
+   private void setStopWords (){
+       ClassLoader cl = getClass().getClassLoader();
+       File stopWordsFile = new File (cl.getResource("../resources/stopWords.txt").getFile());
+       try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFile))) {
+           String token;
+           while((token = br.readLine()) != null){
+               stopWords.add(token);
+           }
+       } catch (FileNotFoundException e) {
+           e.printStackTrace();
+       } catch (IOException e) {
+           e.printStackTrace();
+       }
+   }
+
 
    public void numbers (String token, int nextIdx) {
       double num = Double.parseDouble(token);

@@ -9,6 +9,8 @@ public class Document {
     private String docNo; //<DOCNO>
     private Date date; //<DATE1>
     private String header; //<TI>
+    private int maxTF; //max term's frequency
+    private int numOfUniqueTerms;
 
     //Getters
     public String getText() {
