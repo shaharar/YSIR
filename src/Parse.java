@@ -17,7 +17,7 @@ public class Parse {
          if (Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()){
              String prevToken = tokens[i-1];
              String nextToken = tokens[i+1];
-             
+
 
          }
          //symbols
