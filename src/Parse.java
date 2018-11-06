@@ -1,40 +1,52 @@
+import java.io.File;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 public class Parse {
-    private String [] tokens; // the following data structure contains tokens
-    private HashSet <String> capitalLetters = new HashSet<String>(); // the following data structure contains terms which start at capital letters all along the corpus
-    private HashSet <String> terms = new HashSet<String>(); // the following data structure contains final terms
+   private String[] tokens; // the following data structure contains tokens
+   private HashSet<String> capitalLetters = new HashSet<String>(); // the following data structure contains terms which start at capital letters all along the corpus
+   private HashSet<String> terms = new HashSet<String>(); // the following data structure contains final terms
 
-   public void removeStopWords (String docText){
-       
+   public void parseDocText(String docText) {
+      tokens = docText.split(" |\\. |\\, ");
+      for (String token:tokens) {
+         if (Pattern.compile("[0-9]").matcher(token).find()){ //token contains digits
+
+         }
+         else if (token.contains(".*[%$-].*")){ //token contains symbols
+
+         }
+         else{
+            //check if token is a stop word
+             ClassLoader cl = getClass().getClassLoader();
+            File stopWordsFile = new File (cl.getResource("../resources/stopWords.txt").getFile());
+         }
+      }
    }
-   public void parseDocText (String docText){
 
-   }
-
-   public void numbersCase (String token, int nextIdx){
+   public void numbers (String token, int nextIdx) {
       double num = Double.parseDouble(token);
       //num is less than 1,000
-      if(num < 1000){
+      if (num < 1000) {
          //num has a fraction after it - like '34 2/3'
-         if(tokens[nextIdx].contains("/")){
+         if (tokens[nextIdx].contains("/")) {
             terms.add(token + tokens[nextIdx]);
          }
          //Thousand after num - like '50 Thousand'
-         else if(tokens[nextIdx].equals("Thousand")){
-            terms.add(token+"K");
+         else if (tokens[nextIdx].equals("Thousand")) {
+            terms.add(token + "K");
          }
          //Million after num - like '50 Million'
-         else if(tokens[nextIdx].equals("Million")){
-            terms.add(token+"M");
+         else if (tokens[nextIdx].equals("Million")) {
+            terms.add(token + "M");
          }
          //Billion after num - like '50 Billion'
-         else if(tokens[nextIdx].equals("Billion")){
-            terms.add(token+"B");
+         else if (tokens[nextIdx].equals("Billion")) {
+            terms.add(token + "B");
          }
          //Trillion after num - like '50 Trillion'
-         else if(tokens[nextIdx].equals("Trillion")){
-            terms.add((num*1000)+"B");
+         else if (tokens[nextIdx].equals("Trillion")) {
+            terms.add((num * 1000) + "B");
          }
          //just number - like '123'
          else {
@@ -42,42 +54,163 @@ public class Parse {
          }
       }
       //num is up to 1,000
-      else{
+      else {
          //num between 1,000 to 999,000
-         if (num < 1000000){
-            terms.add((num/1000) +"K");
+         if (num < 1000000) {
+            terms.add((num / 1000) + "K");
          }
          //num between 1,000,000 to 999,000,000
-         else if (num < 1000000000){
-            terms.add((num/1000000) +"M");
+         else if (num < 1000000000) {
+            terms.add((num / 1000000) + "M");
          }
          //num up to 1,000,000,000
-         else{
-            terms.add((num/1000000000) +"B");
+         else {
+            terms.add((num / 1000000000) + "B");
          }
       }
    }
 
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure
-   public void lettersCase (String token){
-       if (token.charAt(0) >= 65 && token.charAt(0) <= 90) //lower case
-       {
-           terms.add(token.toLowerCase());
-       }
-       else { //upper case
-           capitalLetters.add(token.toUpperCase());
-       }
+   public void lettersCase(String token) {
+      if (token.charAt(0) >= 65 && token.charAt(0) <= 90) //lower case
+      {
+         terms.add(token.toLowerCase());
+      } else { //upper case
+         capitalLetters.add(token.toUpperCase());
+      }
    }
 
    // the following function adds final terms to the data structure in this format : NUMBER%
-   public void percentage (String token){
-       terms.add(token + "%");
+   public void percentage(String token) {
+      terms.add(token + "%");
    }
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
-   public void prices (String token, int idx){
-
+   public void prices(String token, int idx) {
+      double price;
+      if (token.startsWith("$"))
+      {
+         price = Double.parseDouble(token.replaceFirst("$", ""));
+      }
+      else if (token.contains("bn")){
+         price = Double.parseDouble(token.replace("bn", ""));
+      }
+      else if (token.contains("m")){
+         price = Double.parseDouble(token.replace("m", ""));
+      }
+      else
+      {
+         price = Double.parseDouble(token);
+      }
+      if (price >= 1000000 || tokens[idx + 1].equals("million") || tokens[idx + 1].equals("billion") || tokens[idx + 1].equals("trillion") || token.contains("bn") || token.contains("m") )
+      {
+         if (tokens[idx + 1].equals("million") || token.contains("m") )
+         {
+            terms.add(price + "M" + "Dollars");
+         }
+         else if (tokens[idx + 1].equals("billion") || token.contains("bn"))
+         {
+            terms.add((price * 1000) + "M" + "Dollars");
+         }
+         else if (tokens[idx + 1].equals("trillion"))
+         {
+            terms.add((price * 1000000) + "M" + "Dollars");
+         }
+         else
+         {
+            terms.add((price / 1000000) + "M" + "Dollars");
+         }
+      }
+      else
+      {
+         if (token.startsWith("$")){
+            price = Double.parseDouble(token.replaceFirst("$", ""));
+            terms.add(price + "Dollars");
+         }
+         else if (tokens[idx + 1].equals("Dollars"))
+         {
+            terms.add(price + "Dollars");
+         }
+         else if (tokens[idx + 2].equals("Dollars"))
+         {
+            terms.add(price + tokens[idx + 1] + "Dollars");
+         }
+      }
    }
 
+   // the following function adds final terms to the data structure in one of these formats : MM-DD, YYYY-MM
+   public void dates(String token, int nextIdx) {
+      String month = "";
+      if (!(Pattern.compile("[0-9]").matcher(token).find())) { //check if the token contains digits, if not - it represents the month
+         month = checkMonth(token);
+         //'Month YYYY' format -> 'YYYY-MM'
+         if ((tokens[nextIdx].length() == 4)) {
+            terms.add(tokens[nextIdx] + "-" + month);
+         }
+         //'Month DD' format -> 'MM-DD'
+         else if ((tokens[nextIdx].length() <= 2)) {
+            terms.add(month + "-" + tokens[nextIdx]);
+         }
+      }
+      //'DD Month' format -> 'MM-DD'
+      else {
+         month = checkMonth(tokens[nextIdx]);
+         terms.add(month + "-" + token);
+      }
+   }
 
+   //help function for 'dates' - converts the Month from letters to digits.
+   private String checkMonth(String month) {
+      if (month.equals("Jan") || month.equals("JAN") || month.equals("January") || month.equals("JANUARY"))
+         return "01";
+      else if (month.equals("Feb") || month.equals("FEB") || month.equals("February") || month.equals("FEBRUARY"))
+         return "02";
+      else if (month.equals("Mar") || month.equals("MAR") || month.equals("March") || month.equals("MARCH"))
+         return "03";
+      else if (month.equals("Apr") || month.equals("APR") || month.equals("April") || month.equals("APRIL"))
+         return "04";
+      else if (month.equals("May") || month.equals("MAY"))
+         return "05";
+      else if (month.equals("Jun") || month.equals("JUN") || month.equals("June") || month.equals("JUNE"))
+         return "06";
+      else if (month.equals("Jul") || month.equals("JUL") || month.equals("July") || month.equals("JULY"))
+         return "07";
+      else if (month.equals("Aug") || month.equals("AUG") || month.equals("August") || month.equals("AUGUST"))
+         return "08";
+      else if (month.equals("Sep") || month.equals("SEP") || month.equals("September") || month.equals("SEPTEMBER"))
+         return "09";
+      else if (month.equals("Oct") || month.equals("OCT") || month.equals("October") || month.equals("OCTOBER"))
+         return "10";
+      else if (month.equals("Nov") || month.equals("NOV") || month.equals("November") || month.equals("NOVEMBER"))
+         return "11";
+      else if (month.equals("Dec") || month.equals("DEC") || month.equals("December") || month.equals("DECEMBER"))
+         return "12";
+      return "";
+   }
+
+   public void rangesAndExpressions(String token, int nextIdx) {
+      //'Word-word' or 'Word-word-word' format
+      if (!(Pattern.compile("[0-9]").matcher(token).find()))
+         terms.add(token);
+      //'Between number and number' format
+      if(token.equals("Between")){
+         double firstNum = Double.parseDouble(tokens[nextIdx]); //lower range
+         nextIdx++;
+         while(!(Pattern.compile("[0-9]").matcher(tokens[nextIdx]).find())){ //search the second number in the range
+            nextIdx++;
+         }
+         double secondNum = Double.parseDouble(tokens[nextIdx]); //upper range
+         terms.add(firstNum + "-" + secondNum);
+      }
+
+      //'Number-number'
+
+
+
+      //'Number-word' or 'Word-Number'
+
+
+
+
+   }
 }
