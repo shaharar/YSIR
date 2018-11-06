@@ -28,32 +28,33 @@ public class Parse {
       for (int i = 0; i < tokens.length; i++) {
           token = tokens[i];
           //numbers
-         if (Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()){
-             String nextToken = tokens[i+1];
-             // token is a percent
-             if (nextToken.equals("percent") || nextToken.equals("percentage")){
-                percentage(token);
-             }
-             // two options: token is a number or a price
-             if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")){
-                //a price
-                if(tokens[i+2].equals("Dollars") || (tokens[i+2].equals("U.S") && tokens[i+3].equals("dollars"))){
-                   prices(token,i+1);
-                }
-                //a number
-                else{
-                   numbers(token,i+1);
-                }
-             }
-             // token is a price
-            if (nextToken.equals(nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[i+2].equals("Dollars")))){
-               prices(token,i+1);
+         if (Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()) {
+            String nextToken = tokens[i + 1];
+            // token is a percent
+            if (nextToken.equals("percent") || nextToken.equals("percentage")) {
+               percentage(token);
+            }
+            // two options: token is a number or a price
+            if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
+               //a price
+               if (tokens[i + 2].equals("Dollars") || (tokens[i + 2].equals("U.S") && tokens[i + 3].equals("dollars"))) {
+                  prices(token, i + 1);
+               }
+               //a number
+               else {
+                  numbers(token, i + 1);
+               }
+            }
+            // token is a price
+            if (nextToken.equals(nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[i + 2].equals("Dollars")))) {
+               prices(token, i + 1);
             }
             // token is a date
-
-
-
+            if (months.contains(nextToken)) {
+               dates(token, i + 1);
             }
+         }
+
          //symbols
          else if (token.contains("%")) {
              percentage(token);
