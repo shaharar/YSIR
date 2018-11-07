@@ -47,7 +47,7 @@ public class Parse {
                }
             }
             // token is a price
-            if (nextToken.equals(nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
+            if ((nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
                prices(token);
             }
             // token is a date
@@ -93,8 +93,6 @@ public class Parse {
            while((token = br.readLine()) != null){
                stopWords.add(token);
            }
-       } catch (FileNotFoundException e) {
-           e.printStackTrace();
        } catch (IOException e) {
            e.printStackTrace();
        }
