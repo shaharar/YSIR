@@ -47,7 +47,7 @@ public class Parse {
                }
             }
             // token is a price
-            if ((nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
+            if (nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars"))) {
                prices(token);
             }
             // token is a date
@@ -108,27 +108,32 @@ public class Parse {
       else{
          try{
             num = Double.parseDouble(token);
+             //num has a fraction after it - like '34 2/3'
+             if (tokens[currentIdx + 1].contains("/")) {
+                 terms.add(token + tokens[currentIdx + 1]);
+                 currentIdx++;
+             }
             //num is less than 1,000
             if (num < 1000) {
-               //num has a fraction after it - like '34 2/3'
-               if (tokens[currentIdx + 1].contains("/")) {
-                  terms.add(token + tokens[currentIdx + 1]);
-               }
                //Thousand after num - like '50 Thousand'
-               else if (tokens[currentIdx + 1].equals("Thousand")) {
+               if (tokens[currentIdx + 1].equals("Thousand")) {
                   terms.add(token + "K");
+                   currentIdx++;
                }
                //Million after num - like '50 Million'
                else if (tokens[currentIdx + 1].equals("Million")) {
                   terms.add(token + "M");
+                   currentIdx++;
                }
                //Billion after num - like '50 Billion'
                else if (tokens[currentIdx + 1].equals("Billion")) {
                   terms.add(token + "B");
+                   currentIdx++;
                }
                //Trillion after num - like '50 Trillion'
                else if (tokens[currentIdx + 1].equals("Trillion")) {
                   terms.add((num * 1000) + "B");
+                   currentIdx++;
                }
                //just number - like '123'
                else {
@@ -231,16 +236,19 @@ public class Parse {
          //'Month YYYY' format -> 'YYYY-MM'
          if ((tokens[currentIdx + 1].length() == 4)) {
             terms.add(tokens[currentIdx + 1] + "-" + month);
+            currentIdx++;
          }
          //'Month DD' format -> 'MM-DD'
          else if ((tokens[currentIdx + 1].length() <= 2)) {
             terms.add(month + "-" + tokens[currentIdx + 1]);
+             currentIdx++;
          }
       }
       //'DD Month' format -> 'MM-DD'
       else {
          month = checkMonth(tokens[currentIdx + 1]);
          terms.add(month + "-" + token);
+          currentIdx++;
       }
    }
 
@@ -287,6 +295,7 @@ public class Parse {
          }
          double secondNum = Double.parseDouble(tokens[currentIdx + 1]); //upper range
          terms.add(firstNum + "-" + secondNum);
+         currentIdx++;
       }
       //negative number
        if((token.charAt(0) == '-') && (Character.isDigit(token.charAt(1)))){
