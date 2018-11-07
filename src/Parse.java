@@ -14,6 +14,7 @@ public class Parse {
       terms = new HashSet<String>();
       stopWords = new HashSet<String>();
       currentIdx = 0;
+      tokens = new String[]{"10,123","1010.56","10,123,000","7 Trillion","34 2/3"};
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -35,7 +36,7 @@ public class Parse {
       while (currentIdx < tokens.length){
           token = tokens[currentIdx];
           //numbers
-         if (Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()) {
+         if (token.matches("^[0-9]+([,.][0-9]?)?$")) {
             String nextToken = tokens[currentIdx + 1];
             // token is a percent
             if (nextToken.equals("percent") || nextToken.equals("percentage")) {
@@ -102,6 +103,8 @@ public class Parse {
        } catch (IOException e) {
            e.printStackTrace();
        }
+
+       //stopWords.add();
    }
 
 
@@ -186,6 +189,9 @@ public class Parse {
    // the following function adds final terms to the data structure in this format : NUMBER%.
    public void percentage(String token) {
       terms.add(token.replaceAll("%", "") + "%");
+      if(tokens[currentIdx+1].equals("percent") || tokens[currentIdx+1].equals("percentage")){
+         currentIdx++;
+      }
    }
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
@@ -333,6 +339,15 @@ public class Parse {
 
    public static void main (String [] args){
       Parse p = new Parse();
-      p.parseDocText("");
+      //p.parseDocText("");
+/*      p.numbers("10,123"); //expect: 10.123K
+      p.numbers("123 Thousand"); //123K
+      p.numbers("1010.56"); //1.01056K
+      p.numbers("55 Million"); //55M
+      p.numbers("10,123,000"); //10.123M*/
+       p.parseDocText("10123, 1010.56 10123000,  7 Trillion 34 2/3. ");
+      for (String term:p.terms) {
+         System.out.println(term);
+      }
    }
 }
