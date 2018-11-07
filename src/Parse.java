@@ -31,21 +31,22 @@ public class Parse {
                "Oct", "OCT", "October", "OCTOBER",
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
-      tokens = docText.split(" |\\. |\\, ");
+      tokens = docText.split(" |\\. |,|: ");
       String token;
       while (currentIdx < tokens.length){
           token = tokens[currentIdx];
+         String nextToken = "";
           //numbers
-         if (token.matches("^[0-9]+([,.][0-9]?)?$")) {
-            String nextToken = tokens[currentIdx + 1];
-            // token is a percent
-            if (nextToken.equals("percent") || nextToken.equals("percentage")) {
-               percentage(token);
-            }
+         if (currentIdx + 1 < tokens.length && token.matches("^[0-9]+([,.][0-9]?)?$")) {
+               nextToken = tokens[currentIdx + 1];
+               // token is a percent
+               if (nextToken.equals("percent") || nextToken.equals("percentage")) {
+                  percentage(token);
+               }
             // token represents one of the following: a number or a price
-            if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
+            if (nextToken.equals("") && nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
                // token is a price
-               if (tokens[currentIdx + 2].equals("Dollars") || (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars"))) {
+               if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 2].equals("Dollars") || (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
                   prices(token);
                }
                // token is a number
@@ -54,11 +55,11 @@ public class Parse {
                }
             }
             // token is a price
-            if (nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars"))) {
+            if (currentIdx + 1 < tokens.length && nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars"))) {
                prices(token);
             }
             // token is a date
-            if (months.contains(nextToken)) {
+            if (currentIdx + 1 < tokens.length && months.contains(nextToken)) {
                dates(token);
             }
          }
@@ -177,9 +178,10 @@ public class Parse {
          if (terms.contains(token.toUpperCase()))
          {
             terms.remove(token);
-            terms.add(token.toLowerCase());
          }
-      } else { //upper case
+         terms.add(token.toLowerCase());
+      }
+      else { //upper case
          if (!terms.contains(token.toLowerCase())){
             terms.add(token.toUpperCase());
          }
@@ -257,14 +259,25 @@ public class Parse {
          }
          //'Month DD' format -> 'MM-DD'
          else if ((tokens[currentIdx + 1].length() <= 2)) {
-            terms.add(month + "-" + tokens[currentIdx + 1]);
+            if (tokens[currentIdx + 1].length() == 1){
+               terms.add(month + "-" + "0" + tokens[currentIdx + 1]);
+            }
+            else{
+               terms.add(month + "-" + tokens[currentIdx + 1]);
+            }
+
              currentIdx++;
          }
       }
       //'DD Month' format -> 'MM-DD'
       else {
          month = checkMonth(tokens[currentIdx + 1]);
-         terms.add(month + "-" + token);
+         if (tokens[currentIdx].length() == 1){
+            terms.add(month + "-" + "0" + token);
+         }
+         else{
+            terms.add(month + "-" + token);
+         }
           currentIdx++;
       }
    }
