@@ -6,9 +6,15 @@ import java.util.regex.Pattern;
 
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
-   private HashSet<String> terms = new HashSet<String>(); // the following data structure contains final terms
-   private HashSet<String> stopWords = new HashSet<String>(); // the following data structure contains the stop words
-   private int currentIdx = 0;
+   private HashSet<String> terms; // the following data structure contains final terms
+   private HashSet<String> stopWords; // the following data structure contains the stop words
+   private int currentIdx;
+
+   public Parse (){
+      terms = new HashSet<String>();
+      stopWords = new HashSet<String>();
+      currentIdx = 0;
+   }
 
    // the following function parses the text of a specific document by the defined rules
    public void parseDocText(String docText) {
@@ -198,14 +204,17 @@ public class Parse {
          if (tokens[currentIdx + 1].equalsIgnoreCase("million") || token.contains("m") )
          {
             terms.add(price + "M" + "Dollars");
+            currentIdx++;
          }
          else if (tokens[currentIdx + 1].equalsIgnoreCase("billion") || token.contains("bn"))
          {
             terms.add((price * 1000) + "M" + "Dollars");
+            currentIdx++;
          }
          else if (tokens[currentIdx + 1].equalsIgnoreCase("trillion"))
          {
             terms.add((price * 1000000) + "M" + "Dollars");
+            currentIdx++;
          }
          else
          {
@@ -220,10 +229,12 @@ public class Parse {
          else if (tokens[currentIdx + 2].equals("Dollars"))
          {
             terms.add(price + tokens[currentIdx + 1] + "Dollars");
+            currentIdx = currentIdx + 2;
          }
          else if (tokens[currentIdx + 1].equals("Dollars"))
          {
             terms.add(price + "Dollars");
+            currentIdx++;
          }
       }
    }
@@ -321,6 +332,7 @@ public class Parse {
    }
 
    public static void main (String [] args){
-
+      Parse p = new Parse();
+      p.parseDocText("");
    }
 }
