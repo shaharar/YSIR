@@ -100,9 +100,15 @@ public class Parse {
        }
    }
 
-// the following function adds final terms to the data structure in one of these formats : NUMBER K/M/B.
+
    public void numbers (String token) {
-      double num = Double.parseDouble(token);
+      double num;
+      //negative number
+      if(token.startsWith("-")){
+         num = Double.parseDouble(token.substring(1)) * (-1);
+      }
+      else
+         num = Double.parseDouble(token);
       //num is less than 1,000
       if (num < 1000) {
          //num has a fraction after it - like '34 2/3'
@@ -278,6 +284,20 @@ public class Parse {
          }
          double secondNum = Double.parseDouble(tokens[currentIdx + 1]); //upper range
          terms.add(firstNum + "-" + secondNum);
+      }
+      //negative number
+       if((token.charAt(0) == '-') && (Character.isDigit(token.charAt(1)))){
+         int i=2;
+         //check if the negative number is a part of a range (has more than one '-') or just a negative number
+         while ((i < token.length()) && (token.charAt(i) != '-') && (Character.isDigit(token.charAt(i)))) {
+            i++;
+         }
+         if(token.charAt(i) == '-'){
+            terms.add(token); //add it as a range
+         }
+         else{
+            numbers(token); //calling to numbers parse function
+         }
       }
 
       //'Number-number'
