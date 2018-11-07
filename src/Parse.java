@@ -14,7 +14,7 @@ public class Parse {
       terms = new HashSet<String>();
       stopWords = new HashSet<String>();
       currentIdx = 0;
-      tokens = new String[]{"10,123","1010.56","10,123,000","7 Trillion","34 2/3"};
+      tokens = new String[]{"-13","6-7","10123","10123000","7 Trillion","34 2/3"};
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -31,22 +31,24 @@ public class Parse {
                "Oct", "OCT", "October", "OCTOBER",
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
-      tokens = docText.split(" |\\. |,|: ");
+      tokens = docText.split(" |\\. |\\, |\\: ");
       String token;
       while (currentIdx < tokens.length){
           token = tokens[currentIdx];
          String nextToken = "";
           //numbers
-         if (currentIdx + 1 < tokens.length && token.matches("^[0-9]+([,.][0-9]?)?$")) {
-               nextToken = tokens[currentIdx + 1];
+         if (token.matches("^[0-9]+([,.][0-9]?)?$")) {
+             if(currentIdx + 1 < tokens.length) {
+                 nextToken = tokens[currentIdx + 1];
+             }
                // token is a percent
                if (nextToken.equals("percent") || nextToken.equals("percentage")) {
                   percentage(token);
                }
             // token represents one of the following: a number or a price
-            if (nextToken.equals("") && nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
-               // token is a price
-               if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 2].equals("Dollars") || (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
+            if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
+                // token is a price
+               if (((currentIdx + 2 < tokens.length) && (tokens[currentIdx + 2].equals("Dollars"))) || ((currentIdx + 3 < tokens.length) && (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
                   prices(token);
                }
                // token is a number
@@ -55,12 +57,15 @@ public class Parse {
                }
             }
             // token is a price
-            if (currentIdx + 1 < tokens.length && nextToken.equals("Dollars") || ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars"))) {
+            else if (currentIdx + 1 < tokens.length && nextToken.equals("Dollars") || ((currentIdx + 2 < tokens.length) && ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
                prices(token);
             }
             // token is a date
-            if (currentIdx + 1 < tokens.length && months.contains(nextToken)) {
+            else if (currentIdx + 1 < tokens.length && months.contains(nextToken)) {
                dates(token);
+            }
+            else{
+                numbers(token);
             }
          }
 
@@ -115,16 +120,16 @@ public class Parse {
       if(token.startsWith("-")){
          num = Double.parseDouble(token.substring(1)) * (-1);
       }
-      else{
-         try{
-            num = Double.parseDouble(token);
+      else {
+          num = Double.parseDouble(token);
+      }
              //num has a fraction after it - like '34 2/3'
              if (tokens[currentIdx + 1].contains("/")) {
-                 terms.add(token + tokens[currentIdx + 1]);
+                 terms.add(token + " " + tokens[currentIdx + 1]);
                  currentIdx++;
              }
             //num is less than 1,000
-            if (num < 1000) {
+            else if (num < 1000) {
                //Thousand after num - like '50 Thousand'
                if (tokens[currentIdx + 1].equals("Thousand")) {
                   terms.add(token + "K");
@@ -165,10 +170,6 @@ public class Parse {
                   terms.add((num / 1000000000) + "B");
                }
             }
-         } catch (NumberFormatException e) {
-            e.printStackTrace();
-         }
-      }
    }
 
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
@@ -313,9 +314,9 @@ public class Parse {
 
    // the following function adds final terms to the data structure in one of these formats : Word-Word, Word-Word-Word, Word-Number, Number-Word, Number-Number, Between Number and Number.
    public void rangesAndExpressions(String token) {
-      //'Word-word' or 'Word-word-word' format
+/*      //'Word-word' or 'Word-word-word' format
       if (!(Pattern.compile("[0-9]").matcher(token).find()))
-         terms.add(token);
+         terms.add(token);*/
       //'Between number and number' format
       if(token.equals("Between")){
          double firstNum = Double.parseDouble(tokens[currentIdx + 1]); //lower range
@@ -328,22 +329,22 @@ public class Parse {
          currentIdx++;
       }
       //negative number
-       if((token.charAt(0) == '-') && (Character.isDigit(token.charAt(1)))){
+       else if((token.charAt(0) == '-') && (Character.isDigit(token.charAt(1)))){
          int i=2;
          //check if the negative number is a part of a range (has more than one '-') or just a negative number
          while ((i < token.length()) && (token.charAt(i) != '-') && (Character.isDigit(token.charAt(i)))) {
             i++;
          }
-         if(token.charAt(i) == '-'){
+         if(i != token.length() && token.charAt(i) == '-'){
             terms.add(token); //add it as a range
          }
          else{
             numbers(token); //calling to numbers parse function
          }
       }
-
-      //'Number-number'
-
+      else{
+          terms.add(token);
+      }
 
 
       //'Number-word' or 'Word-Number'
@@ -358,7 +359,7 @@ public class Parse {
       p.numbers("1010.56"); //1.01056K
       p.numbers("55 Million"); //55M
       p.numbers("10,123,000"); //10.123M*/
-       p.parseDocText("10123, 1010.56 10123000,  7 Trillion 34 2/3. ");
+       p.parseDocText("-13 6-7 10123, 10123000, 7 Trillion 34 2/3. ");
       for (String term:p.terms) {
          System.out.println(term);
       }
