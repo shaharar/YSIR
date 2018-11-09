@@ -14,7 +14,7 @@ public class Parse {
       terms = new HashSet<String>();
       stopWords = new HashSet<String>();
       currentIdx = 0;
-      tokens = new String[]{"-13","6-7","10123","10123000","7 Trillion","34 2/3"};
+      tokens = new String[]{"$20 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -37,16 +37,17 @@ public class Parse {
           token = tokens[currentIdx];
          String nextToken = "";
           //numbers
-         if (token.matches("^[0-9]+([,.][0-9]?)?$")) {
+         if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
              if(currentIdx + 1 < tokens.length) {
                  nextToken = tokens[currentIdx + 1];
              }
                // token is a percent
-               if (nextToken.equals("percent") || nextToken.equals("percentage")) {
-                  percentage(token);
-               }
+             if (nextToken.equals("percent") || nextToken.equals("percentage")) {
+                 percentage(token);
+             }
+
             // token represents one of the following: a number or a price
-            if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
+            else if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
                 // token is a price
                if (((currentIdx + 2 < tokens.length) && (tokens[currentIdx + 2].equals("Dollars"))) || ((currentIdx + 3 < tokens.length) && (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
                   prices(token);
@@ -118,10 +119,10 @@ public class Parse {
       double num;
       //negative number
       if(token.startsWith("-")){
-         num = Double.parseDouble(token.substring(1)) * (-1);
+         num = Double.parseDouble(((token.substring(1)).replace(",",""))) * (-1);
       }
       else {
-          num = Double.parseDouble(token);
+          num = Double.parseDouble(token.replace(",",""));
       }
              //num has a fraction after it - like '34 2/3'
              if (tokens[currentIdx + 1].contains("/")) {
@@ -147,7 +148,12 @@ public class Parse {
                }
                //Trillion after num - like '50 Trillion'
                else if (tokens[currentIdx + 1].equals("Trillion")) {
-                  terms.add((num * 1000) + "B");
+                   if((num * 1000) % 1000 == 0){
+                       terms.add((int)(num * 1000) + "B");
+                   }
+                  else{
+                      terms.add((num * 1000) + "B");
+                   }
                    currentIdx++;
                }
                //just number - like '123'
@@ -202,7 +208,7 @@ public class Parse {
       double price;
       if (token.startsWith("$"))
       {
-         price = Double.parseDouble(token.replaceFirst("$", ""));
+         price = Double.parseDouble(token.replace("$", ""));
       }
       else
       {
@@ -212,37 +218,37 @@ public class Parse {
       {
          if (tokens[currentIdx + 1].equalsIgnoreCase("million") || token.contains("m") )
          {
-            terms.add(price + "M" + "Dollars");
+            terms.add(price + " M" + " Dollars");
             currentIdx++;
          }
          else if (tokens[currentIdx + 1].equalsIgnoreCase("billion") || token.contains("bn"))
          {
-            terms.add((price * 1000) + "M" + "Dollars");
+            terms.add((price * 1000) + " M" + " Dollars");
             currentIdx++;
          }
          else if (tokens[currentIdx + 1].equalsIgnoreCase("trillion"))
          {
-            terms.add((price * 1000000) + "M" + "Dollars");
+            terms.add((price * 1000000) + " M" + " Dollars");
             currentIdx++;
          }
          else
          {
-            terms.add((price / 1000000) + "M" + "Dollars");
+            terms.add((price / 1000000) + " M" + " Dollars");
          }
       }
       else
       {
          if (token.startsWith("$")){
-            terms.add(price + "Dollars");
+            terms.add(price + " Dollars");
          }
          else if (tokens[currentIdx + 2].equals("Dollars"))
          {
-            terms.add(price + tokens[currentIdx + 1] + "Dollars");
+            terms.add(price + " " + tokens[currentIdx + 1] + " Dollars");
             currentIdx = currentIdx + 2;
          }
          else if (tokens[currentIdx + 1].equals("Dollars"))
          {
-            terms.add(price + "Dollars");
+            terms.add(price + " Dollars");
             currentIdx++;
          }
       }
@@ -359,7 +365,7 @@ public class Parse {
       p.numbers("1010.56"); //1.01056K
       p.numbers("55 Million"); //55M
       p.numbers("10,123,000"); //10.123M*/
-       p.parseDocText("-13 6-7 10123, 10123000, 7 Trillion 34 2/3. ");
+       p.parseDocText("$20 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
       for (String term:p.terms) {
          System.out.println(term);
       }
