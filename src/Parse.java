@@ -15,11 +15,11 @@ public class Parse {
       stopWords = new HashSet<String>();
       setStopWords();
       currentIdx = 0;
-      tokens = new String[]{"about","66 1/2 Dollars","35 million U.S dollars","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
+      tokens = new String[]{"50 thousand","about","66 1/2 Dollars","35 million U.S dollars","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
-   public void parseDocText(String docText) {
+   public void parseDocText(Document doc) {
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
                "Feb", "FEB", "February", "FEBRUARY",
                "Mar", "MAR", "March", "MARCH",
@@ -32,6 +32,7 @@ public class Parse {
                "Oct", "OCT", "October", "OCTOBER",
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
+       String docText = doc.getText();
       tokens = docText.split(" |\\. |\\, |\\: ");
       String token;
       while (currentIdx < tokens.length){
@@ -85,12 +86,15 @@ public class Parse {
           //words
          else{
              if(!(stopWords.contains(token))){ //if token is not a stop word
+                 //dates
                  if(months.contains(token)){
                      dates(token);
                  }
+                 //ranges
                  else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()){
                      rangesAndExpressions(token);
                  }
+                 //just words
                  else {
                      lettersCase(token);
                  }
@@ -119,7 +123,7 @@ public class Parse {
                //Thousand after num - like '50 Thousand'
                if (tokens[currentIdx + 1].equals("Thousand")) {
                   terms.add(token + "K");
-                   currentIdx++;
+                  currentIdx++;
                }
                //Million after num - like '50 Million'
                else if (tokens[currentIdx + 1].equals("Million")) {
@@ -195,21 +199,20 @@ public class Parse {
       {
          price = Double.parseDouble(token.replace("$", ""));
       }
-/*      else if(token.endsWith("bn")){
-          price = Double.parseDouble(token.substring(0,token.length()-2));
-      }
-      else if(token.endsWith("m")){
-          price = Double.parseDouble(token.substring(0,token.length()-1));
-      }*/
       else
       {
          price = Double.parseDouble(token);
       }
+
       if (price >= 1000000 || tokens[currentIdx + 1].equalsIgnoreCase("million") || tokens[currentIdx + 1].equalsIgnoreCase("billion") || tokens[currentIdx + 1].equalsIgnoreCase("trillion") || tokens[currentIdx + 1].equals("bn") || tokens[currentIdx + 1].equals("m") )
       {
          if (tokens[currentIdx + 1].equalsIgnoreCase("million") || tokens[currentIdx + 1].equals("m"))
          {
-            terms.add(price + " M" + " Dollars");
+             if (price == (int)(price)){
+                 terms.add((int)price + " M" + " Dollars");
+             }
+            else
+                terms.add(price + " M" + " Dollars");
             if(currentIdx + 2 < tokens.length && tokens[currentIdx+2].equals("Dollars")) {
                 currentIdx = currentIdx + 2;
             }
@@ -221,7 +224,11 @@ public class Parse {
          }
          else if (tokens[currentIdx + 1].equalsIgnoreCase("billion") || tokens[currentIdx + 1].equals("bn"))
          {
-            terms.add((price * 1000) + " M" + " Dollars");
+             if (price == (int)(price)){
+                 terms.add((int)(price * 1000) + " M" + " Dollars");
+             }
+            else
+                terms.add((price * 1000) + " M" + " Dollars");
              if(currentIdx + 2 < tokens.length && tokens[currentIdx+2].equals("Dollars")){
                  currentIdx = currentIdx + 2;
              }
@@ -233,7 +240,11 @@ public class Parse {
          }
          else if (tokens[currentIdx + 1].equalsIgnoreCase("trillion"))
          {
-            terms.add((price * 1000000) + " M" + " Dollars");
+             if (price == (int)(price)){
+                 terms.add((int)(price * 1000) + " M" + " Dollars");
+             }
+            else
+                terms.add((price * 1000000) + " M" + " Dollars");
              if(currentIdx + 2 < tokens.length && tokens[currentIdx+2].equals("Dollars")){
                  currentIdx = currentIdx + 2;
              }
@@ -245,7 +256,11 @@ public class Parse {
          }
          else
          {
-            terms.add((price / 1000000) + " M" + " Dollars");
+             if (price == (int)(price)){
+                 terms.add((int)(price/1000000) + " M" + " Dollars");
+             }
+            else
+                terms.add((price / 1000000) + " M" + " Dollars");
              if(currentIdx + 1 < tokens.length && tokens[currentIdx+1].equals("Dollars")){
                  currentIdx++;
              }
@@ -253,18 +268,24 @@ public class Parse {
       }
       else
       {
-         if (token.startsWith("$")){
-            terms.add(price + " Dollars");
+         if (token.startsWith("$") || tokens[currentIdx + 1].equals("Dollars")){
+             if (price == (int)(price)){
+                 terms.add((int)price + " Dollars");
+             }
+            else
+                terms.add(price + " Dollars");
+             if(tokens[currentIdx + 1].equals("Dollars")){
+                 currentIdx++;
+             }
          }
          else if (tokens[currentIdx + 2].equals("Dollars"))
          {
-            terms.add(price + " " + tokens[currentIdx + 1] + " Dollars");
+             if (price == (int)(price)){
+                 terms.add((int)price + " " + tokens[currentIdx + 1] + " Dollars");
+             }
+            else
+                terms.add(price + " " + tokens[currentIdx + 1] + " Dollars");
             currentIdx = currentIdx + 2;
-         }
-         else if (tokens[currentIdx + 1].equals("Dollars"))
-         {
-            terms.add(price + " Dollars");
-            currentIdx++;
          }
       }
    }
@@ -374,13 +395,9 @@ public class Parse {
 
    public static void main (String [] args){
       Parse p = new Parse();
-      //p.parseDocText("");
-/*      p.numbers("10,123"); //expect: 10.123K
-      p.numbers("123 Thousand"); //123K
-      p.numbers("1010.56"); //1.01056K
-      p.numbers("55 Million"); //55M
-      p.numbers("10,123,000"); //10.123M*/
-       p.parseDocText("about, 66 1/2 Dollars, 35 million U.S dollars 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
+      Document doc = new Document();
+      doc.setText("50 Thousand, about, 66 1/2 Dollars, 35 million U.S dollars 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
+       p.parseDocText(doc);
       for (String term:p.terms) {
          System.out.println(term);
       }

@@ -12,6 +12,10 @@ public class Document {
     private int maxTF; //max term's frequency
     private int numOfUniqueTerms;
 
+    //Constructor
+    public Document() {
+    }
+
     //Getters
     public String getText() {
         return text;
@@ -35,5 +39,10 @@ public class Document {
 
     public String getHeader() {
         return header;
+    }
+
+    //Setters
+    public void setText(String text) {
+        this.text = text;
     }
 }

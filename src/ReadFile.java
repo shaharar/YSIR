@@ -9,6 +9,7 @@ public class ReadFile {
 
     private ArrayList<File> files = new ArrayList<>();
     private ArrayList<Document> documents = new ArrayList<>();
+    private Parse parse = new Parse();
 
 
     public void getFilesFromDir (String path){
@@ -30,10 +31,17 @@ public class ReadFile {
             fIO = new FileInputStream(file.getPath());
             BufferedReader buf = new BufferedReader(new InputStreamReader(fIO));
             try {
-                String line = buf.readLine();
+                String line = "";
                 StringBuilder sb = new StringBuilder();
 
+                while ((line = buf.readLine()) != null){
 
+
+
+
+
+                    parse.parseDocText(new Document());
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
