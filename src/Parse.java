@@ -15,7 +15,7 @@ public class Parse {
       stopWords = new HashSet<String>();
       setStopWords();
       currentIdx = 0;
-      tokens = new String[]{"50 thousand","about","66 1/2 Dollars","35 million U.S dollars","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
+      tokens = new String[]{"First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -169,7 +169,7 @@ public class Parse {
 
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
    public void lettersCase(String token) {
-      if (token.charAt(0) >= 65 && token.charAt(0) <= 90) //lower case
+      if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
          if (terms.contains(token.toUpperCase()))
          {
@@ -396,7 +396,7 @@ public class Parse {
    public static void main (String [] args){
       Parse p = new Parse();
       Document doc = new Document();
-      doc.setText("50 Thousand, about, 66 1/2 Dollars, 35 million U.S dollars 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
+      doc.setText("First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
        p.parseDocText(doc);
       for (String term:p.terms) {
          System.out.println(term);

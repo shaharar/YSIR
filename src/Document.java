@@ -45,4 +45,8 @@ public class Document {
     public void setText(String text) {
         this.text = text;
     }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

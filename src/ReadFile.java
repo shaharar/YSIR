@@ -1,3 +1,5 @@
+import org.jsoup.Jsoup;
+
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 public class ReadFile {
 
     private ArrayList<File> files = new ArrayList<>();
-    private ArrayList<Document> documents = new ArrayList<>();
+    //private ArrayList<Document> documents = new ArrayList<>();
     private Parse parse = new Parse();
 
 
@@ -26,20 +28,64 @@ public class ReadFile {
     }
 
     public void separateFileToDocs (File file){
-        InputStream fIO = null;
+        try {
+            org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
+            org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
+            for (org.jsoup.nodes.Element e: elements) {
+                String docText = e.select("TEXT").text();
+                Document doc = new Document();
+                doc.setText(docText);
+                doc.setContent(e.toString());
+                parse.parseDocText(doc);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+ /*       InputStream fIO = null;
         try {
             fIO = new FileInputStream(file.getPath());
             BufferedReader buf = new BufferedReader(new InputStreamReader(fIO));
             try {
                 String line = "";
+                String[] splitLine;
                 StringBuilder sb = new StringBuilder();
 
+
+                String word = "";
+                String docContent = "";
+                String docText = "";
                 while ((line = buf.readLine()) != null){
-
-
-
-
-
+                    splitLine = line.split(" ");
+*//*                    for (String word:splitLine) {
+                        if (word.equals("<Doc>")) {
+                            String docContent = word;
+                            while (!word.equals("<Doc>")){
+                                docContent += word;
+                            }
+                        }
+                    }*//*
+                    int i = 0;
+                    while (i < splitLine.length){
+                        if(splitLine[i].equals("<Doc>")){
+                            docContent = splitLine[i];
+                            i++;
+                            while (! splitLine[i].equals("<Doc>")){
+                                docContent += splitLine[i];
+                                if(splitLine[i].equals("<Text>")){
+                                    docText = splitLine[i];
+                                    i++;
+                                    while (! splitLine[i].equals("<Text>")) {
+                                        docText += splitLine[i];
+                                        docContent += splitLine[i];
+                                        i++;
+                                    }
+                                }
+                                i++;
+                            }
+                        }
+                        i++;
+                    }
                     parse.parseDocText(new Document());
                 }
 
@@ -48,7 +94,7 @@ public class ReadFile {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
@@ -58,5 +104,10 @@ public class ReadFile {
 
     public void setDocContent (String docText){
 
+    }
+
+    public static void main (String [] args){
+        ReadFile rf = new ReadFile();
+        rf.getFilesFromDir("../resources/corpus");
     }
 }
