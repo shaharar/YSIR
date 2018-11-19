@@ -1,4 +1,5 @@
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
@@ -9,13 +10,22 @@ import java.util.ArrayList;
 
 public class ReadFile {
 
-    private ArrayList<File> files = new ArrayList<>();
+    private File[] docsInFile;
     //private ArrayList<Document> documents = new ArrayList<>();
-    private Parse parse = new Parse();
+    private Parse parse;
 
+    public ReadFile() {
+        parse = new Parse();
+    }
 
-    public void getFilesFromDir (String path){
-        Path dirPath = Paths.get(path);
+    public void getFilesFromDir (String path) throws IOException {
+
+        File corpus = new File(path);
+        File[] files = corpus.listFiles();
+        for (File file:files) {
+            separateFileToDocs(file);
+        }
+/*        Path dirPath = Paths.get(path);
         try {
             DirectoryStream <Path> stream = Files.newDirectoryStream(dirPath);
             for (Path filePath:stream) {
@@ -24,11 +34,28 @@ public class ReadFile {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     public void separateFileToDocs (File file){
-        try {
+
+        docsInFile = file.listFiles();
+        for (File d : docsInFile) {
+            try {
+                org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
+                org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
+                for (Element e: elements) {
+                    String docText = e.select("TEXT").text();
+                    Document doc = new Document();
+                    doc.setText(docText);
+                    doc.setContent(e.toString());
+                    parse.parseDocText(doc);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+/*        try {
             org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
             org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
             for (org.jsoup.nodes.Element e: elements) {
@@ -40,7 +67,7 @@ public class ReadFile {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
  /*       InputStream fIO = null;
         try {
@@ -97,17 +124,9 @@ public class ReadFile {
         }*/
 
     }
-
-    public String getTextFromDoc (Document doc){
-        return "";
-    }
-
-    public void setDocContent (String docText){
-
-    }
-
-    public static void main (String [] args){
+    public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
-        rf.getFilesFromDir("../resources/corpus");
+        rf.getFilesFromDir("resources/corpus.corpus");
     }
 }
+
