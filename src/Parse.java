@@ -296,12 +296,12 @@ public class Parse {
       if (!(Pattern.compile("[0-9]").matcher(token).find())) { //check if the token contains digits, if not - it represents the month
          month = checkMonth(token);
          //'Month YYYY' format -> 'YYYY-MM'
-         if ((tokens[currentIdx + 1].length() == 4)) {
+         if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 1].length() == 4)) {
             terms.add(tokens[currentIdx + 1] + "-" + month);
             currentIdx++;
          }
          //'Month DD' format -> 'MM-DD'
-         else if ((tokens[currentIdx + 1].length() <= 2)) {
+         else if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 1].length() <= 2)) {
             if (tokens[currentIdx + 1].length() == 1){
                terms.add(month + "-" + "0" + tokens[currentIdx + 1]);
             }
@@ -314,14 +314,15 @@ public class Parse {
       }
       //'DD Month' format -> 'MM-DD'
       else {
-         month = checkMonth(tokens[currentIdx + 1]);
-         if (tokens[currentIdx].length() == 1){
-            terms.add(month + "-" + "0" + token);
-         }
-         else{
-            terms.add(month + "-" + token);
-         }
-          currentIdx++;
+          if(currentIdx + 1 < tokens.length) {
+              month = checkMonth(tokens[currentIdx + 1]);
+              if (tokens[currentIdx].length() == 1) {
+                  terms.add(month + "-" + "0" + token);
+              } else {
+                  terms.add(month + "-" + token);
+              }
+              currentIdx++;
+          }
       }
    }
 

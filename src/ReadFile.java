@@ -42,7 +42,8 @@ public class ReadFile {
         docsInFile = file.listFiles();
         for (File d : docsInFile) {
             try {
-                org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
+                //org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
+                org.jsoup.nodes.Document document = Jsoup.parse(d, "UTF-8");
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
                     String docText = e.select("TEXT").text();
@@ -126,7 +127,7 @@ public class ReadFile {
     }
     public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
-        rf.getFilesFromDir("resources/corpus.corpus");
+        rf.getFilesFromDir("C:\\לימודים\\שנה ג\\סמסטר ה\\ניתוצ\\מטלות\\YSIR\\resources\\corpus\\corpus");
     }
 }
 
