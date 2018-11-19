@@ -127,7 +127,7 @@ public class ReadFile {
     }
     public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
-        rf.getFilesFromDir("C:\\לימודים\\שנה ג\\סמסטר ה\\ניתוצ\\מטלות\\YSIR\\resources\\corpus\\corpus");
+        rf.getFilesFromDir("resources\\corpus");
     }
 }
 

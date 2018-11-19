@@ -4,6 +4,10 @@ public class Main {
 
     public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
-        rf.getFilesFromDir("../resources/corpus");
+        try {
+            rf.getFilesFromDir("../resources/corpus");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

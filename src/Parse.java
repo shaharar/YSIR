@@ -6,16 +6,17 @@ import java.util.regex.Pattern;
 
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
-   private HashSet<String> terms; // the following data structure contains final terms
+   private HashSet<Term> terms; // the following data structure contains final terms
    private HashSet<String> stopWords; // the following data structure contains the stop words
    private int currentIdx;
+   private Indexer indexer;
 
    public Parse (){
-      terms = new HashSet<String>();
+      terms = new HashSet<Term>();
       stopWords = new HashSet<String>();
       setStopWords();
       currentIdx = 0;
-      tokens = new String[]{"First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
+      //tokens = new String[]{"First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
