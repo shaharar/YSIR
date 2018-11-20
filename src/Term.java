@@ -1,12 +1,14 @@
 public class Term {
     int tf;
-    String termStr;
 
-    public String getTermStr() {
-        return termStr;
+    public Term(int tf){
+        this.tf = tf;
     }
-
     public int getTf() {
         return tf;
+    }
+
+    public void updateTf() {
+        this.tf++;
     }
 }

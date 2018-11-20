@@ -15,14 +15,14 @@ public class Indexer {
         numOfDocs = 0;
     }
 
-    public void createTemporaryPosting (HashSet<Term> terms, String DocID){
-        for (Term term : terms) {
-            if (!dictionary.containsKey(term.getTermStr())){
-                dictionary.put(term.getTermStr(), new DicRecDetails());
+    public void createTemporaryPosting (HashMap<String, Term> terms, String DocID){
+        for (String str: terms.keySet()) {
+            if (!dictionary.containsKey(str)){
+                dictionary.put(str, new DicRecDetails());
 
             }
-            dictionary.get(term.getTermStr()).totalFreq += term.getTf();
-            dictionary.get(term.getTermStr()).df++;
+            dictionary.get(str).totalFreq += terms.get(str).getTf();
+            dictionary.get(str).df++;
         }
         numOfDocs++;
 
