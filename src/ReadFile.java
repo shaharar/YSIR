@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReadFile {
 
@@ -56,6 +58,8 @@ public class ReadFile {
                 e.printStackTrace();
             }
         }
+
+
 /*        try {
             org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
             org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
@@ -125,6 +129,8 @@ public class ReadFile {
         }*/
 
     }
+
+
     public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
         rf.getFilesFromDir("resources\\corpus");

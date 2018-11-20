@@ -1,21 +1,22 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
    private HashSet<Term> terms; // the following data structure contains final terms
    private HashSet<String> stopWords; // the following data structure contains the stop words
-   private int currentIdx;
+    private HashMap<String,String> replaceMap;
+    private int currentIdx;
    private Indexer indexer;
 
    public Parse (){
       terms = new HashSet<Term>();
       stopWords = new HashSet<String>();
       setStopWords();
-      currentIdx = 0;
+       replaceMap = new HashMap<>();
+       initReplaceMap();
+       currentIdx = 0;
       //tokens = new String[]{"First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
@@ -34,6 +35,7 @@ public class Parse {
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
        String docText = doc.getText();
+       replaceChars(docText);
       tokens = docText.split(" |\\. |\\, |\\: ");
       String token;
       while (currentIdx < tokens.length){
@@ -394,6 +396,48 @@ public class Parse {
       //'Number-word' or 'Word-Number'
 
    }
+
+    private String replaceChars (String textForReplace){
+        StringBuilder sb = new StringBuilder(textForReplace);
+        int from, to, nextFromKey;
+        for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            from = sb.indexOf(key, 0);
+            while (from >= 0) {
+                to = from + key.length();
+                nextFromKey = from + value.length();
+                sb.replace(from, to, value);
+                from = sb.indexOf(key, nextFromKey);
+            }
+        }
+        return sb.toString();
+    }
+
+    private void initReplaceMap(){
+        replaceMap.put(". "," ");
+        replaceMap.put(", "," ");
+        replaceMap.put("\t "," ");
+        replaceMap.put("(","");
+        replaceMap.put(")","");
+        replaceMap.put("]","");
+        replaceMap.put("[","");
+        replaceMap.put("}","");
+        replaceMap.put("{","");
+        replaceMap.put("!","");
+        replaceMap.put("?","");
+        replaceMap.put(":","");
+        replaceMap.put(";","");
+        replaceMap.put("\"","");
+        replaceMap.put(".\"","");
+        replaceMap.put("*","");
+        replaceMap.put("\n"," ");
+        replaceMap.put("-\n","");
+        replaceMap.put(";\n","");
+        replaceMap.put("\n\n"," ");
+        replaceMap.put(".\n"," ");
+        replaceMap.put(". \n"," ");
+    }
 
    public static void main (String [] args){
       Parse p = new Parse();
