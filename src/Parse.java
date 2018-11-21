@@ -14,6 +14,8 @@ public class Parse {
     private int currentIdx;
    private Indexer indexer;
 
+   static int docsTotal = 0;
+
    public Parse (){
       terms = new HashMap<String, Term>();
       stopWords = new HashSet<String>();
@@ -111,19 +113,28 @@ public class Parse {
          }
          currentIdx++;
       }
+      docsTotal++;
    }
 
    public void numbers (String token) {
       double num;
       //negative number
       if(token.startsWith("-")){
-         num = Double.parseDouble(((token.substring(1)).replace(",",""))) * (-1);
+          try{
+              num = Double.parseDouble(((token.substring(1)).replace(",",""))) * (-1);
+          } catch (Exception e){
+              return;
+          }
       }
       else {
-          num = Double.parseDouble(token.replace(",",""));
+          try{
+              num = Double.parseDouble(token.replace(",",""));
+          } catch (Exception e){
+              return;
+          }
       }
              //num has a fraction after it - like '34 2/3'
-             if (tokens[currentIdx + 1].contains("/")) {
+             if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].contains("/")) {
                 if (terms.containsKey(token + " " + tokens[currentIdx + 1])){
                     terms.get(token + " " + tokens[currentIdx + 1]).updateTf();
                 }
@@ -135,7 +146,7 @@ public class Parse {
             //num is less than 1,000
             else if (num < 1000) {
                //Thousand after num - like '50 Thousand'
-               if (tokens[currentIdx + 1].equals("Thousand")) {
+               if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Thousand")) {
                    if (terms.containsKey(token + "K")){
                        terms.get(token + "K").updateTf();
                    }
@@ -145,7 +156,7 @@ public class Parse {
                   currentIdx++;
                }
                //Million after num - like '50 Million'
-               else if (tokens[currentIdx + 1].equals("Million")) {
+               else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Million")) {
                    if (terms.containsKey(token + "M")){
                        terms.get(token + "M").updateTf();
                    }
@@ -155,7 +166,7 @@ public class Parse {
                    currentIdx++;
                }
                //Billion after num - like '50 Billion'
-               else if (tokens[currentIdx + 1].equals("Billion")) {
+               else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Billion")) {
                    if (terms.containsKey(token + "B")){
                        terms.get(token + "B").updateTf();
                    }
@@ -165,7 +176,7 @@ public class Parse {
                    currentIdx++;
                }
                //Trillion after num - like '50 Trillion'
-               else if (tokens[currentIdx + 1].equals("Trillion")) {
+               else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Trillion")) {
                    if((num * 1000) % 1000 == 0){
                        if (terms.containsKey((int)(num * 1000) + "B")){
                            terms.get((int)(num * 1000) + "B").updateTf();
@@ -283,16 +294,27 @@ public class Parse {
       double price;
       if (token.startsWith("$"))
       {
-         price = Double.parseDouble(token.replace("$", ""));
+          try{
+              token = token.replace(",","");
+              price = Double.parseDouble(token.replace("$", ""));
+          }catch (Exception e){
+              terms.put(token, new Term(1));
+              return;
+          }
       }
       else
       {
-         price = Double.parseDouble(token);
+          try{
+              price = Double.parseDouble(token.replace(",",""));
+          }catch (Exception e){
+              terms.put(token, new Term(1));
+              return;
+          }
       }
 
-      if (price >= 1000000 || tokens[currentIdx + 1].equalsIgnoreCase("million") || tokens[currentIdx + 1].equalsIgnoreCase("billion") || tokens[currentIdx + 1].equalsIgnoreCase("trillion") || tokens[currentIdx + 1].equals("bn") || tokens[currentIdx + 1].equals("m") )
+      if (price >= 1000000 || currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("million") || tokens[currentIdx + 1].equalsIgnoreCase("billion") || tokens[currentIdx + 1].equalsIgnoreCase("trillion") || tokens[currentIdx + 1].equals("bn") || tokens[currentIdx + 1].equals("m") )
       {
-         if (tokens[currentIdx + 1].equalsIgnoreCase("million") || tokens[currentIdx + 1].equals("m"))
+         if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("million") || currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("m"))
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " M" + " Dollars")){
@@ -617,7 +639,7 @@ public class Parse {
         replaceMap.put("?","");
         replaceMap.put(":","");
         replaceMap.put(";","");
-        replaceMap.put("--"," ");
+        replaceMap.put(" -- "," ");
         replaceMap.put("- ","");
         replaceMap.put("-\n","");
         //replaceMap.put(" -","");

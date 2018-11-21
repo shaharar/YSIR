@@ -25,6 +25,7 @@ public class ReadFile {
         File corpus = new File(path);
         File[] files = corpus.listFiles();
         for (File file:files) {
+            System.out.println(file.getPath().toString());
             separateFileToDocs(file);
         }
 /*        Path dirPath = Paths.get(path);
@@ -134,6 +135,7 @@ public class ReadFile {
     public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
         rf.getFilesFromDir("C:\\לימודים\\שנה ג\\סמסטר ה\\ניתוצ\\מטלות\\YSIR\\resources\\corpus\\corpus");
+        System.out.println(Parse.docsTotal);
     }
 }
 
