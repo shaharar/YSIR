@@ -7,7 +7,6 @@ public class Term {
     public int getTf() {
         return tf;
     }
-
     public void updateTf() {
         this.tf++;
     }
