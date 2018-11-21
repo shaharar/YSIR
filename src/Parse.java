@@ -556,23 +556,32 @@ public class Parse {
 
    // the following function adds final terms to the data structure in one of these formats : Word-Word, Word-Word-Word, Word-Number, Number-Word, Number-Number, Between Number and Number.
    public void rangesAndExpressions(String token) {
-/*      //'Word-word' or 'Word-word-word' format
-      if (!(Pattern.compile("[0-9]").matcher(token).find()))
-         terms.add(token);*/
+       double firstNum, secondNum;
       //'Between number and number' format
       if(token.equals("Between")){
-         double firstNum = Double.parseDouble(tokens[currentIdx + 1]); //lower range
+          try{
+              firstNum = Double.parseDouble(tokens[currentIdx + 1]); //lower range
+          } catch (Exception e){
+              return;
+          }
          currentIdx++;
          while(!(Pattern.compile("[0-9]").matcher(tokens[currentIdx + 1]).find())){ //search the second number in the range
             currentIdx++;
          }
-         double secondNum = Double.parseDouble(tokens[currentIdx + 1]); //upper range
-          if (terms.containsKey(firstNum + "-" + secondNum)){
-              terms.get(firstNum + "-" + secondNum).updateTf();
+          try{
+             if(currentIdx + 1 < tokens.length){
+                 secondNum = Double.parseDouble(tokens[currentIdx + 1]); //upper range
+                 if (terms.containsKey(firstNum + "-" + secondNum)){
+                     terms.get(firstNum + "-" + secondNum).updateTf();
+                 }
+                 else {
+                     terms.put(firstNum + "-" + secondNum, new Term(1));
+                 }
+             }
+          } catch (Exception e){
+              return;
           }
-          else {
-              terms.put(firstNum + "-" + secondNum, new Term(1));
-          }
+
          currentIdx++;
       }
       //negative number
