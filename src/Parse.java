@@ -21,7 +21,7 @@ public class Parse {
        replaceMap = new HashMap<>();
        initReplaceMap();
        currentIdx = 0;
-      //tokens = new String[]{"First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$2 trillion","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
+       //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -40,8 +40,9 @@ public class Parse {
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
        String docText = doc.getText();
-       replaceChars(docText);
-      tokens = docText.split(" |\\. |\\, |\\: ");
+       docText = replaceChars(docText);
+      //tokens = docText.split(" |\\. |\\, |\\: ");
+      tokens = docText.split(" ");
       String token;
       while (currentIdx < tokens.length){
           token = tokens[currentIdx];
@@ -246,11 +247,20 @@ public class Parse {
          }
       }
       else { //upper case
+          //term doesn't exist in map as lower case
          if (!terms.containsKey(token.toLowerCase())){
-             terms.put(token.toUpperCase(), new Term(1));
+             //term doesn't exist in map - it's a new term
+             if (!terms.containsKey(token.toUpperCase())){
+                 terms.put(token.toUpperCase(), new Term(1));
+             }
+             //term already exists in map as upper case
+             else{
+                 terms.get(token.toUpperCase()).updateTf();
+             }
          }
+         //term exists in map as lower case
          else{
-             terms.get(token.toUpperCase()).updateTf();
+             terms.get(token.toLowerCase()).updateTf();
          }
       }
    }
@@ -607,6 +617,10 @@ public class Parse {
         replaceMap.put("?","");
         replaceMap.put(":","");
         replaceMap.put(";","");
+        replaceMap.put("--"," ");
+        replaceMap.put("- ","");
+        replaceMap.put("-\n","");
+        //replaceMap.put(" -","");
         replaceMap.put("\"","");
         replaceMap.put(".\"","");
         replaceMap.put("*","");
@@ -621,7 +635,7 @@ public class Parse {
    public static void main (String [] args){
       Parse p = new Parse();
       Document doc = new Document();
-      doc.setText("$2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
+      doc.setText("($56) $2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
        p.parseDocText(doc);
       for (String term:p.terms.keySet()) {
          System.out.println(term);
