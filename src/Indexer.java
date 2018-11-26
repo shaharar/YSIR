@@ -105,13 +105,22 @@ public class Indexer {
         writtenFilesCount++;
     }
 
+    private void mergeTempPostings (){
+
+
+
+
+
+
+
+    }
 
     private String mergeSort(String posting1, String posting2) {
 
         int currLine1 = 0, currLine2 = 0; //index of line in posting file
         String mergedPostings = "";
         String[] lines1 = posting1.split("\n");
-        String[] lines2 = posting1.split("\n");
+        String[] lines2 = posting2.split("\n");
         ArrayList<String> linesList1 = (ArrayList<String>) Arrays.asList(lines1);
         ArrayList<String> linesList2 = (ArrayList<String>) Arrays.asList(lines2);
 

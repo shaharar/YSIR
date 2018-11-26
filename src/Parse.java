@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ public class Parse {
    private HashSet<String> stopWords; // the following data structure contains the stop words
     private HashMap<String,String> replaceMap;
     private int currentIdx;
+    private String stopWordsPath;
    private Indexer indexer;
 
    static int docsTotal = 0;
@@ -611,10 +613,6 @@ public class Parse {
               terms.put(token, new Term(1));
           }
       }
-
-
-      //'Number-word' or 'Word-Number'
-
    }
 
     private String replaceChars (String textForReplace){
@@ -665,6 +663,8 @@ public class Parse {
 
    public static void main (String [] args){
       Parse p = new Parse();
+       p.stopWordsPath = "D:\\documents\\users\\shaharar\\Downloads\\ST\\stop_words.txt";
+       p.setStopWords();
       Document doc = new Document();
       doc.setText("($56) $2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
        p.parseDocText(doc);
@@ -674,8 +674,19 @@ public class Parse {
    }
 
 
-    // the following function saves defined stop words in the memory
+    // the following function saves defined stop words in the memory, according to the path the user gave.
     private void setStopWords (){
+/*        File stopWordsFile = new File (stopWordsPath);
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
+            String token;
+            while((token = br.readLine()) != null){
+                stopWords.add(token);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
         stopWords.add("a");
         stopWords.add("a's");
         stopWords.add("able");
@@ -1248,15 +1259,5 @@ public class Parse {
         stopWords.add("z");
         stopWords.add("zero");
 
-        /*        ClassLoader cl = getClass().getClassLoader();
-        File stopWordsFile = new File (cl.getResource("../resources/stopWords.txt").getFile());
-        try (BufferedReader br = new BufferedReader(new FileReader(stopWordsFile))) {
-            String token;
-            while((token = br.readLine()) != null){
-                stopWords.add(token);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 }
