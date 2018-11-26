@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
-   private HashMap<String, Term> terms; // the following data structure contains final terms
+    HashMap<String, Term> terms; // the following data structure contains final terms
    private HashSet<String> stopWords; // the following data structure contains the stop words
     private HashMap<String,String> replaceMap;
     private int currentIdx;
@@ -29,8 +29,9 @@ public class Parse {
    }
 
    // the following function parses the text of a specific document by the defined rules
-   public void parseDocText(Document doc) {
-       terms.clear();
+   public void parseDocText(String docText) {
+       //terms.clear();
+       currentIdx = 0;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
                "Feb", "FEB", "February", "FEBRUARY",
                "Mar", "MAR", "March", "MARCH",
@@ -43,7 +44,7 @@ public class Parse {
                "Oct", "OCT", "October", "OCTOBER",
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
-       String docText = doc.getText();
+       //String docText = doc.getText();
        docText = replaceChars(docText);
       //tokens = docText.split(" |\\. |\\, |\\: ");
       tokens = docText.split(" ");
@@ -73,7 +74,7 @@ public class Parse {
                }
             }
             // token is a price
-            else if (currentIdx + 1 < tokens.length && nextToken.equals("Dollars") || ((currentIdx + 2 < tokens.length) && ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
+            else if ((currentIdx + 1 < tokens.length && nextToken.equals("Dollars")) || ((currentIdx + 2 < tokens.length) && ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
                prices(token);
             }
             // token is a date
@@ -286,7 +287,7 @@ public class Parse {
        else {
            terms.put(token.replaceAll("%", "") + "%", new Term(1));
        }
-      if(tokens[currentIdx+1].equals("percent") || tokens[currentIdx+1].equals("percentage")){
+      if((currentIdx + 1 < tokens.length && tokens[currentIdx+1].equals("percent")) || (currentIdx + 1 < tokens.length && tokens[currentIdx+1].equals("percentage"))){
          currentIdx++;
       }
    }
@@ -314,9 +315,9 @@ public class Parse {
           }
       }
 
-      if (price >= 1000000 || currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("million") || tokens[currentIdx + 1].equalsIgnoreCase("billion") || tokens[currentIdx + 1].equalsIgnoreCase("trillion") || tokens[currentIdx + 1].equals("bn") || tokens[currentIdx + 1].equals("m") )
+      if (price >= 1000000 || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("million")) || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("billion")) || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("trillion")) || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("bn")) || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("m")))
       {
-         if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("million") || currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("m"))
+         if ((currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("million")) || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("m")))
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " M" + " Dollars")){
@@ -343,7 +344,7 @@ public class Parse {
             else
                 currentIdx++;
          }
-         else if (tokens[currentIdx + 1].equalsIgnoreCase("billion") || tokens[currentIdx + 1].equals("bn"))
+         else if ((currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("billion")) || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("bn")))
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price * 1000) + " M" + " Dollars")){
@@ -370,7 +371,7 @@ public class Parse {
              else
                  currentIdx++;
          }
-         else if (tokens[currentIdx + 1].equalsIgnoreCase("trillion"))
+         else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equalsIgnoreCase("trillion"))
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price * 1000000) + " M" + " Dollars")){
@@ -422,7 +423,7 @@ public class Parse {
       }
       else
       {
-         if (token.startsWith("$") || tokens[currentIdx + 1].equals("Dollars")){
+         if (token.startsWith("$") || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Dollars"))){
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " Dollars")){
                      terms.get((int)price + " Dollars").updateTf();
@@ -439,11 +440,11 @@ public class Parse {
                      terms.put(price + " Dollars", new Term(1));
                  }
              }
-             if(tokens[currentIdx + 1].equals("Dollars")){
+             if(currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Dollars")){
                  currentIdx++;
              }
          }
-         else if (tokens[currentIdx + 2].equals("Dollars"))
+         else if (currentIdx + 2 < tokens.length && tokens[currentIdx + 2].equals("Dollars"))
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " " + tokens[currentIdx + 1] + " Dollars")){
@@ -587,7 +588,7 @@ public class Parse {
          currentIdx++;
       }
       //negative number
-       else if((token.charAt(0) == '-') && (Character.isDigit(token.charAt(1)))){
+       else if((token.charAt(0) == '-') && (token.length() > 1 && Character.isDigit(token.charAt(1)))){
          int i=2;
          //check if the negative number is a part of a range (has more than one '-') or just a negative number
          while ((i < token.length()) && (token.charAt(i) != '-') && (Character.isDigit(token.charAt(i)))) {
@@ -667,7 +668,7 @@ public class Parse {
        p.setStopWords();
       Document doc = new Document();
       doc.setText("($56) $2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
-       p.parseDocText(doc);
+       p.parseDocText(doc.getText());
       for (String term:p.terms.keySet()) {
          System.out.println(term);
       }

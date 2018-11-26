@@ -25,7 +25,7 @@ public class ReadFile {
         File corpus = new File(path);
         File[] files = corpus.listFiles();
         for (File file:files) {
-            System.out.println(file.getPath().toString());
+            //System.out.println(file.getPath().toString());
             separateFileToDocs(file);
         }
 /*        Path dirPath = Paths.get(path);
@@ -38,6 +38,7 @@ public class ReadFile {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
+        System.out.println("dicSize: " + parse.terms.size());
     }
 
     public void separateFileToDocs (File file){
@@ -50,10 +51,12 @@ public class ReadFile {
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
                     String docText = e.select("TEXT").text();
+                    String docNo = e.select("DOCNO").text();
                     Document doc = new Document();
-                    doc.setText(docText);
+                    //doc.setText(docText);
+                    doc.setDocNo(docNo);
                     doc.setContent(e.toString());
-                    parse.parseDocText(doc);
+                    parse.parseDocText(docText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -74,68 +77,14 @@ public class ReadFile {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-
- /*       InputStream fIO = null;
-        try {
-            fIO = new FileInputStream(file.getPath());
-            BufferedReader buf = new BufferedReader(new InputStreamReader(fIO));
-            try {
-                String line = "";
-                String[] splitLine;
-                StringBuilder sb = new StringBuilder();
-
-
-                String word = "";
-                String docContent = "";
-                String docText = "";
-                while ((line = buf.readLine()) != null){
-                    splitLine = line.split(" ");
-*//*                    for (String word:splitLine) {
-                        if (word.equals("<Doc>")) {
-                            String docContent = word;
-                            while (!word.equals("<Doc>")){
-                                docContent += word;
-                            }
-                        }
-                    }*//*
-                    int i = 0;
-                    while (i < splitLine.length){
-                        if(splitLine[i].equals("<Doc>")){
-                            docContent = splitLine[i];
-                            i++;
-                            while (! splitLine[i].equals("<Doc>")){
-                                docContent += splitLine[i];
-                                if(splitLine[i].equals("<Text>")){
-                                    docText = splitLine[i];
-                                    i++;
-                                    while (! splitLine[i].equals("<Text>")) {
-                                        docText += splitLine[i];
-                                        docContent += splitLine[i];
-                                        i++;
-                                    }
-                                }
-                                i++;
-                            }
-                        }
-                        i++;
-                    }
-                    parse.parseDocText(new Document());
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
     }
 
 
     public static void main (String [] args) throws IOException {
         ReadFile rf = new ReadFile();
-        rf.getFilesFromDir("C:\\לימודים\\שנה ג\\סמסטר ה\\ניתוצ\\מטלות\\YSIR\\resources\\corpus\\corpus");
+        rf.getFilesFromDir("d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus");
         System.out.println(Parse.docsTotal);
+
     }
 }
 

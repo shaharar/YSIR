@@ -49,4 +49,12 @@ public class Document {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public void setDocNo(String docNo) {
+        this.docNo = docNo;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }
