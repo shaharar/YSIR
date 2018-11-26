@@ -646,6 +646,7 @@ public class Parse {
         replaceMap.put("!","");
         replaceMap.put("?","");
         replaceMap.put(":","");
+        replaceMap.put("=","");
         replaceMap.put(";","");
         replaceMap.put(" -- "," ");
         replaceMap.put("- ","");
