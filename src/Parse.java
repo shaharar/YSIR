@@ -1,3 +1,8 @@
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
+import org.apache.lucene.analysis.snowball.SnowballFilter;
+import org.tartarus.snowball.SnowballProgram;
+import org.tartarus.snowball.ext.EnglishStemmer;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -15,8 +20,10 @@ public class Parse {
     private int currentIdx;
     private String stopWordsPath;
    private Indexer indexer;
+   private Stemmer stemmer;
+    boolean withStemming;
 
-   static int docsTotal = 0;
+    static int docsTotal = 0;
 
    public Parse (){
       terms = new HashMap<String, Term>();
@@ -25,6 +32,8 @@ public class Parse {
        replaceMap = new HashMap<>();
        initReplaceMap();
        currentIdx = 0;
+       this.withStemming = withStemming;
+       stemmer = new Stemmer();
        //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
@@ -115,6 +124,7 @@ public class Parse {
              }
          }
          currentIdx++;
+         stemming(token);
       }
       docsTotal++;
    }
@@ -614,6 +624,13 @@ public class Parse {
               terms.put(token, new Term(1));
           }
       }
+   }
+
+
+   private void stemming (String term){
+       if(withStemming){
+           term  = stemmer.stem(term);
+       }
    }
 
     private String replaceChars (String textForReplace){

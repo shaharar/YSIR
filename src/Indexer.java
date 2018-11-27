@@ -9,9 +9,9 @@ public class Indexer {
     int numOfDocs, docsCountPost;
     StringBuilder sb;
     String path;
-    boolean withStemming;
     int writtenFilesCount;
 
+    // constructor
     public Indexer(String path, boolean withStemming) {
         dictionary = new HashMap<>();
         tempPosting = new HashMap<>();
@@ -20,7 +20,6 @@ public class Indexer {
         docsCountPost = 0;
         sb = new StringBuilder();
         this.path = path;
-        this.withStemming = withStemming;
         writtenFilesCount = 0;
     }
 
@@ -103,7 +102,21 @@ public class Indexer {
         writtenFilesCount++;
     }
 
+
     private void mergeTempPostings (){
+
+    }
+
+
+
+
+
+
+
+
+
+
+/*    private void mergeTempPostings (){
         File postingFile = new File(path + "\\tempPostingFiles\\tempPosting");
         File[] tempFiles = postingFile.listFiles();
 
@@ -124,9 +137,9 @@ public class Indexer {
 
 
 
-    }
+    }*/
 
-    private void mergeSort(File posting1, File posting2) {
+    /*private void mergeSort(File posting1, File posting2) {
 
         ArrayList<String> linesList1 = new ArrayList<>();
         ArrayList<String> linesList2 = new ArrayList<>();
@@ -246,5 +259,5 @@ public class Indexer {
             }
         }
         writtenFilesCount++;
-    }
+    }*/
 }
