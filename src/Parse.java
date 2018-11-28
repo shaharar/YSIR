@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
     HashMap<String, Term> terms; // the following data structure contains final terms
+    HashMap<String, Term> termsPerDoc;
    private HashSet<String> stopWords; // the following data structure contains the stop words
     private HashMap<String,String> replaceMap;
     private int currentIdx;
@@ -21,13 +22,15 @@ public class Parse {
 
     static int docsTotal = 0; // test for us
 
-   public Parse (){
+   public Parse (boolean withStemming){
       terms = new HashMap<String, Term>();
+      termsPerDoc = new HashMap<String, Term>();
       stopWords = new HashSet<String>();
       setStopWords();
        replaceMap = new HashMap<>();
        initReplaceMap();
        currentIdx = 0;
+       indexer = new Indexer("d:\\documents\\users\\shaharar\\Downloads\\test");
        this.withStemming = withStemming;
        stemmer = new Stemmer();
        //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
@@ -35,7 +38,7 @@ public class Parse {
 
    // the following function parses the text of a specific document by the defined rules
    public void parseDocText(String docText, String docNo, String city) {
-       //terms.clear();
+       termsPerDoc.clear();
        currentIdx = 0;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
                "Feb", "FEB", "February", "FEBRUARY",
@@ -120,7 +123,8 @@ public class Parse {
          currentIdx++;
       }
       docsTotal++; // test for us
-       indexer.index(terms,docNo,city);
+       termsPerDoc = terms;
+       indexer.index(termsPerDoc,docNo,city);
    }
 
    public void numbers (String token) {
@@ -623,6 +627,9 @@ public class Parse {
       }
    }
 
+    public void finished() {
+       indexer.finished();
+    }
 
    private String stemming (String token){
        if(withStemming){
@@ -678,22 +685,27 @@ public class Parse {
         replaceMap.put(". \n"," ");
     }
 
+    public void writeDocsInfo(){
+        indexer.writeDocsInfoToDisk();
+    }
+
    public static void main (String [] args){
-      Parse p = new Parse();
+/*      Parse p = new Parse(false);
        p.stopWordsPath = "D:\\documents\\users\\shaharar\\Downloads\\ST\\stop_words.txt";
        p.setStopWords();
-/*      Document doc = new Document();
+*//*      Document doc = new Document();
       doc.setText("($56) $2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
-       p.parseDocText(doc.getText());*/
+       p.parseDocText(doc.getText());*//*
       for (String term:p.terms.keySet()) {
          System.out.println(term);
-      }
+      }*/
    }
 
 
     // the following function saves defined stop words in the memory, according to the path the user gave.
     private void setStopWords (){
 /*        File stopWordsFile = new File (stopWordsPath);
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
             String token;

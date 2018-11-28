@@ -3,12 +3,11 @@ import java.io.IOException;
 public class Main {
 
     public static void main (String [] args) throws IOException {
-/*      Parse p = new Parse();
-        ReadFile rf = new ReadFile();
+        ReadFile rf = new ReadFile(false);
         try {
-            rf.getFilesFromDir("../resources/corpus");
+            rf.getFilesFromDir("d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus");
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }

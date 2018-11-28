@@ -15,8 +15,8 @@ public class ReadFile {
     private File[] docsInFile;
     private Parse parse;
 
-    public ReadFile() {
-        parse = new Parse();
+    public ReadFile(boolean withStemming) {
+        parse = new Parse(withStemming);
     }
 
     public void getFilesFromDir (String path) throws IOException {
@@ -27,17 +27,9 @@ public class ReadFile {
             //System.out.println(file.getPath().toString());
             separateFileToDocs(file);
         }
-/*        Path dirPath = Paths.get(path);
-        try {
-            DirectoryStream <Path> stream = Files.newDirectoryStream(dirPath);
-            for (Path filePath:stream) {
-                files.add(filePath.toFile());
-                separateFileToDocs(filePath.toFile());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        System.out.println("dicSize: " + parse.terms.size());
+        // create docs information file
+        parse.finished();
+        parse.writeDocsInfo();
     }
 
     public void separateFileToDocs (File file){
@@ -67,9 +59,11 @@ public class ReadFile {
 
 
     public static void main (String [] args) throws IOException {
+/*
         ReadFile rf = new ReadFile();
         rf.getFilesFromDir("d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus");
         System.out.println(Parse.docsTotal);
+*/
 
     }
 }
