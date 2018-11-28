@@ -1,7 +1,3 @@
-import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
-import org.apache.lucene.analysis.snowball.SnowballFilter;
-import org.tartarus.snowball.SnowballProgram;
-import org.tartarus.snowball.ext.EnglishStemmer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -23,7 +19,7 @@ public class Parse {
    private Stemmer stemmer;
     boolean withStemming;
 
-    static int docsTotal = 0;
+    static int docsTotal = 0; // test for us
 
    public Parse (){
       terms = new HashMap<String, Term>();
@@ -38,7 +34,7 @@ public class Parse {
    }
 
    // the following function parses the text of a specific document by the defined rules
-   public void parseDocText(String docText) {
+   public void parseDocText(String docText, String docNo, String city) {
        //terms.clear();
        currentIdx = 0;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
@@ -53,9 +49,7 @@ public class Parse {
                "Oct", "OCT", "October", "OCTOBER",
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
-       //String docText = doc.getText();
        docText = replaceChars(docText);
-      //tokens = docText.split(" |\\. |\\, |\\: ");
       tokens = docText.split(" ");
       String token;
       while (currentIdx < tokens.length){
@@ -124,9 +118,9 @@ public class Parse {
              }
          }
          currentIdx++;
-         stemming(token);
       }
-      docsTotal++;
+      docsTotal++; // test for us
+       indexer.index(terms,docNo,city);
    }
 
    public void numbers (String token) {
@@ -259,13 +253,15 @@ public class Parse {
          {
              tf = terms.get(token.toUpperCase()).getTf() + 1;
             terms.remove(token.toUpperCase());
-            terms.put(token.toLowerCase(), new Term(tf));
+             token = stemming(token);
+             terms.put(token.toLowerCase(), new Term(tf));
          }
          else {
              if (terms.containsKey(token.toLowerCase())){
                  terms.get(token.toLowerCase()).updateTf();
              }
              else {
+                 token = stemming(token);
                  terms.put(token.toLowerCase(), new Term(1));
              }
          }
@@ -275,6 +271,7 @@ public class Parse {
          if (!terms.containsKey(token.toLowerCase())){
              //term doesn't exist in map - it's a new term
              if (!terms.containsKey(token.toUpperCase())){
+                 token = stemming(token);
                  terms.put(token.toUpperCase(), new Term(1));
              }
              //term already exists in map as upper case
@@ -627,10 +624,11 @@ public class Parse {
    }
 
 
-   private void stemming (String term){
+   private String stemming (String token){
        if(withStemming){
-           term  = stemmer.stem(term);
+           return stemmer.stem(token);
        }
+       return token;
    }
 
     private String replaceChars (String textForReplace){
@@ -684,9 +682,9 @@ public class Parse {
       Parse p = new Parse();
        p.stopWordsPath = "D:\\documents\\users\\shaharar\\Downloads\\ST\\stop_words.txt";
        p.setStopWords();
-      Document doc = new Document();
+/*      Document doc = new Document();
       doc.setText("($56) $2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
-       p.parseDocText(doc.getText());
+       p.parseDocText(doc.getText());*/
       for (String term:p.terms.keySet()) {
          System.out.println(term);
       }

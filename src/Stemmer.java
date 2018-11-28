@@ -1,16 +1,16 @@
-import org.tartarus.snowball.SnowballProgram;
-import org.tartarus.snowball.ext.EnglishStemmer;
+import org.tartarus.snowball.SnowballStemmer;
+import org.tartarus.snowball.ext.englishStemmer;
 
 public class Stemmer {
 
-    SnowballProgram stemmer;
+    SnowballStemmer stemmer;
 
     public Stemmer() {
-        stemmer = new EnglishStemmer();
+        stemmer = new englishStemmer();
     }
 
-    public String stem (String term){
-        stemmer.setCurrent(term);
+    public String stem (String token){
+        stemmer.setCurrent(token);
         if(stemmer.stem()){
             return stemmer.getCurrent();
         }

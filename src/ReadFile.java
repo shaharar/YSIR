@@ -13,7 +13,6 @@ import java.util.Map;
 public class ReadFile {
 
     private File[] docsInFile;
-    //private ArrayList<Document> documents = new ArrayList<>();
     private Parse parse;
 
     public ReadFile() {
@@ -46,37 +45,24 @@ public class ReadFile {
         docsInFile = file.listFiles();
         for (File d : docsInFile) {
             try {
-                //org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
                 org.jsoup.nodes.Document document = Jsoup.parse(d, "UTF-8");
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
+                    String docWithTags = e.select("DOC").outerHtml();
+                    String city = "";
+                    int cityIdx = docWithTags.indexOf("<F P=104>");
+                    if (cityIdx != -1){
+                        String subByCity = docWithTags.substring(cityIdx + 8);
+                        city = subByCity.substring(0, subByCity.indexOf(' '));
+                    }
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
-                    Document doc = new Document();
-                    //doc.setText(docText);
-                    doc.setDocNo(docNo);
-                    doc.setContent(e.toString());
-                    parse.parseDocText(docText);
+                    parse.parseDocText(docText, docNo, city);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-
-/*        try {
-            org.jsoup.nodes.Document document = Jsoup.parse(new String(Files.readAllBytes(file.toPath())));
-            org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
-            for (org.jsoup.nodes.Element e: elements) {
-                String docText = e.select("TEXT").text();
-                Document doc = new Document();
-                doc.setText(docText);
-                doc.setContent(e.toString());
-                parse.parseDocText(doc);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 
 
