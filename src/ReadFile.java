@@ -15,8 +15,8 @@ public class ReadFile {
     private File[] docsInFile;
     private Parse parse;
 
-    public ReadFile(boolean withStemming) {
-        parse = new Parse(withStemming);
+    public ReadFile(boolean withStemming, String path) {
+        parse = new Parse(withStemming, path);
     }
 
     public void getFilesFromDir (String path) throws IOException {
@@ -29,7 +29,6 @@ public class ReadFile {
         }
         // create docs information file
         parse.finished();
-        parse.writeDocsInfo();
     }
 
     public void separateFileToDocs (File file){

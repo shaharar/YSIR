@@ -1,17 +1,16 @@
 
-import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
     HashMap<String, Term> terms; // the following data structure contains final terms
-    HashMap<String, Term> termsPerDoc;
+    //HashMap<String, Term> termsPerDoc;
    private HashSet<String> stopWords; // the following data structure contains the stop words
     private HashMap<String,String> replaceMap;
     private int currentIdx;
@@ -19,27 +18,32 @@ public class Parse {
    private Indexer indexer;
    private Stemmer stemmer;
     boolean withStemming;
+    StringBuilder sb;
+    String docNo;
+    int docsTotal;
 
-    static int docsTotal = 0; // test for us
-
-   public Parse (boolean withStemming){
+   public Parse (boolean withStemming, String path){
       terms = new HashMap<String, Term>();
-      termsPerDoc = new HashMap<String, Term>();
+      //termsPerDoc = new HashMap<String, Term>();
       stopWords = new HashSet<String>();
       setStopWords();
        replaceMap = new HashMap<>();
        initReplaceMap();
        currentIdx = 0;
-       indexer = new Indexer("d:\\documents\\users\\shaharar\\Downloads\\test");
+       indexer = new Indexer(path);
        this.withStemming = withStemming;
        stemmer = new Stemmer();
+       sb = new StringBuilder();
+       docNo = "";
+       docsTotal = 0;
        //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
-   public void parseDocText(String docText, String docNo, String city) {
-       termsPerDoc.clear();
+   public void parseDocText(String docText, String docID, String city) {
+       //termsPerDoc.clear();
        currentIdx = 0;
+       this.docNo = docID;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
                "Feb", "FEB", "February", "FEBRUARY",
                "Mar", "MAR", "March", "MARCH",
@@ -55,103 +59,131 @@ public class Parse {
        docText = replaceChars(docText);
       tokens = docText.split(" ");
       String token;
-      while (currentIdx < tokens.length){
+       int maxTf = 0;
+       String frequentTerm = "";
+      while (currentIdx < tokens.length) {
+          Term term = null;
           token = tokens[currentIdx];
-         String nextToken = "";
+          String nextToken = "";
           //numbers
-         if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
-             if(currentIdx + 1 < tokens.length) {
-                 nextToken = tokens[currentIdx + 1];
-             }
-               // token is a percent
-             if (nextToken.equals("percent") || nextToken.equals("percentage")) {
-                 percentage(token);
-             }
+          if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
+              if (currentIdx + 1 < tokens.length) {
+                  nextToken = tokens[currentIdx + 1];
+              }
+              // token is a percent
+              if (nextToken.equals("percent") || nextToken.equals("percentage")) {
+                  term = percentage(token);
+              }
 
-            // token represents one of the following: a number or a price
-            else if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
-                // token is a price
-               if (((currentIdx + 2 < tokens.length) && (tokens[currentIdx + 2].equals("Dollars"))) || ((currentIdx + 3 < tokens.length) && (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
-                  prices(token);
-               }
-               // token is a number
-               else {
-                  numbers(token);
-               }
-            }
-            // token is a price
-            else if ((currentIdx + 1 < tokens.length && nextToken.equals("Dollars")) || ((currentIdx + 2 < tokens.length) && ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
-               prices(token);
-            }
-            // token is a date
-            else if (currentIdx + 1 < tokens.length && months.contains(nextToken)) {
-               dates(token);
-            }
-            else{
-                numbers(token);
-            }
-         }
+              // token represents one of the following: a number or a price
+              else if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
+                  // token is a price
+                  if (((currentIdx + 2 < tokens.length) && (tokens[currentIdx + 2].equals("Dollars"))) || ((currentIdx + 3 < tokens.length) && (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
+                      term = prices(token);
+                  }
+                  // token is a number
+                  else {
+                      term = numbers(token);
+                  }
+              }
+              // token is a price
+              else if ((currentIdx + 1 < tokens.length && nextToken.equals("Dollars")) || ((currentIdx + 2 < tokens.length) && ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
+                  term = prices(token);
+              }
+              // token is a date
+              else if (currentIdx + 1 < tokens.length && months.contains(nextToken)) {
+                  term = dates(token);
+              } else {
+                  term = numbers(token);
+              }
+          }
 
-         //symbols
-         else if (token.contains("%")) {
-             percentage(token);
-          }
-          else if (token.contains("$")) {
-              prices(token);
-          }
-          else if (token.contains("-")) {
-              rangesAndExpressions(token);
+          //symbols
+          else if (token.contains("%")) {
+              term = percentage(token);
+          } else if (token.contains("$")) {
+              term = prices(token);
+          } else if (token.contains("-")) {
+              term = rangesAndExpressions(token);
           }
 
           //words
-         else{
-             if(!(stopWords.contains(token.toLowerCase()))){ //if token is not a stop word
-                 //dates
-                 if(months.contains(token)){
-                     dates(token);
-                 }
-                 //ranges
-                 else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()){
-                     rangesAndExpressions(token);
-                 }
-                 //just words
-                 else {
-                     lettersCase(token);
-                 }
+          else {
+              if (!(stopWords.contains(token.toLowerCase()))) { //if token is not a stop word
+                  //dates
+                  if (months.contains(token)) {
+                      term = dates(token);
+                  }
+                  //ranges
+                  else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()) {
+                      term = rangesAndExpressions(token);
+                  }
+                  //just words
+                  else {
+                      term = lettersCase(token);
+                  }
+              }
+          }
+         if (term != null){
+             if (!term.docs.containsKey((docNo))){
+                 term.docs.put(docNo, new AtomicInteger(1));
              }
+             else {
+                 term.updateTf(docNo);
+             }
+             int tf = term.getTf(docNo);
+             if (tf > maxTf){
+                 maxTf = tf;
+                 frequentTerm = term.getTermStr();
+            }
          }
          currentIdx++;
       }
-      docsTotal++; // test for us
-       termsPerDoc = terms;
-       indexer.index(termsPerDoc,docNo,city);
+
+       sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+      docsTotal++;
+       //termsPerDoc = terms;
+
+       if (docsTotal > 1000){
+           System.out.println("finished parsing, start index");
+           indexer.index(terms);
+           indexer.writeDocsInfoToDisk(sb);
+           sb = new StringBuilder();
+           System.out.println("finished index");
+           docsTotal = 0;
+           terms.clear();
+       }
    }
 
-   public void numbers (String token) {
+   public Term numbers (String token) {
       double num;
+      Term term = null;
       //negative number
       if(token.startsWith("-")){
           try{
               num = Double.parseDouble(((token.substring(1)).replace(",",""))) * (-1);
           } catch (Exception e){
-              return;
+              return term;
           }
       }
       else {
           try{
               num = Double.parseDouble(token.replace(",",""));
           } catch (Exception e){
-              return;
+              return term;
           }
       }
              //num has a fraction after it - like '34 2/3'
              if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].contains("/")) {
                 if (terms.containsKey(token + " " + tokens[currentIdx + 1])){
-                    terms.get(token + " " + tokens[currentIdx + 1]).updateTf();
+                    term = terms.get(token + " " + tokens[currentIdx + 1]);
                 }
                 else {
-                    terms.put(token + " " + tokens[currentIdx + 1], new Term(1));
+                    term = new Term();
+                    term.setTermStr(token + " " + tokens[currentIdx + 1]);
+                    terms.put(token + " " + tokens[currentIdx + 1], term);
                 }
+                 //term.updateTf();
                  currentIdx++;
              }
             //num is less than 1,000
@@ -159,30 +191,36 @@ public class Parse {
                //Thousand after num - like '50 Thousand'
                if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Thousand")) {
                    if (terms.containsKey(token + "K")){
-                       terms.get(token + "K").updateTf();
+                       term = terms.get(token + "K");
                    }
                    else {
-                       terms.put(token + "K", new Term(1));
+                       term = new Term();
+                       term.setTermStr(token + " " + tokens[currentIdx + 1]);
+                       terms.put(token + "K", term);
                    }
                   currentIdx++;
                }
                //Million after num - like '50 Million'
                else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Million")) {
                    if (terms.containsKey(token + "M")){
-                       terms.get(token + "M").updateTf();
+                       term = terms.get(token + "M");
                    }
                    else {
-                       terms.put(token + "M", new Term(1));
+                       term = new Term();
+                       term.setTermStr(token + "M");
+                       terms.put(token + "M", term);
                    }
                    currentIdx++;
                }
                //Billion after num - like '50 Billion'
                else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Billion")) {
                    if (terms.containsKey(token + "B")){
-                       terms.get(token + "B").updateTf();
+                       term = terms.get(token + "B");
                    }
                    else {
-                       terms.put(token + "B", new Term(1));
+                       term = new Term();
+                       term.setTermStr(token + "B");
+                       terms.put(token + "B", term);
                    }
                    currentIdx++;
                }
@@ -190,18 +228,22 @@ public class Parse {
                else if (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Trillion")) {
                    if((num * 1000) % 1000 == 0){
                        if (terms.containsKey((int)(num * 1000) + "B")){
-                           terms.get((int)(num * 1000) + "B").updateTf();
+                           term = terms.get((int)(num * 1000) + "B");
                        }
                        else {
-                           terms.put((int)(num * 1000) + "B", new Term(1));
+                           term = new Term();
+                           term.setTermStr((int)(num * 1000) + "B");
+                           terms.put((int)(num * 1000) + "B", term);
                        }
                    }
                   else{
                        if (terms.containsKey((num * 1000) + "B")){
-                           terms.get((num * 1000) + "B").updateTf();
+                           term = terms.get((num * 1000) + "B");
                        }
                        else {
-                           terms.put((num * 1000) + "B", new Term(1));
+                           term = new Term();
+                           term.setTermStr((num * 1000) + "B");
+                           terms.put((num * 1000) + "B", term);
                        }
                    }
                    currentIdx++;
@@ -209,10 +251,12 @@ public class Parse {
                //just number - like '123'
                else {
                    if (terms.containsKey(token)){
-                       terms.get(token).updateTf();
+                       term = terms.get(token);
                    }
                    else {
-                       terms.put(token, new Term(1));
+                       term = new Term();
+                       term.setTermStr(token);
+                       terms.put(token, term);
                    }
                }
             }
@@ -221,52 +265,69 @@ public class Parse {
                //num between 1,000 to 999,000
                if (num < 1000000) {
                    if (terms.containsKey((num / 1000) + "K")){
-                       terms.get((num / 1000) + "K").updateTf();
+                       term = terms.get((num / 1000) + "K");
                    }
                    else {
-                       terms.put((num / 1000) + "K", new Term(1));
+                       term = new Term();
+                       term.setTermStr((num / 1000) + "K");
+                       terms.put((num / 1000) + "K", term);
                    }
                }
                //num between 1,000,000 to 999,000,000
                else if (num < 1000000000) {
                    if (terms.containsKey((num / 1000000) + "M")){
-                       terms.get((num / 1000000) + "M").updateTf();
+                       term = terms.get((num / 1000000) + "M");
                    }
                    else {
-                       terms.put((num / 1000000) + "M", new Term(1));
+                       term = new Term();
+                       term.setTermStr((num / 1000000) + "M");
+                       terms.put((num / 1000000) + "M", term);
                    }
                }
                //num up to 1,000,000,000
                else {
                    if (terms.containsKey((num / 1000000000) + "B")){
-                       terms.get((num / 1000000000) + "B").updateTf();
+                       term = terms.get((num / 1000000000) + "B");
                    }
                    else {
-                       terms.put((num / 1000000000) + "B", new Term(1));
+                       term = new Term();
+                       term.setTermStr((num / 1000000000) + "B");
+                       terms.put((num / 1000000000) + "B", term);
                    }
                }
             }
+       return term;
    }
 
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
-   public void lettersCase(String token) {
-       int tf = 0;
+   public Term lettersCase(String token) {
+       Term term = null;
       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
          if (terms.containsKey(token.toUpperCase()))
          {
-             tf = terms.get(token.toUpperCase()).getTf() + 1;
-            terms.remove(token.toUpperCase());
-             token = stemming(token);
-             terms.put(token.toLowerCase(), new Term(tf));
+            term = terms.get(token.toUpperCase());
+            term.setTermStr(token.toLowerCase());
+//            term.updateTf(docNo);
+            //terms.remove(token.toUpperCase());
+            token = stemming(token);
+
+
+             //tf = terms.get(token.toUpperCase()).getTf() + 1;
+
+
+             //terms.put(token.toLowerCase(), new Term(tf));
          }
          else {
              if (terms.containsKey(token.toLowerCase())){
-                 terms.get(token.toLowerCase()).updateTf();
+                 term = terms.get(token.toLowerCase());
+//                 term.updateTf(docNo);
              }
              else {
                  token = stemming(token);
-                 terms.put(token.toLowerCase(), new Term(1));
+                 term = new Term();
+                 term.setTermStr(token.toLowerCase());
+                 terms.put(token.toLowerCase(), term);
              }
          }
       }
@@ -276,35 +337,46 @@ public class Parse {
              //term doesn't exist in map - it's a new term
              if (!terms.containsKey(token.toUpperCase())){
                  token = stemming(token);
-                 terms.put(token.toUpperCase(), new Term(1));
+                 term = new Term();
+                 term.setTermStr(token.toUpperCase());
+                 terms.put(token.toUpperCase(), term);
              }
              //term already exists in map as upper case
              else{
-                 terms.get(token.toUpperCase()).updateTf();
+                 term = terms.get(token.toUpperCase());
+                 //term.updateTf(docNo);
              }
          }
          //term exists in map as lower case
          else{
-             terms.get(token.toLowerCase()).updateTf();
+             term = terms.get(token.toLowerCase());
+             //term.updateTf(docNo);
          }
       }
+      return term;
    }
 
    // the following function adds final terms to the data structure in this format : NUMBER%.
-   public void percentage(String token) {
+   public Term percentage(String token) {
+       Term term = null;
        if (terms.containsKey(token.replaceAll("%", "") + "%")){
-           terms.get(token.replaceAll("%", "") + "%").updateTf();
+           term = terms.get(token.replaceAll("%", "") + "%");
+           //term.updateTf(docNo);
        }
        else {
-           terms.put(token.replaceAll("%", "") + "%", new Term(1));
+           term = new Term();
+           term.setTermStr(token.replaceAll("%", "") + "%");
+           terms.put(token.replaceAll("%", "") + "%", term);
        }
       if((currentIdx + 1 < tokens.length && tokens[currentIdx+1].equals("percent")) || (currentIdx + 1 < tokens.length && tokens[currentIdx+1].equals("percentage"))){
          currentIdx++;
       }
+       return term;
    }
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
-   public void prices(String token) {
+   public Term prices(String token) {
+       Term term = null;
       double price;
       if (token.startsWith("$"))
       {
@@ -312,8 +384,10 @@ public class Parse {
               token = token.replace(",","");
               price = Double.parseDouble(token.replace("$", ""));
           }catch (Exception e){
-              terms.put(token, new Term(1));
-              return;
+              term = new Term();
+              term.setTermStr(token);
+              terms.put(token, term);
+              return term;
           }
       }
       else
@@ -321,8 +395,10 @@ public class Parse {
           try{
               price = Double.parseDouble(token.replace(",",""));
           }catch (Exception e){
-              terms.put(token, new Term(1));
-              return;
+              term = new Term();
+              term.setTermStr(token);
+              terms.put(token, term);
+              return term;
           }
       }
 
@@ -332,18 +408,24 @@ public class Parse {
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " M" + " Dollars")){
-                     terms.get((int)price + " M" + " Dollars").updateTf();
+                     term = terms.get((int)price + " M" + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((int)price + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((int)price + " M" + " Dollars");
+                     terms.put((int)price + " M" + " Dollars", term);
                  }
              }
             else{
                  if (terms.containsKey(price + " M" + " Dollars")){
-                     terms.get(price + " M" + " Dollars").updateTf();
+                     term = terms.get(price + " M" + " Dollars");
+                     //term.updateTf(docNo);
                  }
                  else {
-                     terms.put(price + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr(price + " M" + " Dollars");
+                     terms.put(price + " M" + " Dollars", term);
                  }
              }
             if(currentIdx + 2 < tokens.length && tokens[currentIdx+2].equals("Dollars")) {
@@ -359,18 +441,24 @@ public class Parse {
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price * 1000) + " M" + " Dollars")){
-                     terms.get((int)(price * 1000) + " M" + " Dollars").updateTf();
+                     term = terms.get((int)(price * 1000) + " M" + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((int)(price * 1000) + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((int)(price * 1000) + " M" + " Dollars");
+                     terms.put((int)(price * 1000) + " M" + " Dollars", term);
                  }
              }
             else{
                  if (terms.containsKey((price * 1000) + " M" + " Dollars")){
-                     terms.get((price * 1000) + " M" + " Dollars").updateTf();
+                     term = terms.get((price * 1000) + " M" + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((price * 1000) + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((price * 1000) + " M" + " Dollars");
+                     terms.put((price * 1000) + " M" + " Dollars", term);
                  }
              }
              if(currentIdx + 2 < tokens.length && tokens[currentIdx+2].equals("Dollars")){
@@ -386,18 +474,24 @@ public class Parse {
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price * 1000000) + " M" + " Dollars")){
-                     terms.get((int)(price * 1000000) + " M" + " Dollars").updateTf();
+                     term = terms.get((int)(price * 1000000) + " M" + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((int)(price * 1000000) + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((int)(price * 1000000) + " M" + " Dollars");
+                     terms.put((int)(price * 1000000) + " M" + " Dollars", term);
                  }
              }
             else{
                  if (terms.containsKey((price * 1000000) + " M" + " Dollars")){
-                     terms.get((price * 1000000) + " M" + " Dollars").updateTf();
+                     term = terms.get((price * 1000000) + " M" + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((price * 1000000) + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((price * 1000000) + " M" + " Dollars");
+                     terms.put((price * 1000000) + " M" + " Dollars", term);
                  }
              }
              if(currentIdx + 2 < tokens.length && tokens[currentIdx+2].equals("Dollars")){
@@ -413,18 +507,24 @@ public class Parse {
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price/1000000) + " M" + " Dollars")){
-                     terms.get((int)(price/1000000) + " M" + " Dollars").updateTf();
+                     term = terms.get((int)(price/1000000) + " M" + " Dollars");
+                   //  term.updateTf(docNo);
                  }
                  else {
-                     terms.put((int)(price/1000000) + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((int)(price/1000000) + " M" + " Dollars");
+                     terms.put((int)(price/1000000) + " M" + " Dollars", term);
                  }
              }
             else{
                  if (terms.containsKey((price / 1000000) + " M" + " Dollars")){
-                     terms.get((price / 1000000) + " M" + " Dollars").updateTf();
+                     term = terms.get((price / 1000000) + " M" + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((price / 1000000) + " M" + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((price / 1000000) + " M" + " Dollars");
+                     terms.put((price / 1000000) + " M" + " Dollars", term);
                  }
              }
              if(currentIdx + 1 < tokens.length && tokens[currentIdx+1].equals("Dollars")){
@@ -437,18 +537,24 @@ public class Parse {
          if (token.startsWith("$") || (currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Dollars"))){
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " Dollars")){
-                     terms.get((int)price + " Dollars").updateTf();
+                     term = terms.get((int)price + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put((int)price + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((int)price + " Dollars");
+                     terms.put((int)price + " Dollars", term);
                  }
              }
             else{
                  if (terms.containsKey(price + " Dollars")){
-                     terms.get(price + " Dollars").updateTf();
+                     term = terms.get(price + " Dollars");
+                  //   term.updateTf(docNo);
                  }
                  else {
-                     terms.put(price + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr(price + " Dollars");
+                     terms.put(price + " Dollars", term);
                  }
              }
              if(currentIdx + 1 < tokens.length && tokens[currentIdx + 1].equals("Dollars")){
@@ -459,37 +565,48 @@ public class Parse {
          {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " " + tokens[currentIdx + 1] + " Dollars")){
-                     terms.get((int)price + " " + tokens[currentIdx + 1] + " Dollars").updateTf();
+                     term = terms.get((int)price + " " + tokens[currentIdx + 1] + " Dollars");
+                     //term.updateTf(docNo);
                  }
                  else {
-                     terms.put((int)price + " " + tokens[currentIdx + 1] + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr((int)price + " " + tokens[currentIdx + 1] + " Dollars");
+                     terms.put((int)price + " " + tokens[currentIdx + 1] + " Dollars", term);
                  }
              }
             else{
                  if (terms.containsKey(price + " " + tokens[currentIdx + 1] + " Dollars")){
-                     terms.get(price + " " + tokens[currentIdx + 1] + " Dollars").updateTf();
+                     term = terms.get(price + " " + tokens[currentIdx + 1] + " Dollars");
+                    // term.updateTf(docNo);
                  }
                  else {
-                     terms.put(price + " " + tokens[currentIdx + 1] + " Dollars", new Term(1));
+                     term = new Term();
+                     term.setTermStr(price + " " + tokens[currentIdx + 1] + " Dollars");
+                     terms.put(price + " " + tokens[currentIdx + 1] + " Dollars", term);
                  }
              }
             currentIdx = currentIdx + 2;
          }
       }
+       return term;
    }
 
    // the following function adds final terms to the data structure in one of these formats : MM-DD, YYYY-MM.
-   public void dates(String token) {
+   public Term dates(String token) {
       String month = "";
+      Term term = null;
       if (!(Pattern.compile("[0-9]").matcher(token).find())) { //check if the token contains digits, if not - it represents the month
          month = checkMonth(token);
          //'Month YYYY' format -> 'YYYY-MM'
          if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 1].length() == 4)) {
              if (terms.containsKey(tokens[currentIdx + 1] + "-" + month)){
-                 terms.get(tokens[currentIdx + 1] + "-" + month).updateTf();
+                 term = terms.get(tokens[currentIdx + 1] + "-" + month);
+                // term.updateTf(docNo);
              }
              else {
-                 terms.put(tokens[currentIdx + 1] + "-" + month, new Term(1));
+                 term = new Term();
+                 term.setTermStr(tokens[currentIdx + 1] + "-" + month);
+                 terms.put(tokens[currentIdx + 1] + "-" + month, term);
              }
             currentIdx++;
          }
@@ -497,18 +614,24 @@ public class Parse {
          else if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 1].length() <= 2)) {
             if (tokens[currentIdx + 1].length() == 1){
                 if (terms.containsKey(month + "-" + "0" + tokens[currentIdx + 1])){
-                    terms.get(month + "-" + "0" + tokens[currentIdx + 1]).updateTf();
+                    term = terms.get(month + "-" + "0" + tokens[currentIdx + 1]);
+                    //term.updateTf(docNo);
                 }
                 else {
-                    terms.put(month + "-" + "0" + tokens[currentIdx + 1], new Term(1));
+                    term = new Term();
+                    term.setTermStr(month + "-" + "0" + tokens[currentIdx + 1]);
+                    terms.put(month + "-" + "0" + tokens[currentIdx + 1], term);
                 }
             }
             else{
                 if (terms.containsKey(month + "-" + tokens[currentIdx + 1])){
-                    terms.get(month + "-" + tokens[currentIdx + 1]).updateTf();
+                    term = terms.get(month + "-" + tokens[currentIdx + 1]);
+                 //   term.updateTf(docNo);
                 }
                 else {
-                    terms.put(month + "-" + tokens[currentIdx + 1], new Term(1));
+                    term = new Term();
+                    term.setTermStr(month + "-" + tokens[currentIdx + 1]);
+                    terms.put(month + "-" + tokens[currentIdx + 1], term);
                 }
             }
 
@@ -521,22 +644,29 @@ public class Parse {
               month = checkMonth(tokens[currentIdx + 1]);
               if (tokens[currentIdx].length() == 1) {
                   if (terms.containsKey(month + "-" + "0" + token)){
-                      terms.get(month + "-" + "0" + token).updateTf();
+                      term = terms.get(month + "-" + "0" + token);
+                   //   term.updateTf(docNo);
                   }
                   else {
-                      terms.put(month + "-" + "0" + token, new Term(1));
+                      term = new Term();
+                      term.setTermStr(month + "-" + "0" + token);
+                      terms.put(month + "-" + "0" + token, term);
                   }
               } else {
                   if (terms.containsKey(month + "-" + token)){
-                      terms.get(month + "-" + token).updateTf();
+                      term = terms.get(month + "-" + token);
+                      //term.updateTf(docNo);
                   }
                   else {
-                      terms.put(month + "-" + token, new Term(1));
+                      term = new Term();
+                      term.setTermStr(month + "-" + token);
+                      terms.put(month + "-" + token, term);
                   }
               }
               currentIdx++;
           }
       }
+      return term;
    }
 
    // help function for 'dates' - the following function converts the String representation for a particular month from letters to digits.
@@ -569,14 +699,15 @@ public class Parse {
    }
 
    // the following function adds final terms to the data structure in one of these formats : Word-Word, Word-Word-Word, Word-Number, Number-Word, Number-Number, Between Number and Number.
-   public void rangesAndExpressions(String token) {
+   public Term rangesAndExpressions(String token) {
        double firstNum, secondNum;
+       Term term = null;
       //'Between number and number' format
       if(token.equals("Between")){
           try{
               firstNum = Double.parseDouble(tokens[currentIdx + 1]); //lower range
           } catch (Exception e){
-              return;
+              return term;
           }
          currentIdx++;
          while(!(Pattern.compile("[0-9]").matcher(tokens[currentIdx + 1]).find())){ //search the second number in the range
@@ -586,14 +717,17 @@ public class Parse {
              if(currentIdx + 1 < tokens.length){
                  secondNum = Double.parseDouble(tokens[currentIdx + 1]); //upper range
                  if (terms.containsKey(firstNum + "-" + secondNum)){
-                     terms.get(firstNum + "-" + secondNum).updateTf();
+                     term = terms.get(firstNum + "-" + secondNum);
+                   //  term.updateTf(docNo);
                  }
                  else {
-                     terms.put(firstNum + "-" + secondNum, new Term(1));
+                     term = new Term();
+                     term.setTermStr(firstNum + "-" + secondNum);
+                     terms.put(firstNum + "-" + secondNum, term);
                  }
              }
           } catch (Exception e){
-              return;
+              return term;
           }
 
          currentIdx++;
@@ -607,10 +741,13 @@ public class Parse {
          }
          if(i != token.length() && token.charAt(i) == '-'){
              if (terms.containsKey(token)){
-                 terms.get(token).updateTf();
+                 term = terms.get(token);
+              //   term.updateTf(docNo);
              }
              else {
-                 terms.put(token, new Term(1));//add it as a range
+                 term = new Term();
+                 term.setTermStr(token);
+                 terms.put(token, term);//add it as a range
              }
          }
          else{
@@ -619,16 +756,20 @@ public class Parse {
       }
       else{
           if (terms.containsKey(token)){
-              terms.get(token).updateTf();
+              term = terms.get(token);
+           //   term.updateTf(docNo);
           }
           else {
-              terms.put(token, new Term(1));
+              term = new Term();
+              term.setTermStr(token);
+              terms.put(token, term);
           }
       }
+      return term;
    }
 
     public void finished() {
-       indexer.finished();
+       indexer.finished(terms);
     }
 
    private String stemming (String token){
@@ -655,6 +796,7 @@ public class Parse {
         return sb.toString();
     }
 
+
     private void initReplaceMap(){
         replaceMap.put(". "," ");
         replaceMap.put(", "," ");
@@ -669,6 +811,7 @@ public class Parse {
         replaceMap.put("?","");
         replaceMap.put(":","");
         replaceMap.put("=","");
+        replaceMap.put("@","");
         replaceMap.put(";","");
         replaceMap.put(" -- "," ");
         replaceMap.put("- ","");
@@ -686,7 +829,7 @@ public class Parse {
     }
 
     public void writeDocsInfo(){
-        indexer.writeDocsInfoToDisk();
+        indexer.writeDocsInfoToDisk(sb);
     }
 
    public static void main (String [] args){
@@ -1289,4 +1432,6 @@ public class Parse {
         stopWords.add("zero");
 
     }
+
+
 }
