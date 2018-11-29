@@ -3,36 +3,33 @@ import javafx.util.Pair;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Indexer {
     private HashMap<String, Term> dictionary;
-    private ArrayList<String> tempTermList;
-    int numOfDocs, totalDocs;
     String path;
-    int writtenFilesCount;
-    StringBuilder sb;
+    //StringBuilder docsListStr;
     int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0, idx5 = 0, idx6 = 0, idx7 = 0, idx8 = 0, idx9 = 0;
-    ArrayList<String> listPostingAC = new ArrayList<>(), listPostingDG = new ArrayList<>(), listPostingHK = new ArrayList<>(), listPostingLO = new ArrayList<>(), listPostingPS = new ArrayList<>(), listPostingTV = new ArrayList<>(), listPostingWZ = new ArrayList<>(), listPostingNumbers = new ArrayList<>(), listPostingOther = new ArrayList<>();
+    String[] arrChunkAC, arrChunkDG, arrChunkHK, arrChunkLO, arrChunkPS, arrChunkTV, arrChunkWZ, arrChunkNumbers, arrChunkOther;
+    ArrayList<String> listChunkAC = new ArrayList<>(), listChunkDG = new ArrayList<>(), listChunkHK = new ArrayList<>(), listChunkLO = new ArrayList<>(), listChunkPS = new ArrayList<>(), listChunkTV = new ArrayList<>(), listChunkWZ = new ArrayList<>(), listChunkNumbers = new ArrayList<>(), listChunkOther = new ArrayList<>();
+    //private StringBuilder strPostingAC = null, strPostingDG = null, strPostingHK = null, strPostingLO = null, strPostingPS = null, strPostingTV = null, strPostingWZ = null, strPostingNumbers = null, strPostingOther = null;
+    //private FileWriter fwPostingAC = null, fwPostingDG = null, fwPostingHK = null, fwPostingLO = null, fwPostingPS = null, fwPostingTV = null, fwPostingWZ = null, fwPostingNumbers = null, fwPostingOther = null;
 
     // constructor
     public Indexer(String path) {
         dictionary = new HashMap<>();
-        tempTermList = new ArrayList<>();
-        numOfDocs = 0;
-        totalDocs = 0;
         this.path = path;
-        writtenFilesCount = 0;
-        sb = new StringBuilder();
+        //docsListStr = new StringBuilder();
         new File(this.path + "\\indexResults").mkdir();
         new File(this.path + "\\indexResults\\postingFiles").mkdir();
         try {
-            (new File(path + "\\indexResults\\postingFiles\\posting_A-C.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_D-G.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_H-K.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_L-O.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_P-S.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_T-V.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_W-Z.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_AC.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_DG.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_HK.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_LO.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_PS.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_TV.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_WZ.txt")).createNewFile();
             (new File(path + "\\indexResults\\postingFiles\\posting_numbers.txt")).createNewFile();
             (new File(path + "\\indexResults\\postingFiles\\posting_other.txt")).createNewFile();
         } catch (IOException e) {
@@ -42,279 +39,251 @@ public class Indexer {
     }
 
 
-    public void index(HashMap<String, Term> terms, String docNo, String city) {
+    public void index(HashMap<String, Term> terms) {
+        int counterAC = 0, counterDG = 0, counterHK = 0, counterLO = 0, counterPS = 0, counterTV = 0, counterWZ = 0, counterNumbers = 0, counterOther = 0;
 
-        int maxTf = 0;
-        String frequentTerm = "";
-        for (String str : terms.keySet()) {
-            if (terms.get(str).getTf() > maxTf){
-                maxTf = terms.get(str).getTf();
-                frequentTerm = str;
+        //readPostingFiles();
+        for (Term term: terms.values()) {
+            String termStr = term.getTermStr();
+            addToDic(term);
+            if (isCapitalLetter(termStr) && dictionary.containsKey(termStr.toLowerCase())){
+                termStr = termStr.toLowerCase();
             }
-            mergeDics(str, terms.get(str).getTf(), docNo);
+            String chunk = "";
+            chunk = classifyToPosting(termStr);
+            switch (chunk){
+                case "AC":
+                    listChunkAC.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterAC++;
+                    break;
+                case "DG":
+                    listChunkDG.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterDG++;
+                    break;
+                case "HK":
+                    listChunkHK.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterHK++;
+                    break;
+                case "LO":
+                    listChunkLO.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterLO++;
+                    break;
+                case "PS":
+                    listChunkPS.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterPS++;
+                    break;
+                case "TV":
+                    listChunkTV.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterTV++;
+                    break;
+                case "WZ":
+                    listChunkWZ.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterWZ++;
+                    break;
+                case "numbers":
+                    listChunkNumbers.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterNumbers++;
+                    break;
+                case "other":
+                    listChunkOther.add(termStr);
+                    if (term.getPostingPointer().getKey() == "")
+                        counterOther++;
+                    break;
+            }
         }
+        arrChunkAC = listChunkAC.toArray(new String[listChunkAC.size()]);
+        listChunkAC.clear();
+        arrChunkDG = listChunkDG.toArray(new String[listChunkDG.size()]);
+        listChunkDG.clear();
+        arrChunkHK = listChunkHK.toArray(new String[listChunkHK.size()]);
+        listChunkHK.clear();
+        arrChunkLO = listChunkLO.toArray(new String[listChunkLO.size()]);
+        listChunkLO.clear();
+        arrChunkPS = listChunkPS.toArray(new String[listChunkPS.size()]);
+        listChunkPS.clear();
+        arrChunkTV = listChunkTV.toArray(new String[listChunkTV.size()]);
+        listChunkTV.clear();
+        arrChunkWZ = listChunkWZ.toArray(new String[listChunkWZ.size()]);
+        listChunkWZ.clear();
+        arrChunkNumbers = listChunkNumbers.toArray(new String[listChunkNumbers.size()]);
+        listChunkNumbers.clear();
+        arrChunkOther = listChunkOther.toArray(new String[listChunkOther.size()]);
+        listChunkOther.clear();
 
-        sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
-        numOfDocs++;
-        totalDocs++;
+        updateChunkToPosting("AC",counterAC);
+        updateChunkToPosting("DG",counterDG);
+        updateChunkToPosting("HK",counterHK);
+        updateChunkToPosting("LO",counterLO);
+        updateChunkToPosting("PS",counterPS);
+        updateChunkToPosting("TV",counterTV);
+        updateChunkToPosting("WZ",counterWZ);
+        updateChunkToPosting("numbers",counterNumbers);
+        updateChunkToPosting("other",counterOther);
 
-        if (numOfDocs > 10000) {
-            System.out.println("before writing");
-            writeToPosting();
-            System.out.println("session done");
-            numOfDocs = 0;
-            tempTermList.clear();
-        }
-        //System.out.println("docsInFiles: " + totalDocs);
+
+        System.out.println("starts writing");
+        //writePostingToDisk(terms);
+        System.out.println("finished writing");
     }
 
-    private void writeToPosting() {
+    public void addToDic(Term term) {
+        String str = term.getTermStr();
+        if (isSmallLetter(str)) {
+            if (dictionary.containsKey(str.toUpperCase())) {
+                dictionary.put(str, dictionary.get(str.toUpperCase()));
+                dictionary.get(str).setTermStr(str);
+                dictionary.remove(str.toUpperCase());
+            }
+        } else if (isCapitalLetter(str)) {
+            if (dictionary.containsKey(str.toLowerCase())) {
+                str = str.toLowerCase();
+            }
+        }
+        if (!dictionary.containsKey(str)) {
+            dictionary.put(str, term);
+        }
+    }
 
-        //read posting files from disk and create a list for each one of them
-        BufferedReader brPostingAC = null, brPostingDG = null, brPostingHK = null, brPostingLO = null, brPostingPS = null, brPostingTV = null, brPostingWZ = null, brPostingNumbers = null, brPostingOther = null;
+
+    private boolean isCapitalLetter (String s) {
+        if (s.charAt(0) >= 'A' && s.charAt(0) <= 'Z') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isSmallLetter (String s) {
+        if (s.charAt(0) >= 'a' && s.charAt(0) <= 'z') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void updateChunkToPosting(String chunk, int counter) {
+        switch (chunk){
+            case "AC":
+                updateChunk (arrChunkAC, chunk, counter);
+                break;
+            case "DG":
+                updateChunk (arrChunkDG, chunk, counter);
+                break;
+            case "HK":
+                updateChunk (arrChunkHK, chunk, counter);
+                break;
+            case "LO":
+                updateChunk (arrChunkLO, chunk, counter);
+                break;
+            case "PS":
+                updateChunk (arrChunkPS, chunk, counter);
+                break;
+            case "TV":
+                updateChunk (arrChunkTV, chunk, counter);
+                break;
+            case "WZ":
+                updateChunk (arrChunkWZ, chunk, counter);
+                break;
+            case "numbers":
+                updateChunk (arrChunkNumbers, chunk, counter);
+                break;
+            case "other":
+                updateChunk (arrChunkOther, chunk, counter);
+                break;
+        }
+    }
+
+    private void updateChunk(String[] arrChunk, String chunk, int counter) {
+        String[] arrPosting;
+        ArrayList<String> listPosting = getListByChunk(chunk);
+
+        //read posting file from disk, and insert it's lines to list
+        BufferedReader br = null;
         try {
-            brPostingAC = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_A-C.txt")));
+            br = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt")));
             String line = "";
-            while((line = (brPostingAC.readLine())) != null){
-                listPostingAC.add(line);
+            while ((line = (br.readLine())) != null) {
+                listPosting.add(line);
             }
-            //brPostingAC.close();
-
-            brPostingDG = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_D-G.txt")));
-            while((line = (brPostingDG.readLine())) != null){
-                listPostingDG.add(line);
-            }
-            //brPostingDG.close();
-
-            brPostingHK = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_H-K.txt")));
-            while((line = (brPostingHK.readLine())) != null){
-                listPostingHK.add(line);
-            }
-            //brPostingHK.close();
-
-            brPostingLO = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_L-O.txt")));
-            while((line = (brPostingLO.readLine())) != null){
-                listPostingLO.add(line);
-            }
-            //brPostingLO.close();
-
-            brPostingPS = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_P-S.txt")));
-            while((line = (brPostingPS.readLine())) != null){
-                listPostingPS.add(line);
-            }
-            //brPostingPS.close();
-
-            brPostingTV = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_T-V.txt")));
-            while((line = (brPostingTV.readLine())) != null){
-                listPostingTV.add(line);
-            }
-            //brPostingTV.close();
-
-            brPostingWZ = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_W-Z.txt")));
-            while((line = (brPostingWZ.readLine())) != null){
-                listPostingWZ.add(line);
-            }
-            //brPostingWZ.close();
-
-            brPostingNumbers = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_numbers.txt")));
-            while((line = (brPostingNumbers.readLine())) != null){
-                listPostingNumbers.add(line);
-            }
-            //brPostingNumbers.close();
-
-            brPostingOther = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_other.txt")));
-            while((line = (brPostingOther.readLine())) != null){
-                listPostingOther.add(line);
-            }
-            //brPostingOther.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        int arrPostingSize = listPosting.size() + counter;
+        arrPosting = new String[arrPostingSize];
+        for (int i = 0; i < listPosting.size(); i++) {
+            arrPosting[i] = listPosting.get(i);
+        }
+        int currIdx = listPosting.size(); // the next free index in the arrPosting
+        listPosting.clear();
 
-        // write terms to posting files
-        Term term;
-        for (String termStr: tempTermList) {
-            term = dictionary.get(termStr);
-            if (term == null){
-                System.out.println("term is null");
+        for (String termStr : arrChunk) {
+            Term term = dictionary.get(termStr);
+            StringBuilder docsListStr = new StringBuilder();
+            HashMap<String, AtomicInteger> docsList = term.getDocs();
+            for (String docNo : docsList.keySet()) {
+                docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
             }
-            String docsListStr = "";
-            ArrayList <String> docsList = new ArrayList<>();
-            docsList = term.getDocs();
-            //Collections.sort(docsList); //////////////////////////////////////////////////////////////////// optional
-            for (String docNo: docsList) {
-                docsListStr += docNo + " " + term.getTf() + ";";
+            //term doesn't exist in posting - add it to the end of the posting
+            if (term.getPostingPointer().getKey().equals("")) {
+                arrPosting[currIdx] = "[" + term.getDf() + "] : " + docsListStr;
+                term.postingPointer = new Pair<>(chunk, currIdx);
+                currIdx++;
+                break;
             }
-
-            //term doesn't exist in posting - add it to the relevant posting file
-            if (term.getPostingPointer() == null){
-                String pointer = classifyToPosting(termStr);
-                switch (pointer){
-                    case "AC":
-                        listPostingAC.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("AC", idx1);
-                        idx1++;
-                        break;
-                    case "DG":
-                        listPostingDG.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("DG", idx2);
-                        idx2++;
-                        break;
-                    case "HK":
-                        listPostingHK.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("HK", idx3);
-                        idx3++;
-                        break;
-                    case "LO":
-                        listPostingLO.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("LO", idx4);
-                        idx4++;
-                        break;
-                    case "PS":
-                        listPostingPS.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("PS", idx5);
-                        idx5++;
-                        break;
-                    case "TV":
-                        listPostingTV.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("TV", idx6);
-                        idx6++;
-                        break;
-                    case "WZ":
-                        listPostingWZ.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("WZ", idx7);
-                        idx7++;
-                        break;
-                    case "numbers":
-                        listPostingNumbers.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("numbers", idx8);
-                        idx8++;
-                        break;
-                    case "other":
-                        listPostingOther.add("[" + term.getDf() + "] : " + docsListStr);
-                        dictionary.get(termStr).postingPointer = new Pair<>("other", idx9);
-                        idx9++;
-                        break;
-                }
-            }
-            //term exists in posting - update the relevant posting file
-            else{
-                Pair<String, Integer> pointer = term.getPostingPointer();
-                switch (pointer.getKey()){
-                    case "AC":
-                        listPostingAC.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "DG":
-                        listPostingDG.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "HK":
-                        listPostingHK.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "LO":
-                        listPostingLO.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "PS":
-                        listPostingPS.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "TV":
-                        listPostingTV.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "WZ":
-                        listPostingWZ.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "numbers":
-                        listPostingNumbers.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                    case "other":
-                        listPostingOther.add(pointer.getValue(),"[" + term.getDf() + "] : " + docsListStr);
-                        break;
-                }
+            //term exists in posting - update the posting in the relevant line
+            else {
+                arrPosting[term.getPostingPointer().getValue()] = "[" + term.getDf() + "] : " + docsListStr;
+                break;
             }
         }
-
-        // write updated posting files to disk
-        FileWriter fwPostingAC = null, fwPostingDG = null, fwPostingHK = null, fwPostingLO = null, fwPostingPS = null, fwPostingTV = null, fwPostingWZ = null, fwPostingNumbers = null, fwPostingOther = null;
-        String strPostingAC = "", strPostingDG = "", strPostingHK = "", strPostingLO = "", strPostingPS = "", strPostingTV = "", strPostingWZ = "", strPostingNumbers = "", strPostingOther = "";
-
-        for (String postingRec: listPostingAC) {
-            strPostingAC += postingRec + "\n";
-        }
-        for (String postingRec: listPostingDG) {
-            strPostingDG += postingRec + "\n";
-        }
-        for (String postingRec: listPostingHK) {
-            strPostingHK += postingRec + "\n";
-        }
-        for (String postingRec: listPostingLO) {
-            strPostingLO += postingRec + "\n";
-        }
-        for (String postingRec: listPostingPS) {
-            strPostingPS += postingRec + "\n";
-        }
-        for (String postingRec: listPostingTV) {
-            strPostingTV += postingRec + "\n";
-        }
-        for (String postingRec: listPostingWZ) {
-            strPostingWZ += postingRec + "\n";
-        }
-        for (String postingRec: listPostingNumbers) {
-            strPostingNumbers += postingRec + "\n";
-        }
-        for (String postingRec: listPostingOther) {
-            strPostingOther += postingRec + "\n";
+        StringBuilder strPosting = new StringBuilder();
+        for (String postingRec : arrPosting) {
+            strPosting.append(postingRec).append("\n");
         }
 
-        // create file writers
+        // create file writer
+        FileWriter fwPosting = null;
         try {
-            fwPostingAC = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_A-C.txt"));
-            fwPostingDG = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_D-G.txt"));
-            fwPostingHK = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_H-K.txt"));
-            fwPostingLO = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_L-O.txt"));
-            fwPostingPS = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_P-S.txt"));
-            fwPostingTV = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_T-V.txt"));
-            fwPostingWZ = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_W-Z.txt"));
-            fwPostingNumbers = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_numbers.txt"));
-            fwPostingOther = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_other.txt"));
+            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"));
+            fwPosting.write(strPosting.toString());
+            fwPosting.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        // write files to disk
-        try {
-            fwPostingAC.write(strPostingAC, 0, strPostingAC.length());
-            fwPostingAC.close();
-            fwPostingDG.write(strPostingDG, 0, strPostingDG.length());
-            fwPostingDG.close();
-            fwPostingHK.write(strPostingHK, 0, strPostingHK.length());
-            fwPostingHK.close();
-            fwPostingLO.write(strPostingLO, 0, strPostingLO.length());
-            fwPostingLO.close();
-            fwPostingPS.write(strPostingPS, 0, strPostingPS.length());
-            fwPostingPS.close();
-            fwPostingTV.write(strPostingTV, 0, strPostingTV.length());
-            fwPostingTV.close();
-            fwPostingWZ.write(strPostingWZ, 0, strPostingWZ.length());
-            fwPostingWZ.close();
-            fwPostingNumbers.write(strPostingNumbers, 0, strPostingNumbers.length());
-            fwPostingNumbers.close();
-            fwPostingOther.write(strPostingOther, 0, strPostingOther.length());
-            fwPostingOther.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private ArrayList<String > getListByChunk ( String chunk){
+        switch (chunk){
+            case "AC":
+                return listChunkAC;
+            case "DG":
+                return listChunkDG;
+            case "HK":
+                return listChunkHK;
+            case "LO":
+                return listChunkLO;
+            case "PS":
+                return listChunkPS;
+            case "TV":
+                return listChunkTV;
+            case "WZ":
+                return listChunkWZ;
+            case "numbers":
+                return listChunkNumbers;
+            case "other":
+                return listChunkOther;
         }
-
-        listPostingAC.clear();
-        listPostingDG.clear();
-        listPostingHK.clear();
-        listPostingLO.clear();
-        listPostingPS.clear();
-        listPostingTV.clear();
-        listPostingWZ.clear();
-        listPostingNumbers.clear();
-        listPostingOther.clear();
+        return null;
     }
 
     private String classifyToPosting (String term){
@@ -348,39 +317,8 @@ public class Indexer {
         }
     }
 
-    public void mergeDics(String str, int tf, String docNo) {
-        if (str.charAt(0) >= 'a' && str.charAt(0) <= 'z'){
-            if (dictionary.containsKey(str.toUpperCase())){
-                dictionary.put(str, dictionary.get(str.toUpperCase()));
-                dictionary.remove(str.toUpperCase());
-            }
-            if (tempTermList.contains(str.toUpperCase())){
-                tempTermList.add(str);
-                tempTermList.remove(str.toUpperCase());
-            }
 
-        }
-        else if (str.charAt(0) >= 'A' && str.charAt(0) <= 'Z'){
-            if (dictionary.containsKey(str.toLowerCase())){
-                str = str.toLowerCase();
-            }
-        }
-        if (!dictionary.containsKey(str)) {
-            dictionary.put(str, new Term(tf));
-        }
-        if (!tempTermList.contains(str)){
-            tempTermList.add(str);
-        }
-        dictionary.get(str).totalFreq += tf;
-        dictionary.get(str).df++;
-        dictionary.get(str).docs.add(docNo);
-
-/*        if (!tempTermList.contains(str.toUpperCase()) || !tempTermList.contains(str.toUpperCase())){
-            tempTermList.add(str);
-        }*/
-    }
-
-    public void writeDocsInfoToDisk (){
+    public void writeDocsInfoToDisk (StringBuilder sb){
         File docsInformation = new File(path + "\\indexResults\\docsInformation.txt");
         try {
             docsInformation.createNewFile();
@@ -391,14 +329,40 @@ public class Indexer {
         try {
             fw = new FileWriter(docsInformation);
             fw.write(sb.toString());
+            fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void finished() {
-        writeToPosting();
+    public void writeDictionaryToDisk() {
+
+        StringBuilder sb = new StringBuilder();
+        for (Term term: dictionary.values()) {
+            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer().getKey() + "," + term.getPostingPointer().getValue()).append("\n");
+        }
+        File dictionary = new File(path + "\\indexResults\\dictionary.txt");
+        try {
+            dictionary.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(dictionary);
+            fw.write(sb.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public void finished(HashMap<String ,Term> terms) {
+        index(terms);
+        writeDictionaryToDisk();
+    }
+
+
 
 /*    public void createTempPosting(Term term, String str, String docID) {
         if (tempPosting.containsKey(str)) {
