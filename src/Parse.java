@@ -19,8 +19,10 @@ public class Parse {
    private Stemmer stemmer;
     boolean withStemming;
     StringBuilder sb;
+    StringBuilder replaceSb;
     String docNo;
     int docsTotal;
+    int counter = 1;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path){
       terms = new HashMap<String, Term>();
@@ -57,6 +59,7 @@ public class Parse {
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
        docText = replaceChars(docText);
+       replaceSb = new StringBuilder();
       tokens = docText.split(" ");
       String token;
        int maxTf = 0;
@@ -140,18 +143,23 @@ public class Parse {
          currentIdx++;
       }
 
-       sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+    //  sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
        //termsPerDoc = terms;
 
-       if (docsTotal > 1000){
-           System.out.println("finished parsing, start index");
+       if (docsTotal > 50000){
+
+           System.out.println("finished parsing, start index "  + counter );
            indexer.index(terms);
-           indexer.writeDocsInfoToDisk(sb);
-           sb = new StringBuilder();
-           System.out.println("finished index");
+     //      indexer.writeDocsInfoToDisk(sb);
+     //      sb = new StringBuilder();
+           System.out.println("finished index"+ "\n");
            docsTotal = 0;
            terms.clear();
+
+
+
+           counter++;
        }
    }
 
@@ -772,6 +780,10 @@ public class Parse {
        indexer.finished(terms);
     }
 
+    public void writeDocsInfo(){
+        indexer.writeDocsInfoToDisk(sb);
+    }
+
    private String stemming (String token){
        if(withStemming){
            return stemmer.stem(token);
@@ -780,20 +792,22 @@ public class Parse {
    }
 
     private String replaceChars (String textForReplace){
-        StringBuilder sb = new StringBuilder(textForReplace);
+       // StringBuilder sb = new StringBuilder();
+        replaceSb = new StringBuilder();
+        replaceSb.append(textForReplace);
         int from, to, nextFromKey;
         for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            from = sb.indexOf(key, 0);
+            from = replaceSb.indexOf(key, 0);
             while (from >= 0) {
                 to = from + key.length();
                 nextFromKey = from + value.length();
-                sb.replace(from, to, value);
-                from = sb.indexOf(key, nextFromKey);
+                replaceSb.replace(from, to, value);
+                from = replaceSb.indexOf(key, nextFromKey);
             }
         }
-        return sb.toString();
+        return replaceSb.toString();
     }
 
 
@@ -828,9 +842,7 @@ public class Parse {
         replaceMap.put(". \n"," ");
     }
 
-    public void writeDocsInfo(){
-        indexer.writeDocsInfoToDisk(sb);
-    }
+
 
    public static void main (String [] args){
 /*      Parse p = new Parse(false);
