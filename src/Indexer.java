@@ -12,8 +12,8 @@ public class Indexer {
     StringBuilder strPosting;
     //int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0, idx5 = 0, idx6 = 0, idx7 = 0, idx8 = 0, idx9 = 0;
     //String[] arrChunkAC, arrChunkDG, arrChunkHK, arrChunkLO, arrChunkPS, arrChunkTV, arrChunkWZ, arrChunkNumbers, arrChunkOther;
-    ArrayList<String> listChunkAC = new ArrayList<>(), listChunkDG = new ArrayList<>(), listChunkHK = new ArrayList<>(), listChunkLO = new ArrayList<>(), listChunkPS = new ArrayList<>(), listChunkTV = new ArrayList<>(), listChunkWZ = new ArrayList<>(), listChunkNumbers = new ArrayList<>(), listChunkOther = new ArrayList<>();
-    ArrayList<String> listPostingAC = new ArrayList<>(), listPostingDG = new ArrayList<>(), listPostingHK = new ArrayList<>(), listPostingLO = new ArrayList<>(), listPostingPS = new ArrayList<>(), listPostingTV = new ArrayList<>(), listPostingWZ = new ArrayList<>(), listPostingNumbers = new ArrayList<>(), listPostingOther = new ArrayList<>();
+    ArrayList<String> listChunkAC, listChunkDG , listChunkHK , listChunkLO , listChunkPS , listChunkTV , listChunkWZ , listChunkNumbers , listChunkOther ;
+    ArrayList<String> listPostingAC , listPostingDG, listPostingHK, listPostingLO , listPostingPS , listPostingTV, listPostingWZ , listPostingNumbers, listPostingOther ;
     //private StringBuilder strPostingAC = null, strPostingDG = null, strPostingHK = null, strPostingLO = null, strPostingPS = null, strPostingTV = null, strPostingWZ = null, strPostingNumbers = null, strPostingOther = null;
     //private FileWriter fwPostingAC = null, fwPostingDG = null, fwPostingHK = null, fwPostingLO = null, fwPostingPS = null, fwPostingTV = null, fwPostingWZ = null, fwPostingNumbers = null, fwPostingOther = null;
 
@@ -37,6 +37,25 @@ public class Indexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        listChunkAC = new ArrayList<>();
+        listChunkDG = new ArrayList<>();
+        listChunkHK = new ArrayList<>();
+        listChunkLO = new ArrayList<>();
+        listChunkPS = new ArrayList<>();
+        listChunkTV = new ArrayList<>();
+        listChunkWZ = new ArrayList<>();
+        listChunkNumbers = new ArrayList<>();
+        listChunkOther = new ArrayList<>();
+
+        listPostingAC = new ArrayList<>();
+        listPostingDG = new ArrayList<>();
+        listPostingHK = new ArrayList<>();
+        listPostingLO = new ArrayList<>();
+        listPostingPS = new ArrayList<>();
+        listPostingTV = new ArrayList<>();
+        listPostingWZ = new ArrayList<>();
+        listPostingNumbers = new ArrayList<>();
+        listPostingOther = new ArrayList<>();
 
     }
 

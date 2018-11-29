@@ -22,7 +22,7 @@ public class Parse {
     StringBuilder replaceSb;
     String docNo;
     int docsTotal;
-    int counter = 1;//////////////////////////////////////test
+    int counter;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path){
       terms = new HashMap<String, Term>();
@@ -38,6 +38,10 @@ public class Parse {
        sb = new StringBuilder();
        docNo = "";
        docsTotal = 0;
+
+
+
+       counter = 1;//////////////////////////////////////////////////////*******************************
        //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
