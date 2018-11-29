@@ -58,7 +58,8 @@ public class Indexer {
         numOfDocs++;
         totalDocs++;
 
-        if (numOfDocs > 1000) {
+        if (numOfDocs > 10000) {
+            System.out.println("before writing");
             writeToPosting();
             System.out.println("session done");
             numOfDocs = 0;
@@ -304,6 +305,16 @@ public class Indexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        listPostingAC.clear();
+        listPostingDG.clear();
+        listPostingHK.clear();
+        listPostingLO.clear();
+        listPostingPS.clear();
+        listPostingTV.clear();
+        listPostingWZ.clear();
+        listPostingNumbers.clear();
+        listPostingOther.clear();
     }
 
     private String classifyToPosting (String term){

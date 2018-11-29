@@ -251,9 +251,10 @@ public class Parse {
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
    public void lettersCase(String token) {
        int tf = 0;
-      if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
+       //token = stemming(token);
+       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
-         if (terms.containsKey(token.toUpperCase()))
+          if (terms.containsKey(token.toUpperCase()))
          {
              tf = terms.get(token.toUpperCase()).getTf() + 1;
             terms.remove(token.toUpperCase());
