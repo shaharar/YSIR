@@ -391,15 +391,17 @@ public class Indexer {
                 docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
             }
             //term doesn't exist in posting - add it to the end of the posting
-            if (term.getPostingPointer().getKey().equals("")) {
+            if (term.getPostingPointer().equals("")) {
                 listPosting.add(docsListStr + " [" + term.getDf() + "]");
-                term.postingPointer = new Pair<>(chunk, currIdx);
+               // term.postingPointer = new Pair<>(chunk, currIdx);
+                term.postingPointer = chunk;
+                term.linePointer = currIdx;
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
             else {
-                String linePosting = listPosting.get(term.getPostingPointer().getValue());
-                listPosting.set(term.getPostingPointer().getValue(), linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + " [" + term.getDf() + "]" );
+                String linePosting = listPosting.get(term.getLinePointer());
+                listPosting.set(term.getLinePointer(), linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + " [" + term.getDf() + "]" );
             }
             docsList.clear();
             docsListStr = new StringBuilder();
@@ -620,7 +622,7 @@ public class Indexer {
 
         StringBuilder sb = new StringBuilder();
         for (Term term: dictionary.values()) {
-            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer().getKey() + "," + term.getPostingPointer().getValue()).append("\n");
+            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer() + "," + term.getLinePointer()).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {
