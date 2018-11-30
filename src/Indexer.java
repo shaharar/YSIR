@@ -251,6 +251,7 @@ public class Indexer {
         updateChunkToPosting("numbers");
         updateChunkToPosting("other");
 
+        terms.clear();
     }
 
     public void addToDic(Term term) {
