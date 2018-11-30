@@ -116,7 +116,7 @@ public class Parse {
 
           //words
           else {
-              if (!(stopWords.contains(token.toLowerCase()))) { //if token is not a stop word
+              if (!(stopWords.contains(token.toLowerCase())) || ((stopWords.contains(token.toLowerCase())) && ((token.equalsIgnoreCase("may")) || (token.equalsIgnoreCase("between")) || (token.equalsIgnoreCase("and"))))) { //if token is not a stop word
                   //dates
                   if (months.contains(token)) {
                       term = dates(token);
@@ -147,17 +147,17 @@ public class Parse {
          currentIdx++;
       }
 
-    //  sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+      sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
        //termsPerDoc = terms;
 
-       if (docsTotal > 50000){
+       if (docsTotal > 100000){
 
            System.out.println("finished parsing, start index "  + counter );
            indexer.index(terms);
-     //      indexer.writeDocsInfoToDisk(sb);
-     //      sb = new StringBuilder();
-           System.out.println("finished index"+ "\n");
+           indexer.writeDocsInfoToDisk(sb);
+           sb = new StringBuilder();
+           System.out.println("index done"+ "\n");
            docsTotal = 0;
            terms.clear();
 
@@ -781,7 +781,9 @@ public class Parse {
    }
 
     public void finished() {
+        System.out.println("'finished' called in parse");
        indexer.finished(terms);
+       indexer.writeDocsInfoToDisk(sb);
     }
 
     public void writeDocsInfo(){
