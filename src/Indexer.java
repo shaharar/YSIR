@@ -381,23 +381,27 @@ public class Indexer {
         for (String termStr : listChunk) {
             Term term = dictionary.get(termStr);
             if (term == null){
+                System.out.println(termStr);
                 break;
-            }
+            }////////////////////////////////////////////////////////////////////debug
             docsListStr = new StringBuilder();
             HashMap<String, AtomicInteger> docsList = term.getDocs();
+            term.updateDf();
             for (String docNo : docsList.keySet()) {
                 docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
             }
             //term doesn't exist in posting - add it to the end of the posting
             if (term.getPostingPointer().getKey().equals("")) {
-                listPosting.add("[" + term.getDf() + "] : " + docsListStr);
+                listPosting.add(docsListStr + " [" + term.getDf() + "]");
                 term.postingPointer = new Pair<>(chunk, currIdx);
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
             else {
-                listPosting.set(term.getPostingPointer().getValue(), "[" + term.getDf() + "] : " + docsListStr);
+                String linePosting = listPosting.get(term.getPostingPointer().getValue());
+                listPosting.set(term.getPostingPointer().getValue(), linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + " [" + term.getDf() + "]" );
             }
+            docsList.clear();
             docsListStr = new StringBuilder();
         }
 
@@ -429,7 +433,7 @@ public class Indexer {
         strPosting = new StringBuilder();
     }
 
-    private ArrayList<String > getListByChunk ( String chunk){
+    private ArrayList<String > getListByChunk (String chunk){
         switch (chunk){
             case "A":
                 return listPosting_A;
