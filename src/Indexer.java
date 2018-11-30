@@ -120,12 +120,18 @@ public class Indexer {
     public void index(HashMap<String, Term> terms) {
 
         //readPostingFiles();
+//        Set <String> strList = terms.keySet();
+        ArrayList <String> strList = new ArrayList<>();
         for (Term term: terms.values()) {
             String termStr = term.getTermStr();
-            if (termStr.equals("")){
+            if (termStr.equals("")) {
                 break;
             }
+            strList.add(termStr);
             addToDic(term);
+        }
+        terms.clear();
+        for (String termStr: strList) {
             if (isCapitalLetter(termStr) && dictionary.containsKey(termStr.toLowerCase())){
                 termStr = termStr.toLowerCase();
             }
@@ -164,63 +170,64 @@ public class Indexer {
                     break;
                 case "J":
                     listChunk_J.add(termStr);
-                        break;
+                    break;
                 case "K":
                     listChunk_K.add(termStr);
-                        break;
+                    break;
                 case "L":
                     listChunk_L.add(termStr);
-                        break;
+                    break;
                 case "M":
                     listChunk_M.add(termStr);
-                        break;
+                    break;
                 case "N":
                     listChunk_N.add(termStr);
-                        break;
+                    break;
                 case "O":
                     listChunk_O.add(termStr);
-                        break;
+                    break;
                 case "P":
                     listChunk_P.add(termStr);
-                        break;
+                    break;
                 case "Q":
                     listChunk_Q.add(termStr);
-                        break;
+                    break;
                 case "R":
                     listChunk_R.add(termStr);
-                        break;
+                    break;
                 case "S":
                     listChunk_S.add(termStr);
-                        break;
+                    break;
                 case "T":
                     listChunk_T.add(termStr);
-                        break;
+                    break;
                 case "U":
                     listChunk_U.add(termStr);
-                        break;
+                    break;
                 case "V":
                     listChunk_V.add(termStr);
-                        break;
+                    break;
                 case "W":
                     listChunk_W.add(termStr);
-                        break;
+                    break;
                 case "X":
                     listChunk_X.add(termStr);
-                        break;
+                    break;
                 case "Y":
                     listChunk_Y.add(termStr);
-                        break;
+                    break;
                 case "Z":
                     listChunk_Z.add(termStr);
-                        break;
+                    break;
                 case "numbers":
                     listChunkNumbers.add(termStr);
-                        break;
+                    break;
                 case "other":
                     listChunkOther.add(termStr);
-                        break;
+                    break;
             }
         }
+        strList.clear();
 
         updateChunkToPosting("A");
         updateChunkToPosting("B");
@@ -251,8 +258,11 @@ public class Indexer {
         updateChunkToPosting("numbers");
         updateChunkToPosting("other");
 
-        terms.clear();
-    }
+        }
+//            terms.remove(termStr, term);
+
+//        terms.clear();
+//    }
 
     public void addToDic(Term term) {
         String str = term.getTermStr();
@@ -260,7 +270,7 @@ public class Indexer {
             if (dictionary.containsKey(str.toUpperCase())) {
                 dictionary.put(str, dictionary.get(str.toUpperCase()));
                 dictionary.get(str).setTermStr(str);
-                dictionary.remove(str.toUpperCase());
+                dictionary.remove(str.toUpperCase(),dictionary.get(str.toUpperCase()) );
             }
         } else if (isCapitalLetter(str)) {
             if (dictionary.containsKey(str.toLowerCase())) {
@@ -382,52 +392,39 @@ public class Indexer {
         for (String termStr : listChunk) {
             Term term = dictionary.get(termStr);
             if (term == null){
-                System.out.println(termStr);
                 break;
-            }////////////////////////////////////////////////////////////////////debug
+            }
             docsListStr = new StringBuilder();
-
             HashMap<String, AtomicInteger> docsList = term.getDocs();
-            term.updateDf();
             for (String docNo : docsList.keySet()) {
                 docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
             }
             //term doesn't exist in posting - add it to the end of the posting
-            if (term.getPostingPointer().equals("")) {
-                listPosting.add(docsListStr + " [" + term.getDf() + "]");
-               // term.postingPointer = new Pair<>(chunk, currIdx);
-                term.postingPointer = chunk;
-                term.linePointer = currIdx;
+            if (term.getPostingPointer().getKey().equals("")) {
+                listPosting.add("[" + term.getDf() + "] : " + docsListStr);
+                term.postingPointer = new Pair<String, Integer>(chunk, currIdx);
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
             else {
-                String linePosting = listPosting.get(term.getLinePointer());
-                String subLinePosting = linePosting.substring(0, linePosting.indexOf("["));
-                listPosting.set(term.getLinePointer(), subLinePosting + docsListStr + " [" + term.getDf() + "]" );
-                linePosting = null;
-                subLinePosting = null;
+                listPosting.set(term.getPostingPointer().getValue(), "[" + term.getDf() + "] : " + docsListStr);
             }
-            //docsList.clear();
-            //term.getDocs().clear();
-            docsListStr = null;
             docsListStr = new StringBuilder();
-//            docsListStr.delete(0,docsListStr.length());
         }
 
 
         strPosting = new StringBuilder();
-//        for (String postingRec : listPosting) {
-//          //  if (postingRec != null){
-//                strPosting.append(postingRec + "\n");
-//          //  }
-//        }
+        for (String postingRec : listPosting) {
+            //  if (postingRec != null){
+            strPosting.append(postingRec + "\n");
+            //  }
+        }
 
 
         listPosting.clear();
         listChunk.clear();
 
-     //   System.out.println("start writing"); //////////////////////////////////////////////////////
+        //   System.out.println("start writing"); //////////////////////////////////////////////////////
 
         // create file writer
         FileWriter fwPosting = null;
@@ -435,19 +432,15 @@ public class Indexer {
             fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"),true);
             fwPosting.append(strPosting.toString());
             fwPosting.close();
-            fwPosting = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        strPosting = null;
-        strPosting = new StringBuilder();
-//        strPosting.delete(0,strPosting.length());
-   //     System.out.println("finished writing"); //////////////////////////////////////////////////////
+        //     System.out.println("finished writing"); //////////////////////////////////////////////////////
 
-//        strPosting = new StringBuilder();
+        strPosting = new StringBuilder();
     }
 
-    private ArrayList<String > getListByChunk (String chunk){
+    private ArrayList<String > getListByChunk ( String chunk){
         switch (chunk){
             case "A":
                 return listPosting_A;
@@ -625,7 +618,6 @@ public class Indexer {
             fw = new FileWriter(docsInformation, true);
             fw.append(sb.toString());
             fw.close();
-            fw = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -635,7 +627,7 @@ public class Indexer {
 
         StringBuilder sb = new StringBuilder();
         for (Term term: dictionary.values()) {
-            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer() + "," + term.getLinePointer()).append("\n");
+            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer().getKey() + "," + term.getPostingPointer().getValue()).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {
@@ -648,12 +640,9 @@ public class Indexer {
             fw = new FileWriter(dictionary);
             fw.write(sb.toString());
             fw.close();
-            fw = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        sb = null;
-//        sb.delete(0, sb.length());
     }
 
     public void finished(HashMap<String ,Term> terms) {
