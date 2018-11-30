@@ -385,6 +385,7 @@ public class Indexer {
                 break;
             }////////////////////////////////////////////////////////////////////debug
             docsListStr = new StringBuilder();
+
             HashMap<String, AtomicInteger> docsList = term.getDocs();
             term.updateDf();
             for (String docNo : docsList.keySet()) {
@@ -404,7 +405,9 @@ public class Indexer {
                 listPosting.set(term.getLinePointer(), linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + " [" + term.getDf() + "]" );
             }
             docsList.clear();
-            docsListStr = new StringBuilder();
+            term.getDocs().clear();
+//            docsListStr = new StringBuilder();
+            docsListStr.delete(0,docsListStr.length());
         }
 
 
@@ -427,12 +430,14 @@ public class Indexer {
             fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"),true);
             fwPosting.append(strPosting.toString());
             fwPosting.close();
+            fwPosting = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        strPosting.delete(0,strPosting.length());
    //     System.out.println("finished writing"); //////////////////////////////////////////////////////
 
-        strPosting = new StringBuilder();
+//        strPosting = new StringBuilder();
     }
 
     private ArrayList<String > getListByChunk (String chunk){
@@ -613,6 +618,7 @@ public class Indexer {
             fw = new FileWriter(docsInformation, true);
             fw.append(sb.toString());
             fw.close();
+            fw = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -635,9 +641,11 @@ public class Indexer {
             fw = new FileWriter(dictionary);
             fw.write(sb.toString());
             fw.close();
+            fw = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        sb.delete(0, sb.length());
     }
 
     public void finished(HashMap<String ,Term> terms) {
