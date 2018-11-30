@@ -1,4 +1,6 @@
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +17,8 @@ public class Parse {
     private HashMap<String,String> replaceMap;
     private int currentIdx;
     private String stopWordsPath;
-   private Indexer indexer;
+//   private Indexer indexer;
+    private NewIndexer indexer;
    private Stemmer stemmer;
     boolean withStemming;
     StringBuilder sb;
@@ -32,7 +35,8 @@ public class Parse {
        replaceMap = new HashMap<>();
        initReplaceMap();
        currentIdx = 0;
-       indexer = new Indexer(path);
+//       indexer = new Indexer(path);
+       indexer = new NewIndexer(path);
        this.withStemming = withStemming;
        stemmer = new Stemmer();
        sb = new StringBuilder();
@@ -152,14 +156,15 @@ public class Parse {
        //termsPerDoc = terms;
 
        if (docsTotal > 50000){
-
-           System.out.println("finished parsing, start index "  + counter );
+           System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms);
+           terms.clear();
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
-           System.out.println("index done"+ "\n");
+           System.out.println("index done"+ "\n");////////////////////////////////////////////////////////////test
            docsTotal = 0;
-           terms.clear();
+
+
 
 
 
