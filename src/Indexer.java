@@ -407,8 +407,9 @@ public class Indexer {
             }
             docsList.clear();
             term.getDocs().clear();
-//            docsListStr = new StringBuilder();
-            docsListStr.delete(0,docsListStr.length());
+            docsListStr = null;
+            docsListStr = new StringBuilder();
+//            docsListStr.delete(0,docsListStr.length());
         }
 
 
@@ -435,7 +436,9 @@ public class Indexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        strPosting.delete(0,strPosting.length());
+        strPosting = null;
+        strPosting = new StringBuilder();
+//        strPosting.delete(0,strPosting.length());
    //     System.out.println("finished writing"); //////////////////////////////////////////////////////
 
 //        strPosting = new StringBuilder();
@@ -646,7 +649,8 @@ public class Indexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        sb.delete(0, sb.length());
+        sb = null;
+//        sb.delete(0, sb.length());
     }
 
     public void finished(HashMap<String ,Term> terms) {
