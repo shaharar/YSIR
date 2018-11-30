@@ -402,7 +402,7 @@ public class Indexer {
             //term doesn't exist in posting - add it to the end of the posting
             if (term.getPostingPointer().getKey().equals("")) {
                 listPosting.add("[" + term.getDf() + "] : " + docsListStr);
-                term.postingPointer = new Pair<>(chunk, currIdx);
+                term.postingPointer = new Pair<String, Integer>(chunk, currIdx);
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
