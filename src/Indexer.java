@@ -403,10 +403,13 @@ public class Indexer {
             //term exists in posting - update the posting in the relevant line
             else {
                 String linePosting = listPosting.get(term.getLinePointer());
-                listPosting.set(term.getLinePointer(), linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + " [" + term.getDf() + "]" );
+                String subLinePosting = linePosting.substring(0, linePosting.indexOf("["));
+                listPosting.set(term.getLinePointer(), subLinePosting + docsListStr + " [" + term.getDf() + "]" );
+                linePosting = null;
+                subLinePosting = null;
             }
-            docsList.clear();
-            term.getDocs().clear();
+            //docsList.clear();
+            //term.getDocs().clear();
             docsListStr = null;
             docsListStr = new StringBuilder();
 //            docsListStr.delete(0,docsListStr.length());
@@ -414,11 +417,11 @@ public class Indexer {
 
 
         strPosting = new StringBuilder();
-        for (String postingRec : listPosting) {
-          //  if (postingRec != null){
-                strPosting.append(postingRec + "\n");
-          //  }
-        }
+//        for (String postingRec : listPosting) {
+//          //  if (postingRec != null){
+//                strPosting.append(postingRec + "\n");
+//          //  }
+//        }
 
 
         listPosting.clear();
