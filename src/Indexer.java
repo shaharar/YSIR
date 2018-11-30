@@ -1,17 +1,19 @@
 import javafx.util.Pair;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Indexer {
     private HashMap<String, Term> dictionary;
     String path;
-    //StringBuilder docsListStr;
-    int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0, idx5 = 0, idx6 = 0, idx7 = 0, idx8 = 0, idx9 = 0;
-    String[] arrChunkAC, arrChunkDG, arrChunkHK, arrChunkLO, arrChunkPS, arrChunkTV, arrChunkWZ, arrChunkNumbers, arrChunkOther;
-    ArrayList<String> listChunkAC = new ArrayList<>(), listChunkDG = new ArrayList<>(), listChunkHK = new ArrayList<>(), listChunkLO = new ArrayList<>(), listChunkPS = new ArrayList<>(), listChunkTV = new ArrayList<>(), listChunkWZ = new ArrayList<>(), listChunkNumbers = new ArrayList<>(), listChunkOther = new ArrayList<>();
+    StringBuilder docsListStr;
+    StringBuilder strPosting;
+    //int idx1 = 0, idx2 = 0, idx3 = 0, idx4 = 0, idx5 = 0, idx6 = 0, idx7 = 0, idx8 = 0, idx9 = 0;
+    //String[] arrChunkAC, arrChunkDG, arrChunkHK, arrChunkLO, arrChunkPS, arrChunkTV, arrChunkWZ, arrChunkNumbers, arrChunkOther;
+    ArrayList<String> listChunk_A, listChunk_B, listChunk_C , listChunk_D, listChunk_E, listChunk_F, listChunk_G, listChunk_H , listChunk_I, listChunk_J, listChunk_K, listChunk_L , listChunk_M, listChunk_N, listChunk_O, listChunk_P, listChunk_Q, listChunk_R , listChunk_S, listChunk_T, listChunk_U, listChunk_V , listChunk_W, listChunk_X, listChunk_Y, listChunk_Z, listChunkNumbers , listChunkOther ;
+    ArrayList<String> listPosting_A, listPosting_B, listPosting_C , listPosting_D, listPosting_E, listPosting_F, listPosting_G, listPosting_H , listPosting_I, listPosting_J, listPosting_K, listPosting_L , listPosting_M, listPosting_N, listPosting_O, listPosting_P, listPosting_Q, listPosting_R , listPosting_S, listPosting_T, listPosting_U, listPosting_V , listPosting_W, listPosting_X, listPosting_Y, listPosting_Z, listPostingNumbers , listPostingOther ;
+
     //private StringBuilder strPostingAC = null, strPostingDG = null, strPostingHK = null, strPostingLO = null, strPostingPS = null, strPostingTV = null, strPostingWZ = null, strPostingNumbers = null, strPostingOther = null;
     //private FileWriter fwPostingAC = null, fwPostingDG = null, fwPostingHK = null, fwPostingLO = null, fwPostingPS = null, fwPostingTV = null, fwPostingWZ = null, fwPostingNumbers = null, fwPostingOther = null;
 
@@ -23,115 +25,232 @@ public class Indexer {
         new File(this.path + "\\indexResults").mkdir();
         new File(this.path + "\\indexResults\\postingFiles").mkdir();
         try {
-            (new File(path + "\\indexResults\\postingFiles\\posting_AC.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_DG.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_HK.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_LO.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_PS.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_TV.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_WZ.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_A.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_B.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_C.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_D.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_E.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_F.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_G.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_H.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_I.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_J.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_K.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_L.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_M.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_N.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_O.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_P.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_Q.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_R.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_S.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_T.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_U.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_V.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_W.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_X.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_Y.txt")).createNewFile();
+            (new File(path + "\\indexResults\\postingFiles\\posting_Z.txt")).createNewFile();
             (new File(path + "\\indexResults\\postingFiles\\posting_numbers.txt")).createNewFile();
             (new File(path + "\\indexResults\\postingFiles\\posting_other.txt")).createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        listChunk_A = new ArrayList<>();
+        listChunk_B = new ArrayList<>();
+        listChunk_C = new ArrayList<>();
+        listChunk_D = new ArrayList<>();
+        listChunk_E = new ArrayList<>();
+        listChunk_F = new ArrayList<>();
+        listChunk_G = new ArrayList<>();
+        listChunk_H = new ArrayList<>();
+        listChunk_I = new ArrayList<>();
+        listChunk_J = new ArrayList<>();
+        listChunk_K = new ArrayList<>();
+        listChunk_L = new ArrayList<>();
+        listChunk_M = new ArrayList<>();
+        listChunk_N = new ArrayList<>();
+        listChunk_O = new ArrayList<>();
+        listChunk_P = new ArrayList<>();
+        listChunk_Q = new ArrayList<>();
+        listChunk_R = new ArrayList<>();
+        listChunk_S = new ArrayList<>();
+        listChunk_T = new ArrayList<>();
+        listChunk_U = new ArrayList<>();
+        listChunk_V = new ArrayList<>();
+        listChunk_W = new ArrayList<>();
+        listChunk_X = new ArrayList<>();
+        listChunk_Y = new ArrayList<>();
+        listChunk_Z = new ArrayList<>();
+        listChunkNumbers = new ArrayList<>();
+        listChunkOther = new ArrayList<>();
+
+        listPosting_A = new ArrayList<>();
+        listPosting_B = new ArrayList<>();
+        listPosting_C = new ArrayList<>();
+        listPosting_D = new ArrayList<>();
+        listPosting_E = new ArrayList<>();
+        listPosting_F = new ArrayList<>();
+        listPosting_G = new ArrayList<>();
+        listPosting_H = new ArrayList<>();
+        listPosting_I = new ArrayList<>();
+        listPosting_J = new ArrayList<>();
+        listPosting_K = new ArrayList<>();
+        listPosting_L = new ArrayList<>();
+        listPosting_M = new ArrayList<>();
+        listPosting_N = new ArrayList<>();
+        listPosting_O = new ArrayList<>();
+        listPosting_P = new ArrayList<>();
+        listPosting_Q = new ArrayList<>();
+        listPosting_R = new ArrayList<>();
+        listPosting_S = new ArrayList<>();
+        listPosting_T = new ArrayList<>();
+        listPosting_U = new ArrayList<>();
+        listPosting_V = new ArrayList<>();
+        listPosting_W = new ArrayList<>();
+        listPosting_X = new ArrayList<>();
+        listPosting_Y = new ArrayList<>();
+        listPosting_Z = new ArrayList<>();
+        listPostingNumbers = new ArrayList<>();
+        listPostingOther = new ArrayList<>();
 
     }
 
 
     public void index(HashMap<String, Term> terms) {
-        int counterAC = 0, counterDG = 0, counterHK = 0, counterLO = 0, counterPS = 0, counterTV = 0, counterWZ = 0, counterNumbers = 0, counterOther = 0;
 
         //readPostingFiles();
         for (Term term: terms.values()) {
             String termStr = term.getTermStr();
+            if (termStr.equals("")){
+                break;
+            }
             addToDic(term);
             if (isCapitalLetter(termStr) && dictionary.containsKey(termStr.toLowerCase())){
                 termStr = termStr.toLowerCase();
             }
+            if (isSmallLetter(termStr) && dictionary.containsKey(termStr.toUpperCase())){
+                termStr = termStr.toUpperCase();
+            }
             String chunk = "";
             chunk = classifyToPosting(termStr);
             switch (chunk){
-                case "AC":
-                    listChunkAC.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterAC++;
+                case "A":
+                    listChunk_A.add(termStr);
                     break;
-                case "DG":
-                    listChunkDG.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterDG++;
+                case "B":
+                    listChunk_B.add(termStr);
                     break;
-                case "HK":
-                    listChunkHK.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterHK++;
+                case "C":
+                    listChunk_C.add(termStr);
                     break;
-                case "LO":
-                    listChunkLO.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterLO++;
+                case "D":
+                    listChunk_D.add(termStr);
                     break;
-                case "PS":
-                    listChunkPS.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterPS++;
+                case "E":
+                    listChunk_E.add(termStr);
                     break;
-                case "TV":
-                    listChunkTV.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterTV++;
+                case "F":
+                    listChunk_F.add(termStr);
                     break;
-                case "WZ":
-                    listChunkWZ.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterWZ++;
+                case "G":
+                    listChunk_G.add(termStr);
                     break;
+                case "H":
+                    listChunk_H.add(termStr);
+                    break;
+                case "I":
+                    listChunk_I.add(termStr);
+                    break;
+                case "J":
+                    listChunk_J.add(termStr);
+                        break;
+                case "K":
+                    listChunk_K.add(termStr);
+                        break;
+                case "L":
+                    listChunk_L.add(termStr);
+                        break;
+                case "M":
+                    listChunk_M.add(termStr);
+                        break;
+                case "N":
+                    listChunk_N.add(termStr);
+                        break;
+                case "O":
+                    listChunk_O.add(termStr);
+                        break;
+                case "P":
+                    listChunk_P.add(termStr);
+                        break;
+                case "Q":
+                    listChunk_Q.add(termStr);
+                        break;
+                case "R":
+                    listChunk_R.add(termStr);
+                        break;
+                case "S":
+                    listChunk_S.add(termStr);
+                        break;
+                case "T":
+                    listChunk_T.add(termStr);
+                        break;
+                case "U":
+                    listChunk_U.add(termStr);
+                        break;
+                case "V":
+                    listChunk_V.add(termStr);
+                        break;
+                case "W":
+                    listChunk_W.add(termStr);
+                        break;
+                case "X":
+                    listChunk_X.add(termStr);
+                        break;
+                case "Y":
+                    listChunk_Y.add(termStr);
+                        break;
+                case "Z":
+                    listChunk_Z.add(termStr);
+                        break;
                 case "numbers":
                     listChunkNumbers.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterNumbers++;
-                    break;
+                        break;
                 case "other":
                     listChunkOther.add(termStr);
-                    if (term.getPostingPointer().getKey() == "")
-                        counterOther++;
-                    break;
+                        break;
             }
         }
-        arrChunkAC = listChunkAC.toArray(new String[listChunkAC.size()]);
-        listChunkAC.clear();
-        arrChunkDG = listChunkDG.toArray(new String[listChunkDG.size()]);
-        listChunkDG.clear();
-        arrChunkHK = listChunkHK.toArray(new String[listChunkHK.size()]);
-        listChunkHK.clear();
-        arrChunkLO = listChunkLO.toArray(new String[listChunkLO.size()]);
-        listChunkLO.clear();
-        arrChunkPS = listChunkPS.toArray(new String[listChunkPS.size()]);
-        listChunkPS.clear();
-        arrChunkTV = listChunkTV.toArray(new String[listChunkTV.size()]);
-        listChunkTV.clear();
-        arrChunkWZ = listChunkWZ.toArray(new String[listChunkWZ.size()]);
-        listChunkWZ.clear();
-        arrChunkNumbers = listChunkNumbers.toArray(new String[listChunkNumbers.size()]);
-        listChunkNumbers.clear();
-        arrChunkOther = listChunkOther.toArray(new String[listChunkOther.size()]);
-        listChunkOther.clear();
 
-        updateChunkToPosting("AC",counterAC);
-        updateChunkToPosting("DG",counterDG);
-        updateChunkToPosting("HK",counterHK);
-        updateChunkToPosting("LO",counterLO);
-        updateChunkToPosting("PS",counterPS);
-        updateChunkToPosting("TV",counterTV);
-        updateChunkToPosting("WZ",counterWZ);
-        updateChunkToPosting("numbers",counterNumbers);
-        updateChunkToPosting("other",counterOther);
+        updateChunkToPosting("A");
+        updateChunkToPosting("B");
+        updateChunkToPosting("C");
+        updateChunkToPosting("D");
+        updateChunkToPosting("E");
+        updateChunkToPosting("F");
+        updateChunkToPosting("G");
+        updateChunkToPosting("H");
+        updateChunkToPosting("I");
+        updateChunkToPosting("J");
+        updateChunkToPosting("K");
+        updateChunkToPosting("L");
+        updateChunkToPosting("M");
+        updateChunkToPosting("N");
+        updateChunkToPosting("O");
+        updateChunkToPosting("P");
+        updateChunkToPosting("Q");
+        updateChunkToPosting("R");
+        updateChunkToPosting("S");
+        updateChunkToPosting("T");
+        updateChunkToPosting("U");
+        updateChunkToPosting("V");
+        updateChunkToPosting("W");
+        updateChunkToPosting("X");
+        updateChunkToPosting("Y");
+        updateChunkToPosting("Z");
+        updateChunkToPosting("numbers");
+        updateChunkToPosting("other");
 
-
-        System.out.println("starts writing");
-        //writePostingToDisk(terms);
-        System.out.println("finished writing");
     }
 
     public void addToDic(Term term) {
@@ -152,6 +271,313 @@ public class Indexer {
         }
     }
 
+    private void updateChunkToPosting(String chunk) {
+        switch (chunk){
+            case "A":
+                updateChunk (listChunk_A, chunk);
+                break;
+            case "B":
+                updateChunk (listChunk_B, chunk);
+                break;
+            case "C":
+                updateChunk (listChunk_C, chunk);
+                break;
+            case "D":
+                updateChunk (listChunk_D, chunk);
+                break;
+            case "E":
+                updateChunk (listChunk_E, chunk);
+                break;
+            case "F":
+                updateChunk (listChunk_F, chunk);
+                break;
+            case "G":
+                updateChunk (listChunk_G, chunk);
+                break;
+            case "H":
+                updateChunk (listChunk_H, chunk);
+                break;
+            case "I":
+                updateChunk (listChunk_I, chunk);
+                break;
+            case "J":
+                updateChunk (listChunk_J, chunk);
+                break;
+            case "K":
+                updateChunk (listChunk_K, chunk);
+                break;
+            case "L":
+                updateChunk (listChunk_L, chunk);
+                break;
+            case "M":
+                updateChunk (listChunk_M, chunk);
+                break;
+            case "N":
+                updateChunk (listChunk_N, chunk);
+                break;
+            case "O":
+                updateChunk (listChunk_O, chunk);
+                break;
+            case "P":
+                updateChunk (listChunk_P, chunk);
+                break;
+            case "Q":
+                updateChunk (listChunk_Q, chunk);
+                break;
+            case "R":
+                updateChunk (listChunk_R, chunk);
+                break;
+            case "S":
+                updateChunk (listChunk_S, chunk);
+                break;
+            case "T":
+                updateChunk (listChunk_T, chunk);
+                break;
+            case "U":
+                updateChunk (listChunk_U, chunk);
+                break;
+            case "V":
+                updateChunk (listChunk_V, chunk);
+                break;
+            case "W":
+                updateChunk (listChunk_W, chunk);
+                break;
+            case "X":
+                updateChunk (listChunk_X, chunk);
+                break;
+            case "Y":
+                updateChunk (listChunk_Y, chunk);
+                break;
+            case "Z":
+                updateChunk (listChunk_Z, chunk);
+                break;
+            case "numbers":
+                updateChunk (listChunkNumbers, chunk);
+                break;
+            case "other":
+                updateChunk (listChunkOther, chunk);
+                break;
+        }
+    }
+
+    private void updateChunk(ArrayList<String > listChunk, String chunk) {
+        ArrayList<String> listPosting = getListByChunk(chunk);
+
+        //read posting file from disk, and insert it's lines to list
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt")));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+                listPosting.add(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int currIdx = listPosting.size(); // the next free index in the listPosting
+
+        for (String termStr : listChunk) {
+            Term term = dictionary.get(termStr);
+            if (term == null){
+                break;
+            }
+            docsListStr = new StringBuilder();
+            HashMap<String, AtomicInteger> docsList = term.getDocs();
+            for (String docNo : docsList.keySet()) {
+                docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
+            }
+            //term doesn't exist in posting - add it to the end of the posting
+            if (term.getPostingPointer().getKey().equals("")) {
+                listPosting.add("[" + term.getDf() + "] : " + docsListStr);
+                term.postingPointer = new Pair<>(chunk, currIdx);
+                currIdx++;
+            }
+            //term exists in posting - update the posting in the relevant line
+            else {
+                listPosting.set(term.getPostingPointer().getValue(), "[" + term.getDf() + "] : " + docsListStr);
+            }
+            docsListStr = new StringBuilder();
+        }
+
+
+        strPosting = new StringBuilder();
+        for (String postingRec : listPosting) {
+          //  if (postingRec != null){
+                strPosting.append(postingRec + "\n");
+          //  }
+        }
+
+
+        listPosting.clear();
+        listChunk.clear();
+
+     //   System.out.println("start writing"); //////////////////////////////////////////////////////
+
+        // create file writer
+        FileWriter fwPosting = null;
+        try {
+            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"),true);
+            fwPosting.append(strPosting.toString());
+            fwPosting.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+   //     System.out.println("finished writing"); //////////////////////////////////////////////////////
+
+        strPosting = new StringBuilder();
+    }
+
+    private ArrayList<String > getListByChunk ( String chunk){
+        switch (chunk){
+            case "A":
+                return listPosting_A;
+            case "B":
+                return listPosting_B;
+            case "C":
+                return listPosting_C;
+            case "D":
+                return listPosting_D;
+            case "E":
+                return listPosting_E;
+            case "F":
+                return listPosting_F;
+            case "G":
+                return listPosting_G;
+            case "H":
+                return listPosting_H;
+            case "I":
+                return listPosting_I;
+            case "J":
+                return listPosting_J;
+            case "K":
+                return listPosting_K;
+            case "L":
+                return listPosting_L;
+            case "M":
+                return listPosting_M;
+            case "N":
+                return listPosting_N;
+            case "O":
+                return listPosting_O;
+            case "P":
+                return listPosting_P;
+            case "Q":
+                return listPosting_Q;
+            case "R":
+                return listPosting_R;
+            case "S":
+                return listPosting_S;
+            case "T":
+                return listPosting_T;
+            case "U":
+                return listPosting_U;
+            case "V":
+                return listPosting_V;
+            case "W":
+                return listPosting_W;
+            case "X":
+                return listPosting_X;
+            case "Y":
+                return listPosting_Y;
+            case "Z":
+                return listPosting_Z;
+            case "numbers":
+                return listPostingNumbers;
+            case "other":
+                return listPostingOther;
+        }
+        return null;
+    }
+
+    private String classifyToPosting (String term){
+        char firstLetter = term.charAt(0);
+        if (firstLetter == 'a' || firstLetter == 'A'){
+            return "A";
+        }
+        else if (firstLetter == 'b' || firstLetter == 'B'){
+            return "B";
+        }
+        else if (firstLetter == 'c' || firstLetter == 'C'){
+            return "C";
+        }
+        else if (firstLetter == 'd' || firstLetter == 'D'){
+            return "D";
+        }
+        else if (firstLetter == 'e' || firstLetter == 'E'){
+            return "E";
+        }
+        else if (firstLetter == 'f' || firstLetter == 'F'){
+            return "F";
+        }
+        else if (firstLetter == 'g' || firstLetter == 'G'){
+            return "G";
+        }
+        else if (firstLetter == 'h' || firstLetter == 'H'){
+            return "H";
+        }
+        else if (firstLetter == 'i' || firstLetter == 'I'){
+            return "I";
+        }
+        else if (firstLetter == 'j' || firstLetter == 'J'){
+            return "J";
+        }
+        else if (firstLetter == 'k' || firstLetter == 'K'){
+            return "K";
+        }
+        else if (firstLetter == 'l' || firstLetter == 'L'){
+            return "L";
+        }
+        else if (firstLetter == 'm' || firstLetter == 'M'){
+            return "M";
+        }
+        else if (firstLetter == 'n' || firstLetter == 'N'){
+            return "N";
+        }
+        else if (firstLetter == 'o' || firstLetter == 'O'){
+            return "O";
+        }
+        else if (firstLetter == 'p' || firstLetter == 'P'){
+            return "P";
+        }
+        else if (firstLetter == 'q' || firstLetter == 'Q'){
+            return "Q";
+        }
+        else if (firstLetter == 'r' || firstLetter == 'R'){
+            return "R";
+        }
+        else if (firstLetter == 's' || firstLetter == 'S'){
+            return "S";
+        }
+        else if (firstLetter == 't' || firstLetter == 'T'){
+            return "T";
+        }
+        else if (firstLetter == 'u' || firstLetter == 'U'){
+            return "U";
+        }
+        else if (firstLetter == 'v' || firstLetter == 'V'){
+            return "V";
+        }
+        else if (firstLetter == 'w' || firstLetter == 'W'){
+            return "W";
+        }
+        else if (firstLetter == 'x' || firstLetter == 'X'){
+            return "X";
+        }
+        else if (firstLetter == 'y' || firstLetter == 'Y'){
+            return "Y";
+        }
+        else if (firstLetter == 'z' || firstLetter == 'Z'){
+            return "Z";
+        }
+        else if ((firstLetter >= '0' && firstLetter <= '9')){
+            return "numbers";
+        }
+        else{
+            return "other";
+        }
+    }
 
     private boolean isCapitalLetter (String s) {
         if (s.charAt(0) >= 'A' && s.charAt(0) <= 'Z') {
@@ -169,155 +595,6 @@ public class Indexer {
         }
     }
 
-    private void updateChunkToPosting(String chunk, int counter) {
-        switch (chunk){
-            case "AC":
-                updateChunk (arrChunkAC, chunk, counter);
-                break;
-            case "DG":
-                updateChunk (arrChunkDG, chunk, counter);
-                break;
-            case "HK":
-                updateChunk (arrChunkHK, chunk, counter);
-                break;
-            case "LO":
-                updateChunk (arrChunkLO, chunk, counter);
-                break;
-            case "PS":
-                updateChunk (arrChunkPS, chunk, counter);
-                break;
-            case "TV":
-                updateChunk (arrChunkTV, chunk, counter);
-                break;
-            case "WZ":
-                updateChunk (arrChunkWZ, chunk, counter);
-                break;
-            case "numbers":
-                updateChunk (arrChunkNumbers, chunk, counter);
-                break;
-            case "other":
-                updateChunk (arrChunkOther, chunk, counter);
-                break;
-        }
-    }
-
-    private void updateChunk(String[] arrChunk, String chunk, int counter) {
-        String[] arrPosting;
-        ArrayList<String> listPosting = getListByChunk(chunk);
-
-        //read posting file from disk, and insert it's lines to list
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt")));
-            String line = "";
-            while ((line = (br.readLine())) != null) {
-                listPosting.add(line);
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int arrPostingSize = listPosting.size() + counter;
-        arrPosting = new String[arrPostingSize];
-        for (int i = 0; i < listPosting.size(); i++) {
-            arrPosting[i] = listPosting.get(i);
-        }
-        int currIdx = listPosting.size(); // the next free index in the arrPosting
-        listPosting.clear();
-
-        for (String termStr : arrChunk) {
-            Term term = dictionary.get(termStr);
-            StringBuilder docsListStr = new StringBuilder();
-            HashMap<String, AtomicInteger> docsList = term.getDocs();
-            for (String docNo : docsList.keySet()) {
-                docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
-            }
-            //term doesn't exist in posting - add it to the end of the posting
-            if (term.getPostingPointer().getKey().equals("")) {
-                arrPosting[currIdx] = "[" + term.getDf() + "] : " + docsListStr;
-                term.postingPointer = new Pair<>(chunk, currIdx);
-                currIdx++;
-                break;
-            }
-            //term exists in posting - update the posting in the relevant line
-            else {
-                arrPosting[term.getPostingPointer().getValue()] = "[" + term.getDf() + "] : " + docsListStr;
-                break;
-            }
-        }
-        StringBuilder strPosting = new StringBuilder();
-        for (String postingRec : arrPosting) {
-            strPosting.append(postingRec).append("\n");
-        }
-
-        // create file writer
-        FileWriter fwPosting = null;
-        try {
-            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"));
-            fwPosting.write(strPosting.toString());
-            fwPosting.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ArrayList<String > getListByChunk ( String chunk){
-        switch (chunk){
-            case "AC":
-                return listChunkAC;
-            case "DG":
-                return listChunkDG;
-            case "HK":
-                return listChunkHK;
-            case "LO":
-                return listChunkLO;
-            case "PS":
-                return listChunkPS;
-            case "TV":
-                return listChunkTV;
-            case "WZ":
-                return listChunkWZ;
-            case "numbers":
-                return listChunkNumbers;
-            case "other":
-                return listChunkOther;
-        }
-        return null;
-    }
-
-    private String classifyToPosting (String term){
-        char firstLetter = term.charAt(0);
-        if ((firstLetter >= 'a' && firstLetter <= 'c') || (firstLetter >= 'A' && firstLetter <= 'C')){
-            return "AC";
-        }
-        else if ((firstLetter >= 'd' && firstLetter <= 'g') || (firstLetter >= 'D' && firstLetter <= 'G')){
-            return "DG";
-        }
-        else if ((firstLetter >= 'h' && firstLetter <= 'k') || (firstLetter >= 'H' && firstLetter <= 'K')){
-            return "HK";
-        }
-        else if ((firstLetter >= 'l' && firstLetter <= 'o') || (firstLetter >= 'L' && firstLetter <= 'O')){
-            return "LO";
-        }
-        else if ((firstLetter >= 'p' && firstLetter <= 's') || (firstLetter >= 'P' && firstLetter <= 'S')){
-            return "PS";
-        }
-        else if ((firstLetter >= 't' && firstLetter <= 'v') || (firstLetter >= 'T' && firstLetter <= 'V')){
-            return "TV";
-        }
-        else if ((firstLetter >= 'w' && firstLetter <= 'z') || (firstLetter >= 'W' && firstLetter <= 'Z')){
-            return "WZ";
-        }
-        else if ((firstLetter >= '0' && firstLetter <= '9')){
-            return "numbers";
-        }
-        else{
-            return "other";
-        }
-    }
-
-
     public void writeDocsInfoToDisk (StringBuilder sb){
         File docsInformation = new File(path + "\\indexResults\\docsInformation.txt");
         try {
@@ -327,8 +604,8 @@ public class Indexer {
         }
         FileWriter fw = null;
         try {
-            fw = new FileWriter(docsInformation);
-            fw.write(sb.toString());
+            fw = new FileWriter(docsInformation, true);
+            fw.append(sb.toString());
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -358,209 +635,9 @@ public class Indexer {
     }
 
     public void finished(HashMap<String ,Term> terms) {
+        System.out.println("'finished' called in index");
         index(terms);
         writeDictionaryToDisk();
+        System.out.println("'finished' ended in index");
     }
-
-
-
-/*    public void createTempPosting(Term term, String str, String docID) {
-        if (tempPosting.containsKey(str)) {
-            tempPosting.get(str).add(new PostingTermDetails(term, docID));
-        } else {
-            ArrayList<PostingTermDetails> ptdList = new ArrayList<>();
-            ptdList.add(new PostingTermDetails(term, docID));
-            tempPosting.put(str, ptdList);
-        }
-    }*/
-
-/*    public void sortTempPosting() {
-        //copy from tempPosting to a sorted data structure
-        for (String str : tempPosting.keySet()) {
-            sortedTermList.add(str);
-        }
-        Collections.sort(sortedTermList, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                return s1.compareTo(s2);
-            }
-        });
-    }*/
-
-/*    public void writeTempPostingToDisk() {
-        new File(path + "\\tempPostingFiles").mkdir();
-        File postingFile = new File(path + "\\tempPostingFiles\\tempPosting" + writtenFilesCount + ".txt");
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(postingFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (String str : sortedTermList) {
-            try {
-                fw.write(str + " (" + tempPosting.get(str).size() + ") : ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            for (PostingTermDetails ptdList : tempPosting.get(str)) {
-                try {
-                    fw.write(ptdList.docId + ", " + ptdList.term.getTf() + ";");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                fw.write("\n");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        writtenFilesCount++;
-    }*/
-
-
-/*    private void mergeTempPostings (){
-        File postingFile = new File(path + "\\tempPostingFiles\\tempPosting");
-        File[] tempFiles = postingFile.listFiles();
-
-        int i = 0;
-        while (tempFiles.length > 2){
-            mergeSort(tempFiles[i], tempFiles[i+1]);
-            tempFiles[i].delete();
-            tempFiles[i+1].delete();
-            tempFiles = postingFile.listFiles();
-            i = i + 2;
-        }
-        //merge the last two files
-        if (tempFiles.length == 2){
-            mergeSort(tempFiles[0], tempFiles[1]);
-        }
-
-
-
-
-
-    }*/
-
-    /*private void mergeSort(File posting1, File posting2) {
-
-        ArrayList<String> linesList1 = new ArrayList<>();
-        ArrayList<String> linesList2 = new ArrayList<>();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(posting1));
-            String line = "";
-            while((line = (br.readLine())) != null){
-                linesList1.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(posting2));
-            String line = "";
-            while((line = (br.readLine())) != null){
-                linesList2.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int currLine1 = 0, currLine2 = 0; //index of line in posting file
-        String mergedPostings = "";
-
-        //get the first term in each of the posting files
-        String firstTerm1 = linesList1.get(0).substring(0, linesList1.get(0).indexOf("(") - 1);
-        String firstTerm2 = linesList2.get(0).substring(0, linesList2.get(0).indexOf("(") - 1);
-
-        //firstTerm1 > firstTerm2
-        if (firstTerm1.compareTo(firstTerm2) >= 0) {
-            mergeSortHelper(linesList1,linesList2,currLine1,currLine2);
-        }
-        //firstTerm2 > firstTerm1
-        else{
-            mergeSortHelper(linesList2,linesList1,currLine2,currLine1);
-        }
-    }
-
-    private void mergeSortHelper (ArrayList<String> lines1, ArrayList<String>lines2, int currLine1, int currLine2){
-        FileWriter mergedFile = null;
-        try {
-            mergedFile = new FileWriter(path + "\\tempPostingFiles\\tempPosting" + writtenFilesCount + ".txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (String line : lines1) {
-            if (currLine2 < lines2.size()) {
-                if (! (currLine1 < lines1.size())){
-                    //write to file the rest of the lines in posting2
-                    for (int i = currLine2; i < lines2.size(); i++){
-                        try {
-                            mergedFile.write(lines2.get(i) + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                else{
-                    String term1 = line.substring(0, line.indexOf("(") - 1);
-                    String term2 = lines2.get(currLine2).substring(0, line.indexOf("(") - 1);
-
-                    while (term1.compareTo(term2) == 1) { //term1 > term2
-                        try {
-                            mergedFile.write(lines2.get(currLine2) + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        currLine2++;
-                        term2 = lines2.get(currLine2).substring(0, line.indexOf("(") - 1);
-                    }
-                    //terms are equals - merge them
-                    if (term1.equals(term2)) {
-                        //add info of the term from posting1 to posting2
-                        String termInfo = line.substring(line.indexOf(":") + 2, line.length());
-                        String line2 = lines2.get(currLine2);
-                        String df1 = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
-                        String df2 = line2.substring(line2.indexOf("(") + 1, line2.indexOf(")"));
-                        int totalDf = Integer.parseInt(df1) + Integer.parseInt(df2);
-                        String mergedLine = term1 + " (" + totalDf + ") : " + line2.substring(line2.indexOf(":") + 2, line2.length()) + termInfo;
-                        lines2.remove(currLine2);
-                        lines2.add(currLine2, mergedLine);
-                        try {
-                            mergedFile.write(mergedLine + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    //term1 < term2 - term1 doesn't exist in posting2
-                    else{
-                        lines2.add(currLine2, line);
-                        try {
-                            mergedFile.write(line + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        currLine2++;
-                    }
-                }
-
-            }
-            else{
-                //there are still unhandled lines in posting1
-                if (currLine1 < lines1.size()){
-                    //add the rest of the lines in posting1 to the end of posting2
-                    for (int i = currLine1; i < lines1.size(); i++){
-                        lines2.add(currLine2 + 1, lines1.get(i));
-                        try {
-                            mergedFile.write(lines1.get(i) + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-        writtenFilesCount++;
-    }*/
 }

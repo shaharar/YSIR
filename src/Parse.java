@@ -19,8 +19,10 @@ public class Parse {
    private Stemmer stemmer;
     boolean withStemming;
     StringBuilder sb;
+    StringBuilder replaceSb;
     String docNo;
     int docsTotal;
+    int counter;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path){
       terms = new HashMap<String, Term>();
@@ -36,6 +38,10 @@ public class Parse {
        sb = new StringBuilder();
        docNo = "";
        docsTotal = 0;
+
+
+
+       counter = 1;//////////////////////////////////////////////////////*******************************
        //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
@@ -57,6 +63,7 @@ public class Parse {
                "Nov", "NOV", "November", "NOVEMBER",
                "Dec", "DEC", "December", "DECEMBER"));
        docText = replaceChars(docText);
+       replaceSb = new StringBuilder();
       tokens = docText.split(" ");
       String token;
        int maxTf = 0;
@@ -109,7 +116,7 @@ public class Parse {
 
           //words
           else {
-              if (!(stopWords.contains(token.toLowerCase()))) { //if token is not a stop word
+              if (!(stopWords.contains(token.toLowerCase())) || ((stopWords.contains(token.toLowerCase())) && ((token.equalsIgnoreCase("may")) || (token.equalsIgnoreCase("between")) || (token.equalsIgnoreCase("and"))))) { //if token is not a stop word
                   //dates
                   if (months.contains(token)) {
                       term = dates(token);
@@ -140,18 +147,23 @@ public class Parse {
          currentIdx++;
       }
 
-       sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+      sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
        //termsPerDoc = terms;
 
-       if (docsTotal > 10000){
-           System.out.println("finished parsing, start index");
+       if (docsTotal > 100000){
+
+           System.out.println("finished parsing, start index "  + counter );
            indexer.index(terms);
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
-           System.out.println("finished index");
+           System.out.println("index done"+ "\n");
            docsTotal = 0;
            terms.clear();
+
+
+
+           counter++;
        }
    }
 
@@ -769,7 +781,13 @@ public class Parse {
    }
 
     public void finished() {
+        System.out.println("'finished' called in parse");
        indexer.finished(terms);
+       indexer.writeDocsInfoToDisk(sb);
+    }
+
+    public void writeDocsInfo(){
+        indexer.writeDocsInfoToDisk(sb);
     }
 
    private String stemming (String token){
@@ -780,20 +798,22 @@ public class Parse {
    }
 
     private String replaceChars (String textForReplace){
-        StringBuilder sb = new StringBuilder(textForReplace);
+       // StringBuilder sb = new StringBuilder();
+        replaceSb = new StringBuilder();
+        replaceSb.append(textForReplace);
         int from, to, nextFromKey;
         for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            from = sb.indexOf(key, 0);
+            from = replaceSb.indexOf(key, 0);
             while (from >= 0) {
                 to = from + key.length();
                 nextFromKey = from + value.length();
-                sb.replace(from, to, value);
-                from = sb.indexOf(key, nextFromKey);
+                replaceSb.replace(from, to, value);
+                from = replaceSb.indexOf(key, nextFromKey);
             }
         }
-        return sb.toString();
+        return replaceSb.toString();
     }
 
 
@@ -828,9 +848,7 @@ public class Parse {
         replaceMap.put(". \n"," ");
     }
 
-    public void writeDocsInfo(){
-        indexer.writeDocsInfoToDisk(sb);
-    }
+
 
    public static void main (String [] args){
 /*      Parse p = new Parse(false);

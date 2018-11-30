@@ -3,9 +3,9 @@ import java.io.IOException;
 public class Main {
 
     public static void main (String [] args) throws IOException {
-        ReadFile rf = new ReadFile(false, "D:\\documents\\users\\haliliya\\Downloads\\test");
+        ReadFile rf = new ReadFile(false, "d:\\documents\\users\\shaharar\\Downloads\\test");
         try {
-            rf.getFilesFromDir("D:\\documents\\users\\haliliya\\Downloads\\corpus\\corpus");
+            rf.getFilesFromDir("d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus");
         } catch (IOException e) {
             e.printStackTrace();
         }
