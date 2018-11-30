@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Term {
-    Pair<String,Integer> postingPointer;
-    int totalFreq;
+    //Pair<String,Integer> postingPointer;
+    //int totalFreq;
     String termStr;
     int df;
     //int tf;
@@ -15,10 +15,10 @@ public class Term {
     public Term(){
         //this.tf = tf;
         //docs = new ArrayList<>();
-        totalFreq = 0;
+        //totalFreq = 0;
         termStr = "";
         df = 0;
-        postingPointer = new Pair<>("",0);
+        //postingPointer = new Pair<>("",0);
         docs = new HashMap<>();
     }
 
@@ -28,21 +28,21 @@ public class Term {
 //    }
 
     //Getters
-    public Pair<String,Integer> getPostingPointer() {
-        return postingPointer;
-    }
+//    public Pair<String,Integer> getPostingPointer() {
+//        return postingPointer;
+//    }
 
     public int getTf(String docNo) {
         return this.docs.get(docNo).intValue();
     }
 
-    public int getTotalFreq() {
+/*    public int getTotalFreq() {
         int totalFreq = 0;
         for (AtomicInteger tf:docs.values()) {
             totalFreq += tf.intValue();
         }
         return totalFreq;
-    }
+    }*/
 
     public String getTermStr() {
         return termStr;
