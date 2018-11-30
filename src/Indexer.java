@@ -400,7 +400,7 @@ public class Indexer {
                 docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
             }
             //term doesn't exist in posting - add it to the end of the posting
-            if (term.getPostingPointer().getKey().equals("")) {
+/*            if (term.getPostingPointer().getKey().equals("")) {
                 listPosting.add("[" + term.getDf() + "] : " + docsListStr);
                 term.postingPointer = new Pair<String, Integer>(chunk, currIdx);
                 currIdx++;
@@ -409,7 +409,7 @@ public class Indexer {
             else {
                 listPosting.set(term.getPostingPointer().getValue(), "[" + term.getDf() + "] : " + docsListStr);
             }
-            docsListStr = new StringBuilder();
+            docsListStr = new StringBuilder();*/
         }
 
 
@@ -627,7 +627,7 @@ public class Indexer {
 
         StringBuilder sb = new StringBuilder();
         for (Term term: dictionary.values()) {
-            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer().getKey() + "," + term.getPostingPointer().getValue()).append("\n");
+//            sb.append(term.getTermStr() + " " + term.getTotalFreq() + " " + term.getPostingPointer().getKey() + "," + term.getPostingPointer().getValue()).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {

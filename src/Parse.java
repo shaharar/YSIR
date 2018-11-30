@@ -12,14 +12,14 @@ import java.util.regex.Pattern;
 public class Parse {
    private String[] tokens; // the following data structure contains tokens
     HashMap<String, Term> terms; // the following data structure contains final terms
-    //HashMap<String, Term> termsPerDoc;
    private HashSet<String> stopWords; // the following data structure contains the stop words
     private HashMap<String,String> replaceMap;
     private int currentIdx;
     private String stopWordsPath;
 //   private Indexer indexer;
     private NewIndexer indexer;
-   private Stemmer stemmer;
+    HashMap <String , Term> termsPerIteration = new HashMap<>();
+    private Stemmer stemmer;
     boolean withStemming;
     StringBuilder sb;
     StringBuilder replaceSb;
@@ -51,7 +51,8 @@ public class Parse {
 
    // the following function parses the text of a specific document by the defined rules
    public void parseDocText(String docText, String docID, String city) {
-       //termsPerDoc.clear();
+   //    HashMap<String, Term> terms = new HashMap<>();
+       terms = new HashMap<>();
        currentIdx = 0;
        this.docNo = docID;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
@@ -150,15 +151,18 @@ public class Parse {
          }
          currentIdx++;
       }
-
-      sb.append(docNo + ": " + terms.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+       termsPerIteration.putAll(terms);
+      int termsInDoc = terms.size();
+      sb.append(docNo + ": " + termsInDoc + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
+      terms.clear();
        //termsPerDoc = terms;
+      // termsPerDoc.clear();
 
-       if (docsTotal > 50000){
+       if (docsTotal > 10000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
-           indexer.index(terms);
-           terms.clear();
+           indexer.index(termsPerIteration);
+           termsPerIteration.clear();
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
            System.out.println("index done"+ "\n");////////////////////////////////////////////////////////////test
@@ -319,6 +323,7 @@ public class Parse {
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
    public Term lettersCase(String token) {
        Term term = null;
+       token = stemming(token);
       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
          if (terms.containsKey(token.toUpperCase()))
@@ -327,7 +332,7 @@ public class Parse {
             term.setTermStr(token.toLowerCase());
 //            term.updateTf(docNo);
             //terms.remove(token.toUpperCase());
-            token = stemming(token);
+            //token = stemming(token);
 
 
              //tf = terms.get(token.toUpperCase()).getTf() + 1;
