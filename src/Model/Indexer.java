@@ -166,6 +166,7 @@ public class Indexer {
         String chunk = getChunk(index);
         ArrayList <String> listPosting = new ArrayList<>();
         StringBuilder docsListStr, strPosting;
+
         //read posting file from disk, and insert it's lines to list
         BufferedReader br = null;
         try {

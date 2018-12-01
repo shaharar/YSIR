@@ -1,10 +1,27 @@
-package Model;
+package View;
+
+import Model.ReadFile;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 import java.io.IOException;
 
 public class Main {
 
+    public void start (){
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        Parent root = null;
+        try {
+            root = fxmlLoader.load(getClass().getResource("../../resources/mainWindow.fxml").openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Scene scene = new Scene(root, 1024, 600);
+    }
+
     public static void main (String [] args) throws IOException {
+
         String corpusPath = "d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus";
         ReadFile rf = new ReadFile(false, "d:\\documents\\users\\shaharar\\Downloads\\test", corpusPath);
         try {
@@ -17,4 +34,6 @@ public class Main {
             e.printStackTrace();
         }
     }
+
+
 }
