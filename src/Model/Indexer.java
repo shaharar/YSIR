@@ -1,16 +1,19 @@
+package Model;
+
+import com.sun.deploy.util.StringUtils;
 import javafx.util.Pair;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class NewIndexer {
+public class Indexer {
 
     private HashMap <String, ArrayList <Integer>> dictionary;
     String path;
 
     // constructor
-    public NewIndexer (String path) {
+    public Indexer(String path) {
         dictionary = new HashMap<>();
         this.path = path;
         new File(this.path + "\\indexResults").mkdir();
@@ -421,7 +424,7 @@ public class NewIndexer {
         else if (firstLetter == 'z' || firstLetter == 'Z'){
             return "Z";
         }
-        else if ((firstLetter >= '0' && firstLetter <= '9')){
+        else if ((firstLetter >= '0' && firstLetter <= '9') || (firstLetter == '-' && isNumeric(term.substring(1)))){
             return "numbers";
         }
         else{
@@ -429,6 +432,18 @@ public class NewIndexer {
         }
 
     }
+
+    private boolean isNumeric(String str)
+    {
+        try {
+            double d = Double.parseDouble(str);
+        }
+        catch(NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
 
     public void writeDocsInfoToDisk (StringBuilder sb){
         File docsInformation = new File(path + "\\indexResults\\docsInformation.txt");
@@ -465,7 +480,7 @@ public class NewIndexer {
             if (termStr.length() == 0){
                 break;
             }
-            sb.append(termStr + " " + dictionary.get(termStr).get(2) + " " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
+            sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {
@@ -483,7 +498,7 @@ public class NewIndexer {
         }
     }
 
-    public void finished(HashMap<String ,Term> terms) {
+    public void finished(HashMap<String , Term> terms) {
         System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
         index(terms);
         writeDictionaryToDisk();

@@ -1,22 +1,17 @@
+package Model;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
-import java.io.*;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
 
 public class ReadFile {
 
-  //  private File[] docsInFile;
     private Parse parse;
 
-    public ReadFile(boolean withStemming, String path) {
-        parse = new Parse(withStemming, path);
+    public ReadFile(boolean withStemming, String path, String corpusPath) {
+        parse = new Parse(withStemming, path, corpusPath);
     }
 
     public void getFilesFromDir (String path) throws IOException {
@@ -26,6 +21,9 @@ public class ReadFile {
         corpus.delete();
         for (File file:files) {
             //System.out.println(file.getPath().toString());
+            if (file.getPath().toString().equals(path + "\\stop_words.txt")){
+                continue;
+            }
             separateFileToDocs(file);
         }
         // create docs information file
@@ -55,16 +53,6 @@ public class ReadFile {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    public static void main (String [] args) throws IOException {
-/*
-        ReadFile rf = new ReadFile();
-        rf.getFilesFromDir("d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus");
-        System.out.println(Parse.docsTotal);
-*/
-
     }
 }
 

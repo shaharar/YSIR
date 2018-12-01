@@ -1,48 +1,46 @@
+package Model;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public class Parse {
-   private String[] tokens; // the following data structure contains tokens
-    HashMap<String, Term> terms; // the following data structure contains final terms
-   private HashSet<String> stopWords; // the following data structure contains the stop words
-    private HashMap<String,String> replaceMap;
-    private int currentIdx;
+    private String[] tokens; // the following data structure contains tokens
+    HashMap<String, Term> terms; // the following data structure contains final terms in X docs
+    private HashSet <String> termsPerDoc; // the following data structure contains final terms in one doc
+    private HashSet<String> stopWords; // the following data structure contains the stop words
     private String stopWordsPath;
-//   private Indexer indexer;
-    private NewIndexer indexer;
-    HashSet <String> termsPerDoc;
+    private HashMap<String,String> replaceMap;
+    private Indexer indexer;
     private Stemmer stemmer;
-    boolean withStemming;
+    private StringBuilder replaceSb;
     StringBuilder sb;
-    StringBuilder replaceSb;
     String docNo;
+    boolean withStemming;
+    private int currentIdx;
     int docsTotal;
+
     int counter;//////////////////////////////////////test
 
-   public Parse (boolean withStemming, String path){
+   public Parse (boolean withStemming, String path, String corpusPath){
       terms = new HashMap<String, Term>();
       termsPerDoc = new HashSet<>();
       stopWords = new HashSet<String>();
+      stopWordsPath = corpusPath + "\\stop_words.txt";
       setStopWords();
-       replaceMap = new HashMap<>();
-       initReplaceMap();
-       currentIdx = 0;
-//       indexer = new Indexer(path);
-       indexer = new NewIndexer(path);
-       this.withStemming = withStemming;
-       stemmer = new Stemmer();
-       sb = new StringBuilder();
-       docNo = "";
-       docsTotal = 0;
-
+      replaceMap = new HashMap<>();
+      initReplaceMap();
+      indexer = new Indexer(path);
+      stemmer = new Stemmer();
+      sb = new StringBuilder();
+      docNo = "";
+      this.withStemming = withStemming;
+      currentIdx = 0;
+      docsTotal = 0;
 
 
        counter = 1;//////////////////////////////////////////////////////*******************************
@@ -136,6 +134,11 @@ public class Parse {
                   else if (token.equalsIgnoreCase("Mr") || token.equalsIgnoreCase("Mrs") || token.equalsIgnoreCase("Dr")){
                       term = shortcuts(token);
                   }
+
+                  else if (token.equalsIgnoreCase("kilogram") || token.equalsIgnoreCase("kilobyte") || token.equalsIgnoreCase("kilobytes") || token.equalsIgnoreCase("kilograms") || token.equalsIgnoreCase("gram") || token.equalsIgnoreCase("byte") || token.equalsIgnoreCase("bytes")){
+                      term = measures(token);
+                  }
+
                   //just words
                   else {
                       term = lettersCase(token);
@@ -178,7 +181,8 @@ public class Parse {
        }
    }
 
-   public Term numbers (String token) {
+
+    public Term numbers (String token) {
       double num;
       Term term = null;
       //negative number
@@ -207,7 +211,6 @@ public class Parse {
                     terms.put(token + " " + tokens[currentIdx + 1], term);
                 }
                  termsPerDoc.add(token + " " + tokens[currentIdx + 1]);
-                 //term.updateTf();
                  currentIdx++;
              }
             //num is less than 1,000
@@ -343,21 +346,13 @@ public class Parse {
             term = terms.get(token.toUpperCase());
             term.setTermStr(token.toLowerCase());
             termsPerDoc.add(term.getTermStr());
-//            term.updateTf(docNo);
-            //terms.remove(token.toUpperCase());
-            //token = stemming(token);
-
-             //tf = terms.get(token.toUpperCase()).getTf() + 1;
-             //terms.put(token.toLowerCase(), new Term(tf));
          }
          else {
              if (terms.containsKey(token.toLowerCase())){
                  term = terms.get(token.toLowerCase());
                  termsPerDoc.add(term.getTermStr());
-//                 term.updateTf(docNo);
              }
              else {
-                 //token = stemming(token);
                  term = new Term();
                  term.setTermStr(token.toLowerCase());
                  terms.put(token.toLowerCase(), term);
@@ -370,7 +365,6 @@ public class Parse {
          if (!terms.containsKey(token.toLowerCase())){
              //term doesn't exist in map - it's a new term
              if (!terms.containsKey(token.toUpperCase())){
-                // token = stemming(token);
                  term = new Term();
                  term.setTermStr(token.toUpperCase());
                  terms.put(token.toUpperCase(), term);
@@ -380,14 +374,12 @@ public class Parse {
              else{
                  term = terms.get(token.toUpperCase());
                  termsPerDoc.add(term.getTermStr());
-                 //term.updateTf(docNo);
              }
          }
          //term exists in map as lower case
          else{
              term = terms.get(token.toLowerCase());
              termsPerDoc.add(term.getTermStr());
-             //term.updateTf(docNo);
          }
       }
       return term;
@@ -398,7 +390,6 @@ public class Parse {
        Term term = null;
        if (terms.containsKey(token.replaceAll("%", "") + "%")){
            term = terms.get(token.replaceAll("%", "") + "%");
-           //term.updateTf(docNo);
        }
        else {
            term = new Term();
@@ -449,7 +440,6 @@ public class Parse {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " M" + " Dollars")){
                      term = terms.get((int)price + " M" + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -461,7 +451,6 @@ public class Parse {
             else{
                  if (terms.containsKey(price + " M" + " Dollars")){
                      term = terms.get(price + " M" + " Dollars");
-                     //term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -484,7 +473,6 @@ public class Parse {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price * 1000) + " M" + " Dollars")){
                      term = terms.get((int)(price * 1000) + " M" + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -496,7 +484,6 @@ public class Parse {
             else{
                  if (terms.containsKey((price * 1000) + " M" + " Dollars")){
                      term = terms.get((price * 1000) + " M" + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -519,7 +506,6 @@ public class Parse {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price * 1000000) + " M" + " Dollars")){
                      term = terms.get((int)(price * 1000000) + " M" + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -531,7 +517,6 @@ public class Parse {
             else{
                  if (terms.containsKey((price * 1000000) + " M" + " Dollars")){
                      term = terms.get((price * 1000000) + " M" + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -554,7 +539,6 @@ public class Parse {
              if (price == (int)(price)){
                  if (terms.containsKey((int)(price/1000000) + " M" + " Dollars")){
                      term = terms.get((int)(price/1000000) + " M" + " Dollars");
-                   //  term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -566,7 +550,6 @@ public class Parse {
             else{
                  if (terms.containsKey((price / 1000000) + " M" + " Dollars")){
                      term = terms.get((price / 1000000) + " M" + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -586,7 +569,6 @@ public class Parse {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " Dollars")){
                      term = terms.get((int)price + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -598,7 +580,6 @@ public class Parse {
             else{
                  if (terms.containsKey(price + " Dollars")){
                      term = terms.get(price + " Dollars");
-                  //   term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -616,7 +597,6 @@ public class Parse {
              if (price == (int)(price)){
                  if (terms.containsKey((int)price + " " + tokens[currentIdx + 1] + " Dollars")){
                      term = terms.get((int)price + " " + tokens[currentIdx + 1] + " Dollars");
-                     //term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -628,7 +608,6 @@ public class Parse {
             else{
                  if (terms.containsKey(price + " " + tokens[currentIdx + 1] + " Dollars")){
                      term = terms.get(price + " " + tokens[currentIdx + 1] + " Dollars");
-                    // term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -653,7 +632,6 @@ public class Parse {
          if (currentIdx + 1 < tokens.length && (tokens[currentIdx + 1].length() == 4)) {
              if (terms.containsKey(tokens[currentIdx + 1] + "-" + month)){
                  term = terms.get(tokens[currentIdx + 1] + "-" + month);
-                // term.updateTf(docNo);
              }
              else {
                  term = new Term();
@@ -668,7 +646,6 @@ public class Parse {
             if (tokens[currentIdx + 1].length() == 1){
                 if (terms.containsKey(month + "-" + "0" + tokens[currentIdx + 1])){
                     term = terms.get(month + "-" + "0" + tokens[currentIdx + 1]);
-                    //term.updateTf(docNo);
                 }
                 else {
                     term = new Term();
@@ -680,7 +657,6 @@ public class Parse {
             else{
                 if (terms.containsKey(month + "-" + tokens[currentIdx + 1])){
                     term = terms.get(month + "-" + tokens[currentIdx + 1]);
-                 //   term.updateTf(docNo);
                 }
                 else {
                     term = new Term();
@@ -700,7 +676,6 @@ public class Parse {
               if (tokens[currentIdx].length() == 1) {
                   if (terms.containsKey(month + "-" + "0" + token)){
                       term = terms.get(month + "-" + "0" + token);
-                   //   term.updateTf(docNo);
                   }
                   else {
                       term = new Term();
@@ -711,7 +686,6 @@ public class Parse {
               } else {
                   if (terms.containsKey(month + "-" + token)){
                       term = terms.get(month + "-" + token);
-                      //term.updateTf(docNo);
                   }
                   else {
                       term = new Term();
@@ -775,7 +749,6 @@ public class Parse {
                  secondNum = Double.parseDouble(tokens[currentIdx + 1]); //upper range
                  if (terms.containsKey(firstNum + "-" + secondNum)){
                      term = terms.get(firstNum + "-" + secondNum);
-                   //  term.updateTf(docNo);
                  }
                  else {
                      term = new Term();
@@ -800,7 +773,6 @@ public class Parse {
           if (i != token.length() && token.charAt(i) == '-') {
               if (terms.containsKey(token)) {
                   term = terms.get(token);
-                  //   term.updateTf(docNo);
               } else {
                   term = new Term();
                   term.setTermStr(token);
@@ -814,7 +786,6 @@ public class Parse {
       else{
           if (terms.containsKey(token)){
               term = terms.get(token);
-           //   term.updateTf(docNo);
           }
           else {
               term = new Term();
@@ -826,23 +797,71 @@ public class Parse {
       return term;
    }
 
-   private Term shortcuts (String token) {
+   //------------------------------------our 2 rules----------------------------------
+   //shortcuts - rule#1
+   public Term shortcuts (String token) {
        Term term = null;
 
-       switch (token){
-           case "Mr" :
-               token = "Mister";
-               break;
-           case "Mrs" :
-               token = "Misses";
-               break;
-           case "Dr" :
-               token = "Doctor";
-               break;
+       if (token.equalsIgnoreCase("Mr")){
+           token = "Mister";
        }
+
+       else if (token.equalsIgnoreCase("Mrs") || token.equalsIgnoreCase("Miss") || token.equalsIgnoreCase("Ms")){
+           token = "Mistress";
+       }
+
+       else if (token.equalsIgnoreCase("Dr")){
+           token = "Doctor";
+       }
+
+       if (terms.containsKey(token)){
+           term = terms.get(token);
+           term.setTermStr(token);
+       }
+       else{
+           term = new Term();
+           term.setTermStr(token);
+           terms.put(token, term);
+       }
+       termsPerDoc.add(token);
 
        return term;
    }
+
+    //measures - rule#2
+    public Term measures(String token) {
+        Term term = null;
+
+        if (token.equalsIgnoreCase("gram")){
+            token = "gr";
+        }
+
+        else if (token.equalsIgnoreCase("kilogram") || token.equalsIgnoreCase("kilograms")){
+            token = "Kg";
+        }
+
+        else if (token.equalsIgnoreCase("byte") || token.equalsIgnoreCase("bytes")){
+            token = "B";
+        }
+
+        else if (token.equalsIgnoreCase("kilobyte") || token.equalsIgnoreCase("kilobytes")){
+            token = "KB";
+        }
+
+        if (terms.containsKey(token)){
+            term = terms.get(token);
+            term.setTermStr(token);
+        }
+        else{
+            term = new Term();
+            term.setTermStr(token);
+            terms.put(token, term);
+        }
+        termsPerDoc.add(token);
+
+        return term;
+    }
+
 
     public void finished() {
         System.out.println("'finished' called in parse");
@@ -850,9 +869,9 @@ public class Parse {
        indexer.writeDocsInfoToDisk(sb);
     }
 
-    public void writeDocsInfo(){
+/*    public void writeDocsInfo(){
         indexer.writeDocsInfoToDisk(sb);
-    }
+    }*/
 
    private String stemming (String token){
        if(withStemming){
@@ -929,7 +948,7 @@ public class Parse {
 
     // the following function saves defined stop words in the memory, according to the path the user gave.
     private void setStopWords (){
-/*        File stopWordsFile = new File (stopWordsPath);
+        File stopWordsFile = new File(stopWordsPath);
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
@@ -939,9 +958,9 @@ public class Parse {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
-        stopWords.add("a");
+       /* stopWords.add("a");
         stopWords.add("a's");
         stopWords.add("able");
         stopWords.add("about");
@@ -1511,7 +1530,7 @@ public class Parse {
         stopWords.add("yourself");
         stopWords.add("yourselves");
         stopWords.add("z");
-        stopWords.add("zero");
+        stopWords.add("zero");*/
 
     }
 
