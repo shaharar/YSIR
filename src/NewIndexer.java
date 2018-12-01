@@ -2,6 +2,7 @@ import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -430,8 +431,13 @@ public class NewIndexer {
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
+        ArrayList <String> strList = new ArrayList<>();
+        for (String termStr: dictionary.keySet()) {
+            strList.add(termStr);
+        }
+        Collections.sort(strList);
         //sb.setLength(dictionary.keySet().size());
-        for (String termStr : dictionary.keySet()) {
+        for (String termStr : strList) {
             if (termStr.length() == 0){
                 break;
             }

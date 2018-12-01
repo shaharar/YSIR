@@ -18,7 +18,7 @@ public class Parse {
     private String stopWordsPath;
 //   private Indexer indexer;
     private NewIndexer indexer;
-    HashMap <String , Term> termsPerIteration = new HashMap<>();
+  //  HashMap <String , Term> termsPerIteration = new HashMap<>();
     private Stemmer stemmer;
     boolean withStemming;
     StringBuilder sb;
@@ -52,7 +52,7 @@ public class Parse {
    // the following function parses the text of a specific document by the defined rules
    public void parseDocText(String docText, String docID, String city) {
    //    HashMap<String, Term> terms = new HashMap<>();
-       terms = new HashMap<>();
+       //terms = new HashMap<>();
        currentIdx = 0;
        this.docNo = docID;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
@@ -151,18 +151,19 @@ public class Parse {
          }
          currentIdx++;
       }
-       termsPerIteration.putAll(terms);
+      // termsPerIteration.putAll(terms);
       int termsInDoc = terms.size();
       sb.append(docNo + ": " + termsInDoc + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
-      terms.clear();
+      //terms.clear();
        //termsPerDoc = terms;
       // termsPerDoc.clear();
 
        if (docsTotal > 10000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
-           indexer.index(termsPerIteration);
-           termsPerIteration.clear();
+           indexer.index(terms);
+           terms.clear();
+           //termsPerIteration.clear();
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
            System.out.println("index done"+ "\n");////////////////////////////////////////////////////////////test
