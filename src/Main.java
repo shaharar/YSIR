@@ -3,9 +3,13 @@ import java.io.IOException;
 public class Main {
 
     public static void main (String [] args) throws IOException {
-        ReadFile rf = new ReadFile(false, "C:\\Users\\yardenhalili\\Documents\\test");
+        ReadFile rf = new ReadFile(false, "d:\\documents\\users\\shaharar\\Downloads\\test");
         try {
-            rf.getFilesFromDir("C:\\Users\\yardenhalili\\Documents\\corpus");
+            long startTime 	= System.nanoTime();
+            rf.getFilesFromDir("d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus");
+            long finishTime 	= System.nanoTime();
+            long totalTime = (long)((finishTime - startTime)/1000000.0);
+            System.out.println("Total time:  " + totalTime/60000.0 + " min");
         } catch (IOException e) {
             e.printStackTrace();
         }
