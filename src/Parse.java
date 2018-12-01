@@ -1,7 +1,5 @@
 
 import com.sun.org.apache.bcel.internal.generic.NEW;
-import org.tartarus.snowball.SnowballStemmer;
-import org.tartarus.snowball.ext.englishStemmer;
 
 import java.util.*;
 import java.util.ArrayList;
@@ -44,6 +42,7 @@ public class Parse {
        sb = new StringBuilder();
        docNo = "";
        docsTotal = 0;
+
 
 
        counter = 1;//////////////////////////////////////////////////////*******************************

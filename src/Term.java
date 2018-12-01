@@ -7,7 +7,7 @@ public class Term {
     //Pair<String,Integer> postingPointer;
     //int totalFreq;
     String termStr;
-    int df;
+//    int df;
     //int tf;
     //ArrayList<String> docs;
     HashMap<String,AtomicInteger> docs;
@@ -17,7 +17,7 @@ public class Term {
         //docs = new ArrayList<>();
         //totalFreq = 0;
         termStr = "";
-        df = 0;
+//        df = 0;
         //postingPointer = new Pair<>("",0);
         docs = new HashMap<>();
     }
@@ -52,17 +52,17 @@ public class Term {
 //        return df;
 //    }
 
-    public int getDf (){
-        return this.docs.size();
-    }
+//    public int getDf (){
+//        return this.docs.size();
+//    }
 
     public HashMap<String, AtomicInteger> getDocs() {
         return docs;
     }
-
-    public void updateDf (){
-        this.df += this.docs.size();
-    }
+//
+//    public void updateDf (){
+//        this.df += this.docs.size();
+//    }
 
 
     public int updateTf(String docNo) {

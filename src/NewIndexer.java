@@ -1,14 +1,12 @@
 import javafx.util.Pair;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class NewIndexer {
 
-    private HashMap <String, Integer> dictionary;
+    private HashMap <String, ArrayList <Integer>> dictionary;
     String path;
 
     // constructor
@@ -183,16 +181,25 @@ public class NewIndexer {
         for (String termStr : listChunk) {
             Term term = terms.get(termStr);
             HashMap <String, AtomicInteger> docsList = term.getDocs();
+            ArrayList <Integer> termInfo;
+            int currDf = docsList.size();
+            int currTotalFreq = 0;
+            for (AtomicInteger tf:docsList.values()) {
+                currTotalFreq += tf.intValue();
+            }
             docsListStr = new StringBuilder();
             //docsListStr.setLength(docsListStr.length());
             Integer pointer;
             if (isSmallLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toUpperCase())) {
-                    pointer = dictionary.get(termStr.toUpperCase());
-                    dictionary.replace(termStr,pointer);
+                    //pointer = dictionary.get(termStr.toUpperCase()).get(0);
+                    termInfo = dictionary.get(termStr.toUpperCase());
+//                    termInfo.set(1, termInfo.get(1) + currDf);
+//                    termInfo.set(2, termInfo.get(2) + currTotalFreq);
+                    dictionary.replace(termStr,termInfo);
                 }
             } else if (isCapitalLetter(termStr)) {
-                if (terms.containsKey(termStr.toLowerCase())) {
+                if (dictionary.containsKey(termStr.toLowerCase())) {
                     termStr = termStr.toLowerCase();
                 }
             }
@@ -206,16 +213,29 @@ public class NewIndexer {
             }
             //term doesn't exist in posting - add it to the end of the posting
             if (!dictionary.containsKey(termStr)) {
-                listPosting.add(docsListStr + "[" + term.getDf() + "]");
+                listPosting.add(docsListStr + "[" + currDf + "]");
                 pointer = currIdx;
-                dictionary.put(termStr, pointer);
+                termInfo = new ArrayList<>();
+                termInfo.add(pointer);
+                termInfo.add(currDf);
+                termInfo.add(currTotalFreq);
+                dictionary.put(termStr, termInfo);
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
             else {
-                pointer = dictionary.get(termStr);
-                listPosting.set(pointer, listPosting.get(pointer).substring(0, listPosting.get(pointer).indexOf("[")) + docsListStr + "[" + term.getDf() + "]");
+                termInfo = dictionary.get(termStr);
+                pointer = termInfo.get(0);
+                currDf += termInfo.get(1);
+                currTotalFreq += termInfo.get(2);
+                ArrayList <Integer> newTermInfo = new ArrayList<>();
+                newTermInfo.add(pointer);
+                newTermInfo.add(currDf);
+                newTermInfo.add(currTotalFreq);
+                String linePosting = listPosting.get(pointer);
+                listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currDf + "]");
                // dictionary.put(termStr, pointer);
+                dictionary.replace(termStr, newTermInfo);
             }
         }
 
@@ -430,12 +450,22 @@ public class NewIndexer {
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
+        ArrayList <String> strList = new ArrayList<>();
+        for (String termStr: dictionary.keySet()) {
+            strList.add(termStr);
+        }
+        Collections.sort(strList, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareToIgnoreCase(o2);
+            }
+        });
         //sb.setLength(dictionary.keySet().size());
-        for (String termStr : dictionary.keySet()) {
+        for (String termStr : strList) {
             if (termStr.length() == 0){
                 break;
             }
-            sb.append(termStr + " " + classifyToPosting(termStr) + dictionary.get(termStr)).append("\n");
+            sb.append(termStr + " " + dictionary.get(termStr).get(2) + " " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {
