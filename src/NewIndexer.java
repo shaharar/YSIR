@@ -181,6 +181,7 @@ public class NewIndexer {
         for (String termStr : listChunk) {
             Term term = terms.get(termStr);
             HashMap <String, AtomicInteger> docsList = term.getDocs();
+            ArrayList <Integer> termInfo;
             int currDf = docsList.size();
             int currTotalFreq = 0;
             for (AtomicInteger tf:docsList.values()) {
@@ -191,15 +192,14 @@ public class NewIndexer {
             Integer pointer;
             if (isSmallLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toUpperCase())) {
-                    pointer = dictionary.get(termStr.toUpperCase()).get(0);
-                    ArrayList <Integer> termInfo = dictionary.get(termStr.toUpperCase());
-                    termInfo.set(0, pointer);
-                    termInfo.set(1, termInfo.get(1) + currDf);
-                    termInfo.set(2, termInfo.get(2) + currTotalFreq);
+                    //pointer = dictionary.get(termStr.toUpperCase()).get(0);
+                    termInfo = dictionary.get(termStr.toUpperCase());
+//                    termInfo.set(1, termInfo.get(1) + currDf);
+//                    termInfo.set(2, termInfo.get(2) + currTotalFreq);
                     dictionary.replace(termStr,termInfo);
                 }
             } else if (isCapitalLetter(termStr)) {
-                if (terms.containsKey(termStr.toLowerCase())) {
+                if (dictionary.containsKey(termStr.toLowerCase())) {
                     termStr = termStr.toLowerCase();
                 }
             }
@@ -215,7 +215,7 @@ public class NewIndexer {
             if (!dictionary.containsKey(termStr)) {
                 listPosting.add(docsListStr + "[" + currDf + "]");
                 pointer = currIdx;
-                ArrayList <Integer> termInfo = new ArrayList<>();
+                termInfo = new ArrayList<>();
                 termInfo.add(pointer);
                 termInfo.add(currDf);
                 termInfo.add(currTotalFreq);
@@ -224,12 +224,18 @@ public class NewIndexer {
             }
             //term exists in posting - update the posting in the relevant line
             else {
-                ArrayList <Integer> termInfo = dictionary.get(termStr);
+                termInfo = dictionary.get(termStr);
                 pointer = termInfo.get(0);
                 currDf += termInfo.get(1);
+                currTotalFreq += termInfo.get(2);
+                ArrayList <Integer> newTermInfo = new ArrayList<>();
+                newTermInfo.add(pointer);
+                newTermInfo.add(currDf);
+                newTermInfo.add(currTotalFreq);
                 String linePosting = listPosting.get(pointer);
                 listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currDf + "]");
                // dictionary.put(termStr, pointer);
+                dictionary.replace(termStr, newTermInfo);
             }
         }
 
@@ -459,7 +465,7 @@ public class NewIndexer {
             if (termStr.length() == 0){
                 break;
             }
-            sb.append(termStr + " " + dictionary.get(termStr).get(2) + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
+            sb.append(termStr + " " + dictionary.get(termStr).get(2) + " " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {

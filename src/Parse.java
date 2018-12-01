@@ -159,7 +159,7 @@ public class Parse {
        //termsPerDoc = terms;
       // termsPerDoc.clear();
 
-       if (docsTotal > 10000){
+       if (docsTotal > 100){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms);
            terms.clear();
