@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Term {
-    Pair<String,Integer> postingPointer;
     int totalFreq;
     String termStr;
     int df;
@@ -18,7 +17,6 @@ public class Term {
         totalFreq = 0;
         termStr = "";
         df = 0;
-        postingPointer = new Pair<>("",0);
         docs = new HashMap<>();
     }
 
@@ -28,10 +26,7 @@ public class Term {
 //    }
 
     //Getters
-    public Pair<String,Integer> getPostingPointer() {
-        return postingPointer;
-    }
-
+ 
     public int getTf(String docNo) {
         return this.docs.get(docNo).intValue();
     }

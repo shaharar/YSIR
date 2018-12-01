@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ReadFile {
 
-    private File[] docsInFile;
+  //  private File[] docsInFile;
     private Parse parse;
 
     public ReadFile(boolean withStemming, String path) {
@@ -23,6 +23,7 @@ public class ReadFile {
 
         File corpus = new File(path);
         File[] files = corpus.listFiles();
+        corpus.delete();
         for (File file:files) {
             //System.out.println(file.getPath().toString());
             separateFileToDocs(file);
@@ -33,7 +34,7 @@ public class ReadFile {
 
     public void separateFileToDocs (File file){
 
-        docsInFile = file.listFiles();
+        File [] docsInFile = file.listFiles();
         for (File d : docsInFile) {
             try {
                 org.jsoup.nodes.Document document = Jsoup.parse(d, "UTF-8");

@@ -155,7 +155,7 @@ public class Parse {
       docsTotal++;
        //termsPerDoc = terms;
 
-       if (docsTotal > 50000){
+       if (docsTotal > 10000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms);
            terms.clear();

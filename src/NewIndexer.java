@@ -184,6 +184,7 @@ public class NewIndexer {
             Term term = terms.get(termStr);
             HashMap <String, AtomicInteger> docsList = term.getDocs();
             docsListStr = new StringBuilder();
+            //docsListStr.setLength(docsListStr.length());
             Integer pointer;
             if (isSmallLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toUpperCase())) {
@@ -205,20 +206,22 @@ public class NewIndexer {
             }
             //term doesn't exist in posting - add it to the end of the posting
             if (!dictionary.containsKey(termStr)) {
-                listPosting.add("[" + term.getDf() + "] : " + docsListStr);
+                listPosting.add(docsListStr + "[" + term.getDf() + "]");
                 pointer = currIdx;
+                dictionary.put(termStr, pointer);
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
             else {
                 pointer = dictionary.get(termStr);
-                listPosting.set(pointer, "[" + term.getDf() + "] : " + docsListStr);
-                dictionary.put(termStr, pointer);
+                listPosting.set(pointer, listPosting.get(pointer).substring(0, listPosting.get(pointer).indexOf("[")) + docsListStr + "[" + term.getDf() + "]");
+               // dictionary.put(termStr, pointer);
             }
         }
 
 
         strPosting = new StringBuilder();
+        //strPosting.setLength(listPosting.size());
         for (String postingRec : listPosting) {
             strPosting.append(postingRec + "\n");
         }
@@ -229,8 +232,8 @@ public class NewIndexer {
         // create file writer
         FileWriter fwPosting = null;
         try {
-            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"),true);
-            fwPosting.append(strPosting.toString());
+            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"));
+            fwPosting.write(strPosting.toString());
             fwPosting.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -427,6 +430,7 @@ public class NewIndexer {
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
+        //sb.setLength(dictionary.keySet().size());
         for (String termStr : dictionary.keySet()) {
             if (termStr.length() == 0){
                 break;
