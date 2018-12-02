@@ -23,6 +23,7 @@ public class Parse {
     boolean withStemming;
     private int currentIdx;
     int docsTotal;
+    int docsInCollection;
 
     int counter;//////////////////////////////////////test
 
@@ -41,6 +42,7 @@ public class Parse {
       this.withStemming = withStemming;
       currentIdx = 0;
       docsTotal = 0;
+      docsInCollection = 0;
 
 
        counter = 1;//////////////////////////////////////////////////////*******************************
@@ -162,11 +164,12 @@ public class Parse {
       }
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
+      docsInCollection++;
       termsPerDoc.clear();
 
        if (docsTotal > 10000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
-           indexer.index(terms);
+           indexer.index(terms, docsInCollection);
            terms.clear();
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
@@ -865,7 +868,7 @@ public class Parse {
 
     public void finished() {
         System.out.println("'finished' called in parse");
-       indexer.finished(terms);
+       indexer.finished(terms, docsInCollection);
        indexer.writeDocsInfoToDisk(sb);
     }
 

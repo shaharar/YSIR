@@ -52,7 +52,7 @@ public class Indexer {
         }
     }
 
-    public void index(HashMap<String, Term> terms) {
+    public void index(HashMap<String, Term> terms, int docsInCollection) {
 
         ArrayList<ArrayList<String>> chunkLists;
         chunkLists = new ArrayList<>();
@@ -155,14 +155,14 @@ public class Indexer {
         }
 
         for (int i = 0; i < chunkLists.size(); i++) {
-            updateChunk(chunkLists.get(i), i, terms);
+            updateChunk(chunkLists.get(i), i, terms, docsInCollection);
             chunkLists.get(i).clear();
         }
         chunkLists.clear();
         terms.clear();
     }
 
-    private void updateChunk(ArrayList<String> listChunk, int index, HashMap <String, Term> terms) {
+    private void updateChunk(ArrayList<String> listChunk, int index, HashMap <String, Term> terms, int docsInCollection) {
         String chunk = getChunk(index);
         ArrayList <String> listPosting = new ArrayList<>();
         StringBuilder docsListStr, strPosting;
@@ -188,6 +188,7 @@ public class Indexer {
             ArrayList <Integer> termInfo;
             int currDf = docsList.size();
             int currTotalFreq = 0;
+            double currIdf = Math.log(docsInCollection / currDf);
             for (AtomicInteger tf:docsList.values()) {
                 currTotalFreq += tf.intValue();
             }
@@ -212,12 +213,14 @@ public class Indexer {
                 break;
             }
 
-            for (String docNo : docsList.keySet()) {
-                docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
-            }
+
             //term doesn't exist in posting - add it to the end of the posting
             if (!dictionary.containsKey(termStr)) {
-                listPosting.add(docsListStr + "[" + currDf + "]");
+                for (String docNo : docsList.keySet()) {
+                    double weight = docsList.get(docNo).intValue() * currIdf;
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
+                }
+                listPosting.add(docsListStr + "[" + currIdf + "]");
                 pointer = currIdx;
                 termInfo = new ArrayList<>();
                 termInfo.add(pointer);
@@ -232,12 +235,17 @@ public class Indexer {
                 pointer = termInfo.get(0);
                 currDf += termInfo.get(1);
                 currTotalFreq += termInfo.get(2);
+                currIdf = Math.log(docsInCollection / currDf);
                 ArrayList <Integer> newTermInfo = new ArrayList<>();
                 newTermInfo.add(pointer);
                 newTermInfo.add(currDf);
                 newTermInfo.add(currTotalFreq);
                 String linePosting = listPosting.get(pointer);
-                listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currDf + "]");
+                for (String docNo : docsList.keySet()) {
+                    double weight = docsList.get(docNo).intValue() * currIdf;
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
+                }
+                listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdf + "]");
                // dictionary.put(termStr, pointer);
                 dictionary.replace(termStr, newTermInfo);
             }
@@ -481,7 +489,7 @@ public class Indexer {
             if (termStr.length() == 0){
                 break;
             }
-            sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
+            sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {
@@ -499,9 +507,9 @@ public class Indexer {
         }
     }
 
-    public void finished(HashMap<String , Term> terms) {
+    public void finished(HashMap<String , Term> terms, int docsInCollection) {
         System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
-        index(terms);
+        index(terms, docsInCollection);
         writeDictionaryToDisk();
         System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
     }
