@@ -7,13 +7,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class View {
@@ -21,19 +19,19 @@ public class View {
     Controller controller;
     static Stage stage;
     File corpusDirSelected = null;
-    File postingDirSelected = null;
+    File saveDirSelected = null;
     public Button btn_corpusPath;
-    public Button btn_postingPath;
+    public Button btn_savePath;
     public Button btn_run;
     public Button btn_reset;
     public Button btn_showDic;
     public Button btn_loadDic;
     public TextField txt_corpusChooser;
-    public TextField txt_postingChooser;
+    public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
     String corpusPath;
-    String postingPath;
+    String savePath;
     private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian");
 
 
@@ -46,17 +44,31 @@ public class View {
 
     public void saveFilesPath() {
         DirectoryChooser fc = new DirectoryChooser();
-        postingDirSelected = fc.showDialog(stage);
-        postingPath = postingDirSelected.getPath().toString();
+        saveDirSelected = fc.showDialog(stage);
+        savePath = saveDirSelected.getPath().toString();
         setPostingTextField();
     }
 
-    public void run(String corpusPath, String postingPath) {
+    public void run () {
         try {
-            controller.run(corpusPath, postingPath);
+            controller.run(corpusPath, savePath);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void showDictionary () {
+        File dicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        try {
+            Desktop.getDesktop().open(dicFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadDictionary () {
+        File newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        controller.loadDictionary (savePath, newDicFile);
     }
 
     public void stemming(){
@@ -68,7 +80,7 @@ public class View {
     }
 
     public void reset(){
-        controller.reset(postingPath);
+        controller.reset(savePath);
     }
 
     public void setCorpusTextField (){
@@ -76,6 +88,6 @@ public class View {
     }
 
     public void setPostingTextField (){
-        txt_postingChooser.setText(postingPath);
+        txt_savePathChooser.setText(savePath);
     }
 }

@@ -26,7 +26,6 @@ public class ReadFile {
             }
             separateFileToDocs(file);
         }
-        // create docs information file
         parse.finished();
     }
 
@@ -53,6 +52,11 @@ public class ReadFile {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void reset() {
+        parse.reset();
+        parse = new Parse(false,"","");
     }
 }
 
