@@ -149,7 +149,6 @@ public class Parse {
               }
               else{
                   documentLength --;
-                  continue;
               }
           }
          if (term != null){
@@ -788,7 +787,7 @@ public class Parse {
               }
               termsPerDoc.add(token);
           } else {
-              numbers(token); //calling to numbers parse function
+              term = numbers(token); //calling to numbers parse function
           }
       }
       else{

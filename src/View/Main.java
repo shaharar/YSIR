@@ -9,21 +9,21 @@ import java.io.IOException;
 
 public class Main {
 
-    public void start (){
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        Parent root = null;
-        try {
-            root = fxmlLoader.load(getClass().getResource("../../resources/mainWindow.fxml").openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Scene scene = new Scene(root, 1024, 600);
-    }
+//    public void start (){
+//        FXMLLoader fxmlLoader = new FXMLLoader();
+//        Parent root = null;
+//        try {
+//            root = fxmlLoader.load(getClass().getResource("../../resources/mainWindow.fxml").openStream());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Scene scene = new Scene(root, 1024, 600);
+//    }
 
     public static void main (String [] args) throws IOException {
 
-        String corpusPath = "d:\\documents\\users\\haliliya\\Downloads\\corpus\\corpus";
-        ReadFile rf = new ReadFile(false, "d:\\documents\\users\\haliliya\\Downloads\\test", corpusPath);
+        String corpusPath = "C:\\Users\\yardenhalili\\Documents\\corpus";
+        ReadFile rf = new ReadFile(false, "C:\\Users\\yardenhalili\\Documents\\test", corpusPath);
         try {
             long startTime 	= System.nanoTime();
             rf.getFilesFromDir(corpusPath);
