@@ -22,8 +22,8 @@ public class Main {
 
     public static void main (String [] args) throws IOException {
 
-        String corpusPath = "C:\\Users\\yardenhalili\\Documents\\corpus";
-        ReadFile rf = new ReadFile(false, "C:\\Users\\yardenhalili\\Documents\\test", corpusPath);
+        String corpusPath = "d:\\documents\\users\\haliliya\\Downloads\\corpus\\corpus";
+        ReadFile rf = new ReadFile(false, "d:\\documents\\users\\haliliya\\Downloads\\test", corpusPath);
         try {
             long startTime 	= System.nanoTime();
             rf.getFilesFromDir(corpusPath);
