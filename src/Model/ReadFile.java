@@ -29,7 +29,7 @@ public class ReadFile {
         parse.finished();
     }
 
-    public void separateFileToDocs (File file){
+    private void separateFileToDocs (File file){
 
         File [] docsInFile = file.listFiles();
         for (File d : docsInFile) {

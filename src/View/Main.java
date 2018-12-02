@@ -26,8 +26,8 @@ public class Main extends Application {
 
 /*    public static void main (String [] args) throws IOException {
 
-        String corpusPath = "d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus";
-        ReadFile rf = new ReadFile(false, "d:\\documents\\users\\shaharar\\Downloads\\test", corpusPath);
+        String corpusPath = "d:\\documents\\users\\haliliya\\Downloads\\corpus\\corpus";
+        ReadFile rf = new ReadFile(false, "d:\\documents\\users\\haliliya\\Downloads\\test", corpusPath);
         try {
             long startTime 	= System.nanoTime();
             rf.getFilesFromDir(corpusPath);

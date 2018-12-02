@@ -189,7 +189,7 @@ public class Parse {
    }
 
 
-    public Term numbers (String token) {
+    private Term numbers (String token) {
       double num;
       Term term = null;
       //negative number
@@ -343,7 +343,7 @@ public class Parse {
    }
 
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
-   public Term lettersCase(String token) {
+   private Term lettersCase(String token) {
        Term term = null;
        token = stemming(token);
       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
@@ -393,7 +393,7 @@ public class Parse {
    }
 
    // the following function adds final terms to the data structure in this format : NUMBER%.
-   public Term percentage(String token) {
+   private Term percentage(String token) {
        Term term = null;
        if (terms.containsKey(token.replaceAll("%", "") + "%")){
            term = terms.get(token.replaceAll("%", "") + "%");
@@ -411,7 +411,7 @@ public class Parse {
    }
 
    // the following function adds final terms to the data structure in one of these formats : PRICE Dollars, PRICE M Dollars
-   public Term prices(String token) {
+   private Term prices(String token) {
        Term term = null;
       double price;
       if (token.startsWith("$"))
@@ -630,7 +630,7 @@ public class Parse {
    }
 
    // the following function adds final terms to the data structure in one of these formats : MM-DD, YYYY-MM.
-   public Term dates(String token) {
+   private Term dates(String token) {
       String month = "";
       Term term = null;
       if (!(Pattern.compile("[0-9]").matcher(token).find())) { //check if the token contains digits, if not - it represents the month
@@ -737,7 +737,7 @@ public class Parse {
    }
 
    // the following function adds final terms to the data structure in one of these formats : Word-Word, Word-Word-Word, Word-Number, Number-Word, Number-Number, Between Number and Number.
-   public Term rangesAndExpressions(String token) {
+   private Term rangesAndExpressions(String token) {
        double firstNum, secondNum;
        Term term = null;
       //'Between number and number' format
@@ -806,7 +806,7 @@ public class Parse {
 
    //------------------------------------our 2 rules----------------------------------
    //shortcuts - rule#1
-   public Term shortcuts (String token) {
+   private Term shortcuts (String token) {
        Term term = null;
 
        if (token.equalsIgnoreCase("Mr")){
@@ -836,7 +836,7 @@ public class Parse {
    }
 
     //measures - rule#2
-    public Term measures(String token) {
+    private Term measures(String token) {
         Term term = null;
 
         if (token.equalsIgnoreCase("gram")){
