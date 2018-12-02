@@ -904,8 +904,7 @@ public class Parse {
 
 
     private void initReplaceMap(){
-        replaceMap.put(". "," ");
-        replaceMap.put(", "," ");
+        replaceMap.put("----------------------------------------------------------------------","");
         replaceMap.put("\t "," ");
         replaceMap.put("(","");
         replaceMap.put(")","");
@@ -918,6 +917,9 @@ public class Parse {
         replaceMap.put(":","");
         replaceMap.put("=","");
         replaceMap.put("@","");
+        replaceMap.put("#","");
+        replaceMap.put("'","");
+        replaceMap.put("|","");
         replaceMap.put(";","");
         replaceMap.put(" -- "," ");
         replaceMap.put("- ","");
@@ -932,6 +934,8 @@ public class Parse {
         replaceMap.put("\n\n"," ");
         replaceMap.put(".\n"," ");
         replaceMap.put(". \n"," ");
+        replaceMap.put(", "," ");
+        replaceMap.put(". "," ");
     }
 
 
