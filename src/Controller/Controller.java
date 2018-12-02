@@ -11,6 +11,10 @@ public class Controller {
     View view;
     Model model;
 
+    public Controller(View view) {
+        this.view = view;
+    }
+
     public void run(String corpusPath, String savePath) {
         model.run(corpusPath,savePath);
     }

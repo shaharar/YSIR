@@ -17,7 +17,7 @@ import java.io.IOException;
 public class View {
 
     Controller controller;
-    static Stage stage;
+    static Stage stage = null;
     File corpusDirSelected = null;
     File saveDirSelected = null;
     public Button btn_corpusPath;
@@ -33,6 +33,10 @@ public class View {
     String corpusPath;
     String savePath;
     private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian");
+
+    public void setStage(Stage stage) {
+        View.stage = stage;
+    }
 
 
     public void loadCorpusPath() {
@@ -89,5 +93,9 @@ public class View {
 
     public void setPostingTextField (){
         txt_savePathChooser.setText(savePath);
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 }

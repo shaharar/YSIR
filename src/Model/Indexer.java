@@ -500,7 +500,8 @@ public class Indexer {
             if (termStr.length() == 0){
                 break;
             }
-            sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
+//            sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
+            sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0)).append("\n");
         }
         File dictionary = new File(path + "\\indexResults\\dictionary.txt");
         try {
@@ -531,14 +532,21 @@ public class Indexer {
     }
 
     public void loadDictionary(File newDic) {
+        dictionary.clear();
         BufferedReader br = null;
         try {
             String term;
-            int[] termInfo = new int[3];
+            ArrayList<Integer> termInfo = new ArrayList<>();
             br = new BufferedReader(new FileReader(newDic));
             String line = "";
             while ((line = (br.readLine())) != null) {
-               // dictionary.add(term,termInfo);
+                term = line.substring(0, line.indexOf(':') - 1);
+                String values = line.substring(line.indexOf(':') + 2);
+                String[] valuesArr = values.split(",");
+                termInfo.add(Integer.parseInt(valuesArr[0].substring(0, valuesArr[0].indexOf(' '))));
+                termInfo.add(Integer.parseInt(valuesArr[1].substring(1, valuesArr[0].indexOf(' '))));
+                termInfo.add(Integer.parseInt(valuesArr[2].substring(valuesArr[2].indexOf('_') + 1)));
+                dictionary.put(term,termInfo);
             }
             br.close();
         } catch (IOException e) {

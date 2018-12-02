@@ -965,7 +965,8 @@ public class Parse {
             BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
             String token;
             while((token = br.readLine()) != null){
-                stopWords.add(token.substring(0,token.indexOf("\n")));
+              //  stopWords.add(token.substring(0,token.indexOf("\r")));
+                stopWords.add(token);
             }
         } catch (IOException e) {
             e.printStackTrace();
