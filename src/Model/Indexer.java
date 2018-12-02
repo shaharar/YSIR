@@ -192,7 +192,7 @@ public class Indexer {
             try {
                 currIdf = Math.log(docsInCollection / currDf);
             }catch (ArithmeticException e){
-
+                currIdf = 0;
             }
             for (AtomicInteger tf:docsList.values()) {
                 currTotalFreq += tf.intValue();
@@ -223,7 +223,7 @@ public class Indexer {
             if (!dictionary.containsKey(termStr)) {
                 for (String docNo : docsList.keySet()) {
                     double weight = docsList.get(docNo).intValue() * currIdf;
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
                 }
                 listPosting.add(docsListStr + "[" + currIdf + "]");
                 pointer = currIdx;
@@ -242,8 +242,9 @@ public class Indexer {
                 currTotalFreq += termInfo.get(2);
                 try{
                     currIdf = Math.log(docsInCollection / currDf);
-                }catch (ArithmeticException e){
-                    
+                }
+                catch (ArithmeticException e){
+                    currIdf = 0;
                 }
                 ArrayList <Integer> newTermInfo = new ArrayList<>();
                 newTermInfo.add(pointer);
@@ -252,7 +253,7 @@ public class Indexer {
                 String linePosting = listPosting.get(pointer);
                 for (String docNo : docsList.keySet()) {
                     double weight = docsList.get(docNo).intValue() * currIdf;
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + ";");
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
                 }
                 listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdf + "]");
                // dictionary.put(termStr, pointer);

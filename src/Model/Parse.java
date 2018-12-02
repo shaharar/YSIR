@@ -69,6 +69,7 @@ public class Parse {
        docText = replaceChars(docText);
        replaceSb = new StringBuilder();
        tokens = docText.split(" ");
+       int documentLength = tokens.length;
        String token;
        int maxTf = 0;
        String frequentTerm = "";
@@ -146,6 +147,9 @@ public class Parse {
                       term = lettersCase(token);
                   }
               }
+              else{
+                  documentLength --;
+              }
           }
          if (term != null){
              if (!term.docs.containsKey((docNo))){
@@ -162,7 +166,7 @@ public class Parse {
          }
          currentIdx++;
       }
-      sb.append(docNo + ": " + termsPerDoc.size() + ", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+      sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
@@ -783,7 +787,7 @@ public class Parse {
               }
               termsPerDoc.add(token);
           } else {
-              numbers(token); //calling to numbers parse function
+              term = numbers(token); //calling to numbers parse function
           }
       }
       else{
