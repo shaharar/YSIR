@@ -531,9 +531,18 @@ public class Indexer {
     }
 
     public void loadDictionary(File newDic) {
-/*        for (:
-             ) {
-
-        }*/
+        BufferedReader br = null;
+        try {
+            String term;
+            int[] termInfo = new int[3];
+            br = new BufferedReader(new FileReader(newDic));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+               // dictionary.add(term,termInfo);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
