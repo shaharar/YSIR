@@ -188,7 +188,14 @@ public class Indexer {
             ArrayList <Integer> termInfo;
             int currDf = docsList.size();
             int currTotalFreq = 0;
-            double currIdf = Math.log(docsInCollection / currDf);
+            double currIdf;
+            try{
+                currIdf = Math.log(docsInCollection / currDf);
+            }
+            catch (ArithmeticException e){
+                currIdf = 0;
+                System.out.println(termStr);
+            }
             for (AtomicInteger tf:docsList.values()) {
                 currTotalFreq += tf.intValue();
             }
@@ -235,7 +242,13 @@ public class Indexer {
                 pointer = termInfo.get(0);
                 currDf += termInfo.get(1);
                 currTotalFreq += termInfo.get(2);
-                currIdf = Math.log(docsInCollection / currDf);
+                try{
+                    currIdf = Math.log(docsInCollection / currDf);
+                }
+                catch (ArithmeticException e){
+                    currIdf = 0;
+                    System.out.println(termStr);
+                }
                 ArrayList <Integer> newTermInfo = new ArrayList<>();
                 newTermInfo.add(pointer);
                 newTermInfo.add(currDf);
