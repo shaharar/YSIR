@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -27,6 +28,8 @@ public class View {
     public Button btn_reset;
     public Button btn_showDic;
     public Button btn_loadDic;
+    public TextField txt_corpusChooser;
+    public TextField txt_postingChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
     String corpusPath;
@@ -38,12 +41,14 @@ public class View {
         DirectoryChooser fc = new DirectoryChooser();
         corpusDirSelected = fc.showDialog(stage);
         corpusPath = corpusDirSelected.getPath().toString();
+        setCorpusTextField();
     }
 
     public void saveFilesPath() {
         DirectoryChooser fc = new DirectoryChooser();
         postingDirSelected = fc.showDialog(stage);
         postingPath = postingDirSelected.getPath().toString();
+        setPostingTextField();
     }
 
     public void run(String corpusPath, String postingPath) {
@@ -64,5 +69,13 @@ public class View {
 
     public void reset(){
         controller.reset(postingPath);
+    }
+
+    public void setCorpusTextField (){
+        txt_corpusChooser.setText(corpusPath);
+    }
+
+    public void setPostingTextField (){
+        txt_postingChooser.setText(postingPath);
     }
 }
