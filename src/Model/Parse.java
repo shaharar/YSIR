@@ -920,7 +920,7 @@ public class Parse {
         replaceMap.put("?","");
         replaceMap.put(":","");
         replaceMap.put("=","");
-        replaceMap.put("@","");
+        //replaceMap.put("@","");
         replaceMap.put("#","");
         replaceMap.put("'","");
         replaceMap.put("|","");
@@ -965,7 +965,7 @@ public class Parse {
             BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
             String token;
             while((token = br.readLine()) != null){
-                stopWords.add(token);
+                stopWords.add(token.substring(0,token.indexOf("\n")));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -1546,4 +1546,15 @@ public class Parse {
     }
 
 
+    public void reset() {
+        indexer.reset();
+        terms.clear();
+        termsPerDoc.clear();
+        stopWords.clear();
+        replaceMap.clear();
+        replaceSb = new StringBuilder();
+        sb = new StringBuilder();
+        stemmer = new Stemmer();
+        indexer = new Indexer("");
+    }
 }

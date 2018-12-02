@@ -215,6 +215,7 @@ public class Indexer {
             }
 
             if (term == null){
+                System.out.println(termStr);
                 break;
             }
 
@@ -525,5 +526,14 @@ public class Indexer {
     }
 
 
+    public void reset() {
+        dictionary.clear();
+    }
 
+    public void loadDictionary(File newDic) {
+/*        for (:
+             ) {
+
+        }*/
+    }
 }

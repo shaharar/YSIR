@@ -17,7 +17,7 @@
          </font>
       </Button>
       <TextField layoutX="158.0" layoutY="98.0" prefHeight="30.0" prefWidth="190.0" />
-      <Button fx:id="btn_postingPath" layoutX="57.0" layoutY="147.0" mnemonicParsing="false" onAction="#saveFilesPath" prefHeight="30.0" prefWidth="101.0" text="Save files in" textAlignment="CENTER">
+      <Button fx:id="btn_savePath" layoutX="57.0" layoutY="147.0" mnemonicParsing="false" onAction="#saveFilesPath" prefHeight="30.0" prefWidth="101.0" text="Save files in" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="12.0" />
          </font>
@@ -49,13 +49,13 @@
             <Font name="Calibri Bold" size="12.0" />
          </font>
       </Button>
-      <Button disable="true" layoutX="57.0" layoutY="263.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="101.0" text="Show Dictionary" textAlignment="CENTER">
+      <Button fx:id="btn_showDic" disable="true" layoutX="57.0" layoutY="263.0" mnemonicParsing="false" onAction="#showDictionary" prefHeight="30.0" prefWidth="101.0" text="Show Dictionary" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="12.0" />
          </font>
       </Button>
       <TextField layoutX="158.0" layoutY="215.0" prefHeight="30.0" prefWidth="190.0" />
-      <Button layoutX="57.0" layoutY="215.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="101.0" text="Load Dictionary" textAlignment="CENTER">
+      <Button fx:id="btn_loadDic" layoutX="57.0" layoutY="215.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="30.0" prefWidth="101.0" text="Load Dictionary" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="12.0" />
          </font>

@@ -2,15 +2,18 @@ package View;
 
 import Model.Model;
 import Model.ReadFile;
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Main {
+public class Main extends Application {
 
-/*    public void start (){
+    @Override
+    public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent root = null;
         try {
@@ -19,9 +22,9 @@ public class Main {
             e.printStackTrace();
         }
         Scene scene = new Scene(root, 1024, 600);
-    }*/
+    }
 
-    public static void main (String [] args) throws IOException {
+/*    public static void main (String [] args) throws IOException {
 
         String corpusPath = "d:\\documents\\users\\haliliya\\Downloads\\corpus\\corpus";
         ReadFile rf = new ReadFile(false, "d:\\documents\\users\\haliliya\\Downloads\\test", corpusPath);
@@ -34,7 +37,6 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
+    }*/
 
 }
