@@ -11,8 +11,8 @@ public class Controller {
     View view;
     Model model;
 
-    public Controller(View view) {
-        this.view = view;
+    public Controller() {
+        model = new Model();
     }
 
     public void run(String corpusPath, String savePath) {
@@ -23,8 +23,8 @@ public class Controller {
         model.stemming(selected);
     }
 
-    public void reset(String savePath) {
-        model.reset(savePath);
+    public boolean reset(String savePath) {
+        return model.reset(savePath);
     }
 
     public void loadDictionary(String savePath, File newDic) {

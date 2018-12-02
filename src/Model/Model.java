@@ -11,10 +11,18 @@ public class Model {
     Indexer index;
     boolean isStemSelected;
 
+    public Model() {
+        isStemSelected = false;
+    }
+
     public void run(String corpusPath, String savePath) {
         try {
             rf = new ReadFile(isStemSelected, savePath, corpusPath);
+            long startTime = System.nanoTime();
             rf.getFilesFromDir(corpusPath);
+            long finishTime = System.nanoTime();
+            long totalTime = (long)((finishTime - startTime)/1000000.0);
+            System.out.println("Total time:  " + totalTime/60000.0 + " min");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -24,15 +32,20 @@ public class Model {
         isStemSelected = selected;
     }
 
-    public void reset(String postingPath) {
-        File f = new File(postingPath + "\\indexResults");
-        f.delete();
-        rf.reset();
+    public boolean reset(String savePath) {
+        if (rf != null) {
+            File f = new File(savePath + "\\indexResults");
+            f.deleteOnExit();
+            rf.reset();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public void loadDictionary(String savePath, File newDic) {
         index = new Indexer(savePath);
         index.loadDictionary(newDic);
-
     }
 }

@@ -1556,6 +1556,6 @@ public class Parse {
         replaceSb = new StringBuilder();
         sb = new StringBuilder();
         stemmer = new Stemmer();
-        indexer = new Indexer("");
+        //indexer = new Indexer("");
     }
 }

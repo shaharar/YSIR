@@ -540,13 +540,25 @@ public class Indexer {
             br = new BufferedReader(new FileReader(newDic));
             String line = "";
             while ((line = (br.readLine())) != null) {
+                termInfo = new ArrayList<>();
                 term = line.substring(0, line.indexOf(':') - 1);
                 String values = line.substring(line.indexOf(':') + 2);
                 String[] valuesArr = values.split(",");
-                termInfo.add(Integer.parseInt(valuesArr[0].substring(0, valuesArr[0].indexOf(' '))));
-                termInfo.add(Integer.parseInt(valuesArr[1].substring(1, valuesArr[0].indexOf(' '))));
-                termInfo.add(Integer.parseInt(valuesArr[2].substring(valuesArr[2].indexOf('_') + 1)));
-                dictionary.put(term,termInfo);
+                try {
+/*                    termInfo.add(Integer.parseInt(valuesArr[0].substring(0, valuesArr[0].indexOf(' '))));
+                    termInfo.add(Integer.parseInt(valuesArr[1].substring(1, valuesArr[0].indexOf(' '))));
+                    termInfo.add(Integer.parseInt(valuesArr[2].substring(valuesArr[2].indexOf('_') + 1)));*/
+                    String v1 = valuesArr[0].substring(0, valuesArr[0].length() - 1);
+                    termInfo.add(Integer.parseInt(v1));
+                    String v2 = valuesArr[1].substring(1, valuesArr[1].length() - 1);
+                    termInfo.add(Integer.parseInt(v2));
+                    String v3 = valuesArr[2].substring(valuesArr[2].indexOf('_') + 1);
+                    termInfo.add(Integer.parseInt(v3));
+                    dictionary.put(term, termInfo);
+                   // termInfo.clear();
+                } catch (NumberFormatException e){
+                    System.out.println(valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2]);
+                }
             }
             br.close();
         } catch (IOException e) {

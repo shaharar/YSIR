@@ -3,9 +3,8 @@ package View;
 import Controller.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -34,26 +33,33 @@ public class View {
     String savePath;
     private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian");
 
-    public void setStage(Stage stage) {
-        View.stage = stage;
+    public View() {
+        controller = new Controller();
     }
 
-
     public void loadCorpusPath() {
+        Stage stage = new Stage();
         DirectoryChooser fc = new DirectoryChooser();
         corpusDirSelected = fc.showDialog(stage);
-        corpusPath = corpusDirSelected.getPath().toString();
-        setCorpusTextField();
+        corpusPath = corpusDirSelected.getAbsolutePath();
+        txt_corpusChooser.setText(corpusPath);
     }
 
     public void saveFilesPath() {
+        Stage stage = new Stage();
         DirectoryChooser fc = new DirectoryChooser();
         saveDirSelected = fc.showDialog(stage);
-        savePath = saveDirSelected.getPath().toString();
-        setPostingTextField();
+        savePath = saveDirSelected.getAbsolutePath();
+        txt_savePathChooser.setText(savePath);
     }
 
     public void run () {
+        if (corpusPath == null){
+            showAlert("Please insert corpus path");
+        }
+        if (savePath == null){
+            showAlert("Please insert save files path");
+        }
         try {
             controller.run(corpusPath, savePath);
         } catch (Exception e) {
@@ -62,7 +68,13 @@ public class View {
     }
 
     public void showDictionary () {
+        if (savePath == null){
+            showAlert("Please insert save files path");
+        }
         File dicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        if (!dicFile.exists()){
+            showAlert("There wasn't found a dictionary. Please load a new one");
+        }
         try {
             Desktop.getDesktop().open(dicFile);
         } catch (IOException e) {
@@ -70,9 +82,16 @@ public class View {
         }
     }
 
+    private void showAlert(String alertMessage) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText(alertMessage);
+        alert.show();
+    }
+
     public void loadDictionary () {
         File newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
         controller.loadDictionary (savePath, newDicFile);
+        System.out.println("loading succeed");
     }
 
     public void stemming(){
@@ -84,18 +103,9 @@ public class View {
     }
 
     public void reset(){
-        controller.reset(savePath);
-    }
+        if (! controller.reset(savePath)){
+            showAlert("The files and the memory are already cleared");
+        }
 
-    public void setCorpusTextField (){
-        txt_corpusChooser.setText(corpusPath);
-    }
-
-    public void setPostingTextField (){
-        txt_savePathChooser.setText(savePath);
-    }
-
-    public void setController(Controller controller) {
-        this.controller = controller;
     }
 }

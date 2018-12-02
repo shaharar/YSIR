@@ -11,8 +11,6 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    private View view;
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader();
@@ -25,11 +23,6 @@ public class Main extends Application {
         primaryStage.setTitle("Search Engine");
         Scene scene = new Scene(root, 650, 500);
         primaryStage.setScene(scene);
-/*        view = fxmlLoader.getController();
-        view.setStage(primaryStage);*/
-        //view.setMainStage(primaryStage);
-/*        Controller con = new Controller(view);
-        view.setController(con);*/
         primaryStage.show();
     }
 
