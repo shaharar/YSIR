@@ -39,7 +39,7 @@ public class ReadFile {
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
                     String docWithTags = e.select("DOC").outerHtml();
-                    String city = "";
+                    String city = getCityByTag(e.outerHtml());
 //                    int cityIdx = docWithTags.indexOf("<F P=104>");
 //                    if (cityIdx != -1){
 //                        String subByCity = docWithTags.substring(cityIdx + 8);
@@ -58,7 +58,7 @@ public class ReadFile {
 //                        city = cityTag[0];
 //                    }
 //                    System.out.println(e.toString());
-                    city = "vienna";
+//                    city = "vienna";
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
@@ -67,6 +67,19 @@ public class ReadFile {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String getCityByTag(String str) {
+        String city = "";
+        String [] tempStr;
+        String [] lines = str.split("\n");
+        for (int i = 0; i < lines.length; i++){
+            if (lines[i].equals(" <f p=\"104\">")){
+                tempStr = lines[i + 1].split(" ");
+                return tempStr[3];
+            }
+        }
+        return "";
     }
 
     public void reset() {
