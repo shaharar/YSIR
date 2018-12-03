@@ -35,7 +35,7 @@ public class Parse {
       setStopWords();
       replaceMap = new HashMap<>();
       initReplaceMap();
-      indexer = new Indexer(path);
+      indexer = new Indexer(path, withStemming);
       stemmer = new Stemmer();
       sb = new StringBuilder();
       docNo = "";
@@ -173,7 +173,7 @@ public class Parse {
 
        if (docsTotal > 10000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
-           indexer.index(terms, docsInCollection);
+           indexer.index(terms, docsInCollection, withStemming);
            terms.clear();
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
@@ -872,7 +872,7 @@ public class Parse {
 
     public void finished() {
         System.out.println("'finished' called in parse");
-       indexer.finished(terms, docsInCollection);
+       indexer.finished(terms, docsInCollection,withStemming);
        indexer.writeDocsInfoToDisk(sb);
     }
 

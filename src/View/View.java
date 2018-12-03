@@ -12,11 +12,12 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class View {
 
     Controller controller;
-    static Stage stage = null;
     File corpusDirSelected = null;
     File saveDirSelected = null;
     public Button btn_corpusPath;
@@ -31,7 +32,7 @@ public class View {
     public ChoiceBox chobx_language;
     String corpusPath;
     String savePath;
-    private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian");
+    private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian", "Russian", "Arabic");
 
     public View() {
         controller = new Controller();
@@ -54,31 +55,37 @@ public class View {
     }
 
     public void run () {
-        if (corpusPath == null){
+        if (corpusPath == null) {
             showAlert("Please insert corpus path");
+            return;
         }
-        if (savePath == null){
+        if (savePath == null) {
             showAlert("Please insert save files path");
-        }
-        try {
-            controller.run(corpusPath, savePath);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return;
+        } else {
+            try {
+                controller.run(corpusPath, savePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void showDictionary () {
         if (savePath == null){
             showAlert("Please insert save files path");
+            return;
         }
-        File dicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        File dicFile = new File(savePath + "\\indexResults\\dictionaryShow.txt");
         if (!dicFile.exists()){
             showAlert("There wasn't found a dictionary. Please load a new one");
         }
-        try {
-            Desktop.getDesktop().open(dicFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        else {
+            try {
+                Desktop.getDesktop().open(dicFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -89,9 +96,18 @@ public class View {
     }
 
     public void loadDictionary () {
+        if (savePath == null){
+            showAlert("Please insert save files path");
+            return;
+        }
         File newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
-        controller.loadDictionary (savePath, newDicFile);
-        System.out.println("loading succeed");
+        if (!newDicFile.exists()){
+            showAlert("There wasn't found a dictionary. Please load a new one");
+        }
+        else {
+            controller.loadDictionary (savePath, newDicFile);
+            showAlert("Loading successful");
+        }
     }
 
     public void stemming(){
@@ -104,7 +120,15 @@ public class View {
 
     public void reset(){
         if (! controller.reset(savePath)){
-            showAlert("The files and the memory are already cleared");
+/*            try {
+                Files.deleteIfExists(Paths.get(savePath + "\\indexResults"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+            showAlert("The files and memory have already been cleared");
+        }
+        else {
+            showAlert("Reset is done");
         }
 
     }

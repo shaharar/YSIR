@@ -29,6 +29,13 @@ public class Main extends Application {
     public static void main (String [] args) throws IOException {
 
         launch(args);
+
+
+
+
+
+
+
 /*        String corpusPath = "d:\\documents\\users\\shaharar\\Downloads\\corpus\\corpus";
         ReadFile rf = new ReadFile(false, "d:\\documents\\users\\shaharar\\Downloads\\test", corpusPath);
         try {

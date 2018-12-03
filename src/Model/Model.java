@@ -1,9 +1,10 @@
 package Model;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Model {
 
@@ -34,9 +35,17 @@ public class Model {
 
     public boolean reset(String savePath) {
         if (rf != null) {
-            File f = new File(savePath + "\\indexResults");
-            f.deleteOnExit();
-            rf.reset();
+/*            File f = new File(savePath + "\\indexResults");
+            for (File file: f.listFiles()) {
+                file.delete();
+            }
+            f.delete();
+            rf.reset();*/
+            try {
+                Files.deleteIfExists(Paths.get(savePath + "\\indexResults"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return true;
         }
         else{
@@ -45,7 +54,7 @@ public class Model {
     }
 
     public void loadDictionary(String savePath, File newDic) {
-        index = new Indexer(savePath);
+        index = new Indexer(savePath, isStemSelected);
         index.loadDictionary(newDic);
     }
 }

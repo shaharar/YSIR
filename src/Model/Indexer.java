@@ -1,8 +1,5 @@
 package Model;
 
-import com.sun.deploy.util.StringUtils;
-import javafx.util.Pair;
-
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -11,48 +8,56 @@ public class Indexer {
 
     private HashMap <String, ArrayList <Integer>> dictionary;
     String path;
+    private boolean withStemming;
+    String postingDir;
 
     // constructor
-    public Indexer(String path) {
+    public Indexer(String path, boolean withStemming) {
         dictionary = new HashMap<>();
         this.path = path;
+        this.withStemming = withStemming;
         new File(this.path + "\\indexResults").mkdir();
-        new File(this.path + "\\indexResults\\postingFiles").mkdir();
+        if (!withStemming){
+            postingDir = "\\indexResults\\postingFiles";
+        }
+        else{
+            postingDir = "\\indexResults\\postingFiles_Stemming";
+        }
+        new File(this.path + postingDir).mkdir();
         try {
-            (new File(path + "\\indexResults\\postingFiles\\posting_A.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_B.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_C.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_D.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_E.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_F.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_G.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_H.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_I.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_J.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_K.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_L.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_M.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_N.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_O.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_P.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_Q.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_R.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_S.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_T.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_U.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_V.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_W.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_X.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_Y.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_Z.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_numbers.txt")).createNewFile();
-            (new File(path + "\\indexResults\\postingFiles\\posting_other.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_B.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_C.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_D.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_E.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_F.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_G.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_H.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_I.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_J.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_K.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_L.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_M.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_N.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_O.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_P.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_Q.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_R.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_S.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_T.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_U.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_V.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_W.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_X.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_Y.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_Z.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_numbers.txt")).createNewFile();
+            (new File(path + postingDir + "\\posting_other.txt")).createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void index(HashMap<String, Term> terms, int docsInCollection) {
+    public void index(HashMap<String, Term> terms, int docsInCollection, boolean withStemming) {
 
         ArrayList<ArrayList<String>> chunkLists;
         chunkLists = new ArrayList<>();
@@ -170,7 +175,7 @@ public class Indexer {
         //read posting file from disk, and insert it's lines to list
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt")));
+            br = new BufferedReader(new FileReader(new File(path + postingDir + "\\posting_" + chunk + ".txt")));
             String line = "";
             while ((line = (br.readLine())) != null) {
                 listPosting.add(line);
@@ -275,7 +280,7 @@ public class Indexer {
         // create file writer
         FileWriter fwPosting = null;
         try {
-            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_" + chunk + ".txt"));
+            fwPosting = new FileWriter(new File(path + postingDir + "\\posting_" + chunk + ".txt"));
             fwPosting.write(strPosting.toString());
             fwPosting.close();
         } catch (IOException e) {
@@ -485,6 +490,7 @@ public class Indexer {
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
+        StringBuilder sbShowDic = new StringBuilder();
         ArrayList <String> strList = new ArrayList<>();
         for (String termStr: dictionary.keySet()) {
             strList.add(termStr);
@@ -500,28 +506,43 @@ public class Indexer {
             if (termStr.length() == 0){
                 break;
             }
+            sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2));
 //            sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
             sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0)).append("\n");
         }
-        File dictionary = new File(path + "\\indexResults\\dictionary.txt");
+
+        String dicPath;
+        if (!withStemming){
+            dicPath = "\\indexResults\\dictionary";
+        }
+        else{
+            dicPath = "\\indexResults\\dictionary_stemming";
+        }
+        File dictionary = new File(path + dicPath + ".txt");
+        File dictionaryShow = new File(path + dicPath + "Show.txt");
         try {
             dictionary.createNewFile();
+            dictionaryShow.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
         FileWriter fw = null;
+        FileWriter fwShow = null;
         try {
             fw = new FileWriter(dictionary);
+            fwShow = new FileWriter(dictionaryShow);
             fw.write(sb.toString());
+            fwShow.write(sbShowDic.toString());
             fw.close();
+            fwShow.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void finished(HashMap<String , Term> terms, int docsInCollection) {
+    public void finished(HashMap<String , Term> terms, int docsInCollection, boolean withStemming) {
         System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
-        index(terms, docsInCollection);
+        index(terms, docsInCollection, withStemming);
         writeDictionaryToDisk();
         System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
     }
