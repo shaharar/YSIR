@@ -95,7 +95,7 @@ public class Parse {
           String nextToken = "";
 
           //cities
-           if (token.equalsIgnoreCase(city) && cityIndexer != null){
+           if (token.equalsIgnoreCase(city) && cityIndexer != null && !city.equals("")){
                positionsInDoc.add(position);
                if (!cityDocs.containsKey(city.toUpperCase())) {
 //                   cityDocs.put(city.toUpperCase(), new ArrayList<>);
@@ -106,7 +106,8 @@ public class Parse {
                    docs.add(docID);
                    cityDocs.put(city.toUpperCase(), docs);
                }
-               else {
+               else if (!cityDocs.get(city.toUpperCase()).contains(docID))
+               {
 //                   if (cityPositions.get(city.toUpperCase()).containsKey(docID)){
 //                       ArrayList <Integer> positions = cityPositions.get(city.toUpperCase()).get(docID);
 //                       positions.add(position);

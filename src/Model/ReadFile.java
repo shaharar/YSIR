@@ -45,17 +45,20 @@ public class ReadFile {
 //                        String subByCity = docWithTags.substring(cityIdx + 8);
 //                        city = subByCity.substring(0, subByCity.indexOf(' '));
 //                    }
-                    String [] cityTag = e.outerHtml().split("<f P=\"104\">");
-                    String [] temspStr;
-                    if (cityTag.length > 1){
-                        temspStr = cityTag[1].split("</f>");
-                        city = temspStr[0];
-                        String [] firstStr = city.split(" ");
-                        city = firstStr[0];
-                    }
-                    else{
-                        city = cityTag[0];
-                    }
+//                    city = "Johannesburg";
+//                    String [] cityTag = e.outerHtml().split("<f P=\"104\">");
+//                    String [] temspStr;
+//                    if (cityTag.length > 1){
+//                        temspStr = cityTag[1].split("</f>");
+//                        city = temspStr[0];
+//                        String [] firstStr = city.split(" ");
+//                        city = firstStr[0];
+//                    }
+//                    else{
+//                        city = cityTag[0];
+//                    }
+//                    System.out.println(e.toString());
+                    city = "vienna";
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
