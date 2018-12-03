@@ -39,10 +39,21 @@ public class ReadFile {
                 for (Element e: elements) {
                     String docWithTags = e.select("DOC").outerHtml();
                     String city = "";
-                    int cityIdx = docWithTags.indexOf("<F P=104>");
-                    if (cityIdx != -1){
-                        String subByCity = docWithTags.substring(cityIdx + 8);
-                        city = subByCity.substring(0, subByCity.indexOf(' '));
+//                    int cityIdx = docWithTags.indexOf("<F P=104>");
+//                    if (cityIdx != -1){
+//                        String subByCity = docWithTags.substring(cityIdx + 8);
+//                        city = subByCity.substring(0, subByCity.indexOf(' '));
+//                    }
+                    String [] cityTag = e.outerHtml().split("<f P=\"104\">");
+                    String [] temspStr;
+                    if (cityTag.length > 1){
+                        temspStr = cityTag[1].split("</f>");
+                        city = temspStr[0];
+                        String [] firstStr = city.split(" ");
+                        city = firstStr[0];
+                    }
+                    else{
+                        city = cityTag[0];
                     }
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();

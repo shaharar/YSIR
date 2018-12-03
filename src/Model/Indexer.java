@@ -258,7 +258,7 @@ public class Indexer {
                 }
                 listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdf + "]");
                // dictionary.put(termStr, pointer);
-                dictionary.replace(termStr, newTermInfo);
+                dictionary.replace(termStr,termInfo,newTermInfo);
             }
         }
 

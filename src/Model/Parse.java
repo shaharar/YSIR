@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.beans.binding.IntegerBinding;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,11 +13,14 @@ import java.util.regex.Pattern;
 public class Parse {
     private String[] tokens; // the following data structure contains tokens
     HashMap<String, Term> terms; // the following data structure contains final terms in X docs
+//    HashMap<String, HashMap<String, ArrayList <Integer>>> cityPositions;
+    HashMap <String , ArrayList <String>> cityDocs;
     private HashSet <String> termsPerDoc; // the following data structure contains final terms in one doc
     private HashSet<String> stopWords; // the following data structure contains the stop words
     private String stopWordsPath;
     private HashMap<String,String> replaceMap;
     private Indexer indexer;
+    private CityIndexer cityIndexer;
     private Stemmer stemmer;
     private StringBuilder replaceSb;
     StringBuilder sb;
@@ -28,7 +33,9 @@ public class Parse {
     int counter;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path, String corpusPath){
-      terms = new HashMap<String, Term>();
+      terms = new HashMap<>();
+//      cityPositions = new HashMap<>();
+      cityDocs = new HashMap<>();
       termsPerDoc = new HashSet<>();
       stopWords = new HashSet<String>();
       stopWordsPath = corpusPath + "\\stop_words.txt";
@@ -36,7 +43,12 @@ public class Parse {
       replaceMap = new HashMap<>();
       initReplaceMap();
       indexer = new Indexer(path);
-      stemmer = new Stemmer();
+       try {
+           cityIndexer = new CityIndexer(path);
+       } catch (IOException e) {
+           cityIndexer = null;
+       }
+       stemmer = new Stemmer();
       sb = new StringBuilder();
       docNo = "";
       this.withStemming = withStemming;
@@ -54,6 +66,8 @@ public class Parse {
        termsPerDoc = new HashSet<>();
        currentIdx = 0;
        this.docNo = docID;
+       ArrayList <Integer> positionsInDoc = new ArrayList<>();
+       int position = 0;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
                "Feb", "FEB", "February", "FEBRUARY",
                "Mar", "MAR", "March", "MARCH",
@@ -78,6 +92,32 @@ public class Parse {
           Term term = null;
           token = tokens[currentIdx];
           String nextToken = "";
+
+          //cities
+           if (token.equalsIgnoreCase(city) && cityIndexer != null){
+               positionsInDoc.add(position);
+               if (!cityDocs.containsKey(city.toUpperCase())) {
+//                   cityDocs.put(city.toUpperCase(), new ArrayList<>);
+//                   ArrayList<Integer> positions = new ArrayList<>();
+//                   positions.add(position);
+//                   cityPositions.get(city.toUpperCase()).put(docID, positions);
+                   ArrayList <String> docs = new ArrayList<>();
+                   docs.add(docID);
+                   cityDocs.put(city.toUpperCase(), docs);
+               }
+               else {
+//                   if (cityPositions.get(city.toUpperCase()).containsKey(docID)){
+//                       ArrayList <Integer> positions = cityPositions.get(city.toUpperCase()).get(docID);
+//                       positions.add(position);
+//                   }
+//                   else{
+//                       ArrayList<Integer> positions = new ArrayList<>();
+//                       positions.add(position);
+//                       cityPositions.get(city.toUpperCase()).put(docID, positions);
+//                   }
+                   cityDocs.get(city.toUpperCase()).add(docID);
+               }
+           }
 
           //numbers
           if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
@@ -165,8 +205,14 @@ public class Parse {
             }
          }
          currentIdx++;
+           position++;
       }
-      sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + "\n");
+      String docCityPositions = "";
+       for (Integer pos:positionsInDoc) {
+           docCityPositions += pos + " ";
+       }
+       positionsInDoc.clear();
+      sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + docCityPositions + "\n");
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
@@ -175,6 +221,10 @@ public class Parse {
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms, docsInCollection);
            terms.clear();
+           if (cityIndexer != null){
+               cityIndexer.index(cityDocs);
+               cityDocs.clear();
+           }
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
            System.out.println("index done"+ "\n");////////////////////////////////////////////////////////////test
@@ -874,6 +924,11 @@ public class Parse {
         System.out.println("'finished' called in parse");
        indexer.finished(terms, docsInCollection);
        indexer.writeDocsInfoToDisk(sb);
+       if (cityIndexer != null){
+           cityIndexer.finished(cityDocs);
+           cityIndexer.writeDictionaryToDisk();
+       }
+
     }
 
 /*    public void writeDocsInfo(){
