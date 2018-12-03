@@ -39,23 +39,26 @@ public class ReadFile {
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
                     String docWithTags = e.select("DOC").outerHtml();
-                    String city = "";
+                    String city = getCityByTag(e.outerHtml());
 //                    int cityIdx = docWithTags.indexOf("<F P=104>");
 //                    if (cityIdx != -1){
 //                        String subByCity = docWithTags.substring(cityIdx + 8);
 //                        city = subByCity.substring(0, subByCity.indexOf(' '));
 //                    }
-                    String [] cityTag = e.outerHtml().split("<f p=\"104\">");
-                    String [] tempStr;
-                    if (cityTag.length > 1){
-                        tempStr = cityTag[1].split("</f>");
-                        city = tempStr[0];
-                        String [] firstStr = city.split(" ");
-                        city = firstStr[0];
-                    }
-                    else{
-                        city = cityTag[0];
-                    }
+//                    city = "Johannesburg";
+//                    String [] cityTag = e.outerHtml().split("<f P=\"104\">");
+//                    String [] temspStr;
+//                    if (cityTag.length > 1){
+//                        temspStr = cityTag[1].split("</f>");
+//                        city = temspStr[0];
+//                        String [] firstStr = city.split(" ");
+//                        city = firstStr[0];
+//                    }
+//                    else{
+//                        city = cityTag[0];
+//                    }
+//                    System.out.println(e.toString());
+//                    city = "vienna";
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
@@ -64,6 +67,19 @@ public class ReadFile {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String getCityByTag(String str) {
+        String city = "";
+        String [] tempStr;
+        String [] lines = str.split("\n");
+        for (int i = 0; i < lines.length; i++){
+            if (lines[i].equals(" <f p=\"104\">")){
+                tempStr = lines[i + 1].split(" ");
+                return tempStr[3];
+            }
+        }
+        return "";
     }
 
     public void reset() {

@@ -18,8 +18,9 @@ public class CityIndexer {
         this.path = path;
         httpRequest = new HTTPRequest("https://restcountries.eu/rest/v2/all");
         countries = new CountriesCollection(httpRequest.getJsonObj());
+        new File(this.path + "\\cityIndexResults").mkdir();
         try {
-            (new File(path + "\\indexResults\\postingFiles\\posting_city.txt")).createNewFile();
+            (new File(path + "\\cityIndexResults\\posting_city.txt")).createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,7 +34,7 @@ public class CityIndexer {
         //read posting file from disk, and insert it's lines to list
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(new File(path + "\\indexResults\\postingFiles\\posting_city.txt")));
+            br = new BufferedReader(new FileReader(new File(path + "\\cityIndexResults\\posting_city.txt")));
             String line = "";
             while ((line = (br.readLine())) != null) {
                 listPosting.add(line);
@@ -108,7 +109,7 @@ public class CityIndexer {
         // create file writer
         FileWriter fwPosting = null;
         try {
-            fwPosting = new FileWriter(new File(path + "\\indexResults\\postingFiles\\posting_city.txt"));
+            fwPosting = new FileWriter(new File(path + "\\cityIndexResults\\posting_city.txt"));
             fwPosting.write(strPosting.toString());
             fwPosting.close();
         } catch (IOException e) {
@@ -136,7 +137,7 @@ public class CityIndexer {
             }
             sb.append(cityStr + " : " + citiesDictionary.get(cityStr)).append("\n");
         }
-        File dictionary = new File(path + "\\indexResults\\citiesDictionary.txt");
+        File dictionary = new File(path + "\\cityIndexResults\\citiesDictionary.txt");
         try {
             dictionary.createNewFile();
         } catch (IOException e) {
