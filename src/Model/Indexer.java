@@ -25,6 +25,7 @@ public class Indexer {
         }
         new File(this.path + postingDir).mkdir();
         try {
+            (new File(path + postingDir + "\\posting_A.txt")).createNewFile();
             (new File(path + postingDir + "\\posting_B.txt")).createNewFile();
             (new File(path + postingDir + "\\posting_C.txt")).createNewFile();
             (new File(path + postingDir + "\\posting_D.txt")).createNewFile();
@@ -506,9 +507,9 @@ public class Indexer {
             if (termStr.length() == 0){
                 break;
             }
-            sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2));
+            sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2) + "\n");
 //            sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
-            sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0)).append("\n");
+            sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0) + "\n");
         }
 
         String dicPath;

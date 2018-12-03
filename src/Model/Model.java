@@ -1,5 +1,7 @@
 package Model;
 
+import View.View;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,23 +36,25 @@ public class Model {
     }
 
     public boolean reset(String savePath) {
+        File dirToDelete = new File(savePath + "\\indexResults");
+        deleteDirectory(dirToDelete);
         if (rf != null) {
-/*            File f = new File(savePath + "\\indexResults");
-            for (File file: f.listFiles()) {
-                file.delete();
-            }
-            f.delete();
-            rf.reset();*/
-            try {
-                Files.deleteIfExists(Paths.get(savePath + "\\indexResults"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            rf.reset();
             return true;
         }
         else{
             return false;
         }
+    }
+
+    private void deleteDirectory(File dir) {
+        File[] filesInDir = dir.listFiles();
+        if (filesInDir != null) {
+            for (File file : filesInDir) {
+                deleteDirectory(file);
+            }
+        }
+        dir.delete();
     }
 
     public void loadDictionary(String savePath, File newDic) {

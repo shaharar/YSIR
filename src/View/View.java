@@ -76,7 +76,13 @@ public class View {
             showAlert("Please insert save files path");
             return;
         }
-        File dicFile = new File(savePath + "\\indexResults\\dictionaryShow.txt");
+        File dicFile;
+        if (chbx_stemming.isSelected()){
+            dicFile = new File(savePath + "\\indexResults\\dictionary_stemmingShow.txt");
+        }
+        else{
+            dicFile = new File(savePath + "\\indexResults\\dictionaryShow.txt");
+        }
         if (!dicFile.exists()){
             showAlert("There wasn't found a dictionary. Please load a new one");
         }
@@ -120,11 +126,6 @@ public class View {
 
     public void reset(){
         if (! controller.reset(savePath)){
-/*            try {
-                Files.deleteIfExists(Paths.get(savePath + "\\indexResults"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
             showAlert("The files and memory have already been cleared");
         }
         else {
