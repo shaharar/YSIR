@@ -64,6 +64,7 @@ public class Parse {
 
    // the following function parses the text of a specific document by the defined rules
    public void parseDocText(String docText, String docID, String city) {
+
        termsPerDoc = new HashSet<>();
        currentIdx = 0;
        this.docNo = docID;
@@ -122,7 +123,7 @@ public class Parse {
            }
 
           //numbers
-          if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
+          else if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
               if (currentIdx + 1 < tokens.length) {
                   nextToken = tokens[currentIdx + 1];
               }
@@ -223,7 +224,7 @@ public class Parse {
       docsInCollection++;
       termsPerDoc.clear();
 
-       if (docsTotal > 10000){
+       if (docsTotal > 50000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms, docsInCollection, withStemming);
            terms.clear();
@@ -401,6 +402,7 @@ public class Parse {
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
    private Term lettersCase(String token) {
        Term term = null;
+       removeDashes(token);
        token = stemming(token);
       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
@@ -448,7 +450,19 @@ public class Parse {
       return term;
    }
 
-   // the following function adds final terms to the data structure in this format : NUMBER%.
+    private String removeDashes(String token) {
+        int i = 0;
+        char c = ' ';
+        if (token.length() > 0) {
+           c = token.charAt(0);
+       }
+       while (token.length() > 0 && c == '-'){
+            i++;
+       }
+       return token.substring(i);
+    }
+
+    // the following function adds final terms to the data structure in this format : NUMBER%.
    private Term percentage(String token) {
        Term term = null;
        if (terms.containsKey(token.replaceAll("%", "") + "%")){
@@ -925,6 +939,13 @@ public class Parse {
         return term;
     }
 
+    private String stemming (String token){
+        if(withStemming){
+            return stemmer.stem(token);
+        }
+        return token;
+    }
+
 
     public void finished() {
         System.out.println("'finished' called in parse");
@@ -936,18 +957,6 @@ public class Parse {
        }
 
     }
-
-/*    public void writeDocsInfo(){
-        indexer.writeDocsInfoToDisk(sb);
-    }
-
-
-   private String stemming (String token){
-       if(withStemming){
-           return stemmer.stem(token);
-       }
-       return token;
-   }
 
     private boolean isNumeric(String str)
     {

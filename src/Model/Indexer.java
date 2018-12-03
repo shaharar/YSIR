@@ -186,7 +186,7 @@ public class Indexer {
             e.printStackTrace();
         }
 
-        int currIdx = listPosting.size(); // the next free index in the listPosting
+        int currIdx = listPosting.size() - 1; // the next free index in the listPosting
 
         for (String termStr : listChunk) {
             Term term = terms.get(termStr);
@@ -511,9 +511,11 @@ public class Indexer {
             if (termStr.length() == 0){
                 break;
             }
-            sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2) + "\n");
-//            sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
-            sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0) + "\n");
+            if (dictionary.get(termStr).get(2) > 1) {
+                sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2) + "\n");
+//              sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
+                sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0) + "\n");
+            }
         }
 
         String dicPath;
