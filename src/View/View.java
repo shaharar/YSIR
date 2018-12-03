@@ -3,6 +3,7 @@ package View;
 import Controller.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -42,16 +43,20 @@ public class View {
         Stage stage = new Stage();
         DirectoryChooser fc = new DirectoryChooser();
         corpusDirSelected = fc.showDialog(stage);
-        corpusPath = corpusDirSelected.getAbsolutePath();
-        txt_corpusChooser.setText(corpusPath);
+        if (corpusDirSelected != null) {
+            corpusPath = corpusDirSelected.getAbsolutePath();
+            txt_corpusChooser.setText(corpusPath);
+        }
     }
 
     public void saveFilesPath() {
         Stage stage = new Stage();
         DirectoryChooser fc = new DirectoryChooser();
         saveDirSelected = fc.showDialog(stage);
-        savePath = saveDirSelected.getAbsolutePath();
-        txt_savePathChooser.setText(savePath);
+        if (saveDirSelected != null) {
+            savePath = saveDirSelected.getAbsolutePath();
+            txt_savePathChooser.setText(savePath);
+        }
     }
 
     public void run () {
@@ -132,5 +137,15 @@ public class View {
             showAlert("Reset is done");
         }
 
+    }
+
+    public void setCorpusPath() {
+       // txt_corpusChooser.setText(txt_corpusChooser.getSelectedText());
+        corpusPath = txt_corpusChooser.getSelectedText();
+    }
+
+    public void setSavePath() {
+       // txt_savePathChooser.setText(txt_savePathChooser.getSelectedText());
+        savePath = txt_savePathChooser.getSelectedText();
     }
 }

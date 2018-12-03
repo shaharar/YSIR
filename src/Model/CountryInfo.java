@@ -45,10 +45,10 @@ public class CountryInfo {
 //    }
 
     private String parse(String string) {
-            double num;
+            int num;
             String parseStr = "";
             try{
-                num = Double.parseDouble(string.replace(",",""));
+                num = Integer.parseInt(string);
             } catch (Exception e){
                 return parseStr;
             }

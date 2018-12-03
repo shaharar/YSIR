@@ -232,6 +232,7 @@ public class Indexer {
                     double weight = docsList.get(docNo).intValue() * currIdf;
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
                 }
+           //     String currIdfStr =
                 listPosting.add(docsListStr + "[" + currIdf + "]");
                 pointer = currIdx;
                 termInfo = new ArrayList<>();
@@ -492,7 +493,11 @@ public class Indexer {
 
         StringBuilder sb = new StringBuilder();
         StringBuilder sbShowDic = new StringBuilder();
-        ArrayList <String> strList = new ArrayList<>();
+        TreeMap <String, String> sortedTerms = new TreeMap<>();
+        for (String termStr: dictionary.keySet()) {
+            sortedTerms.put(termStr, "");
+        }
+/*        ArrayList <String> strList = new ArrayList<>();
         for (String termStr: dictionary.keySet()) {
             strList.add(termStr);
         }
@@ -501,9 +506,8 @@ public class Indexer {
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
             }
-        });
-        //sb.setLength(dictionary.keySet().size());
-        for (String termStr : strList) {
+        });*/
+        for (String termStr : sortedTerms.keySet()) {
             if (termStr.length() == 0){
                 break;
             }

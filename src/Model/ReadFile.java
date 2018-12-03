@@ -45,11 +45,11 @@ public class ReadFile {
 //                        String subByCity = docWithTags.substring(cityIdx + 8);
 //                        city = subByCity.substring(0, subByCity.indexOf(' '));
 //                    }
-                    String [] cityTag = e.outerHtml().split("<f P=\"104\">");
-                    String [] temspStr;
+                    String [] cityTag = e.outerHtml().split("<f p=\"104\">");
+                    String [] tempStr;
                     if (cityTag.length > 1){
-                        temspStr = cityTag[1].split("</f>");
-                        city = temspStr[0];
+                        tempStr = cityTag[1].split("</f>");
+                        city = tempStr[0];
                         String [] firstStr = city.split(" ");
                         city = firstStr[0];
                     }
@@ -68,7 +68,6 @@ public class ReadFile {
 
     public void reset() {
         parse.reset();
-//        parse = new Parse(false,"","");
     }
 }
 

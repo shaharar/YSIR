@@ -15,7 +15,7 @@ public class HTTPRequest {
         URL url = new URL(urlAddress);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         httpConn.setRequestMethod("GET");
-        httpConn.setRequestProperty("Accept", "applicatiom/json");
+        httpConn.setRequestProperty("Accept", "application/json");
         String json = "{\"result\":";
         Scanner scanner = new Scanner(url.openStream());
         while (scanner.hasNext()) {

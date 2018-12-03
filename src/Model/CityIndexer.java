@@ -121,8 +121,8 @@ public class CityIndexer {
 
         StringBuilder sb = new StringBuilder();
         ArrayList <String> strList = new ArrayList<>();
-        for (String termStr: citiesDictionary.keySet()) {
-            strList.add(termStr);
+        for (String cityStr: citiesDictionary.keySet()) {
+            strList.add(cityStr);
         }
         Collections.sort(strList, new Comparator<String>() {
             @Override
