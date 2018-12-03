@@ -42,13 +42,14 @@ public class Parse {
       setStopWords();
       replaceMap = new HashMap<>();
       initReplaceMap();
-      indexer = new Indexer(path);
        try {
            cityIndexer = new CityIndexer(path);
        } catch (IOException e) {
            cityIndexer = null;
        }
        stemmer = new Stemmer();
+      indexer = new Indexer(path, withStemming);
+      stemmer = new Stemmer();
       sb = new StringBuilder();
       docNo = "";
       this.withStemming = withStemming;
@@ -219,7 +220,7 @@ public class Parse {
 
        if (docsTotal > 10000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
-           indexer.index(terms, docsInCollection);
+           indexer.index(terms, docsInCollection, withStemming);
            terms.clear();
            if (cityIndexer != null){
                cityIndexer.index(cityDocs);
@@ -922,7 +923,7 @@ public class Parse {
 
     public void finished() {
         System.out.println("'finished' called in parse");
-       indexer.finished(terms, docsInCollection);
+       indexer.finished(terms, docsInCollection,withStemming);
        indexer.writeDocsInfoToDisk(sb);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);
@@ -1611,6 +1612,6 @@ public class Parse {
         replaceSb = new StringBuilder();
         sb = new StringBuilder();
         stemmer = new Stemmer();
-        indexer = new Indexer("");
+        //indexer = new Indexer("");
     }
 }

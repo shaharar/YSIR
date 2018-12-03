@@ -21,7 +21,8 @@ public class ReadFile {
         corpus.delete();
         for (File file:files) {
             //System.out.println(file.getPath().toString());
-            if (file.getPath().toString().equals(path + "\\stop_words.txt")){
+          //  if (file.getPath().toString().equals(path + "\\stop_words.txt")){
+            if (! file.isDirectory()){ // to pass the stop words file
                 continue;
             }
             separateFileToDocs(file);
@@ -67,7 +68,7 @@ public class ReadFile {
 
     public void reset() {
         parse.reset();
-        parse = new Parse(false,"","");
+//        parse = new Parse(false,"","");
     }
 }
 
