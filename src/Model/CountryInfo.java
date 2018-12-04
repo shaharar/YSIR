@@ -17,9 +17,9 @@ public class CountryInfo {
         this.countryName = cityInfo.get("name").toString();
         this.currency = cityInfo.getJSONArray("currencies").getJSONObject(0).get("name").toString();
         this.population = parse(cityInfo.get("population").toString());
-        if (population.contains(".")){
+/*        if (population.contains(".")){
             population.substring(0, population.indexOf(".") + 3);
-        }
+        }*/
         this.capitalCity = cityInfo.get("capital").toString().toUpperCase();
 //        this.positionsInDocs = new HashMap<>();
     }

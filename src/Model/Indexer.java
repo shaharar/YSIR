@@ -1,5 +1,8 @@
 package Model;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -579,6 +582,15 @@ public class Indexer {
         System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
         index(terms, docsInCollection, withStemming);
         writeDictionaryToDisk();
+/*        Map<String,Integer> mapCSV = new HashMap<>();
+        for (String term: dictionary.keySet()) {
+            mapCSV.put(term,dictionary.get(term).get(2));
+        }
+        try {
+            createCSVFile(mapCSV);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
     }
 
@@ -621,4 +633,19 @@ public class Indexer {
             e.printStackTrace();
         }
     }
+
+/*    public void createCSVFile (Map<String,Integer> map) throws IOException {
+        FileWriter fw = new FileWriter(path + "book.csv");
+        String[] headers = {"term","totalFreq"};
+        try (CSVPrinter printer = new CSVPrinter(fw, CSVFormat.DEFAULT.withHeader(headers))) {
+            map.forEach((author,title) -> {
+                try{
+                    printer.printRecord(author,title);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            });
+        }
+
+    }*/
 }

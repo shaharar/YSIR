@@ -30,8 +30,10 @@ public class Parse {
     int docsTotal;
     int docsInCollection;
 
-    int maxPositions = 0;
+/*    int maxPositions = 0;
     String maxCity = "";
+    String cityPositions = "";
+    String docNumber = "";*/
     int counter;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path, String corpusPath){
@@ -225,15 +227,26 @@ public class Parse {
            docCityPositions += pos + " ";
        }
 
-       if (positionsInDoc.size() > maxPositions) {
+       //////////////////////////////////////////////////////////////////////////////////////////////////////
+/*       if (positionsInDoc.size() > maxPositions) {
            maxPositions = positionsInDoc.size();
            maxCity = city;
-       }
+           cityPositions = docCityPositions;
+           docNumber = docID;
+       }*/
+       //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
        positionsInDoc.clear();
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [" + docCityPositions + "]" + "\n");
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
+
+
+
+
+
 
        if (docsTotal > 50000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
@@ -249,7 +262,7 @@ public class Parse {
            docsTotal = 0;
 
 
-           System.out.println("DocNo: " + docNo + " Max positions: " + maxPositions + "positions: [" + docCityPositions + "] " + "City: " + maxCity);
+       //    System.out.println("DocNo: " + docNumber + " Max positions: " + maxPositions + "positions: [" + cityPositions + "] " + "City: " + maxCity);
            counter++;
        }
    }

@@ -9,9 +9,6 @@ public class CityIndexer {
     private CountriesCollection countries;
     private String path;
 
-    ///////////////////////////////////////////////////////////////
-    private int notCapitalCity = 0;
-
 
     public CityIndexer(String path) throws IOException {
         citiesDictionary = new HashMap<>();
@@ -61,8 +58,6 @@ public class CityIndexer {
                     currency = "";
                     population = "";
 
-                    //////////////////////////////////////
-                    notCapitalCity++;
                 }
 //                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
 //                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
@@ -175,7 +170,6 @@ public class CityIndexer {
 
 
         System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
-        System.out.println("Not capital cities: " + notCapitalCity); ////////////////////////////////////////////////////////////////////////////////////////
     }
 }
 
