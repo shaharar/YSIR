@@ -10,14 +10,14 @@ import java.util.HashSet;
 public class ReadFile {
 
     private Parse parse;
+  //  private HashSet<String> languages;
 
     public ReadFile(boolean withStemming, String path, String corpusPath) {
         parse = new Parse(withStemming, path, corpusPath);
+//        languages = new HashSet<>();
     }
 
     public void getFilesFromDir (String path) throws IOException {
-
-        HashSet<String> languages = new HashSet<>();
         File corpus = new File(path);
         File[] files = corpus.listFiles();
         corpus.delete();
@@ -27,13 +27,12 @@ public class ReadFile {
             if (! file.isDirectory()){ // to pass the stop words file
                 continue;
             }
-            separateFileToDocs(file, languages);
+            separateFileToDocs(file);
         }
         parse.finished();
     }
 
-    private void separateFileToDocs(File file, HashSet<String> languages){
-
+    private void separateFileToDocs(File file){
         File [] docsInFile = file.listFiles();
         for (File d : docsInFile) {
             try {
@@ -42,8 +41,8 @@ public class ReadFile {
                 for (Element e: elements) {
                     String docWithTags = e.select("DOC").outerHtml();
                     String city = getCityByTag(e.outerHtml());
-                    String language = getLanguageByTag(e.outerHtml());
-                    languages.add(language);
+                 //   String language = getLanguageByTag(e.outerHtml());
+                 //   languages.add(language);
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
@@ -82,6 +81,11 @@ public class ReadFile {
 
     public void reset() {
         parse.reset();
+   //     languages.clear();
     }
+
+/*    public HashSet<String> getLanguages() {
+        return languages;
+    }*/
 }
 

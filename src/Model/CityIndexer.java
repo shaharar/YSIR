@@ -1,16 +1,16 @@
 package Model;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 
 public class CityIndexer {
     private HashMap<String, Integer> citiesDictionary;
     private HTTPRequest httpRequest;
     private CountriesCollection countries;
     private String path;
+
+    ///////////////////////////////////////////////////////////////
+    private int notCapitalCity = 0;
 
 
     public CityIndexer(String path) throws IOException {
@@ -60,6 +60,9 @@ public class CityIndexer {
                     countryName = "";
                     currency = "";
                     population = "";
+
+                    //////////////////////////////////////
+                    notCapitalCity++;
                 }
 //                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
 //                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
@@ -122,17 +125,23 @@ public class CityIndexer {
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
-        ArrayList <String> strList = new ArrayList<>();
-        for (String cityStr: citiesDictionary.keySet()) {
-            strList.add(cityStr);
-        }
-        Collections.sort(strList, new Comparator<String>() {
+     //   ArrayList <String> strList = new ArrayList<>();
+        TreeMap<String, String> sortedCities = new TreeMap<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
             }
         });
-        for (String cityStr : strList) {
+        for (String cityStr: citiesDictionary.keySet()) {
+            sortedCities.put(cityStr,"");
+        }
+/*        Collections.sort(strList, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareToIgnoreCase(o2);
+            }
+        });*/
+        for (String cityStr : sortedCities.keySet()) {
             if (cityStr.length() == 0){
                 break;
             }
@@ -155,10 +164,18 @@ public class CityIndexer {
     }
 
     public void finished(HashMap<String , ArrayList <String>> cityDocs) {
+
+
         System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
+
+
         index(cityDocs);
         writeDictionaryToDisk();
+
+
+
         System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
+        System.out.println("Not capital cities: " + notCapitalCity); ////////////////////////////////////////////////////////////////////////////////////////
     }
 }
 

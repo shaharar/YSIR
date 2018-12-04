@@ -236,7 +236,7 @@ public class Indexer {
                             weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
                         }
                     }
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")){
@@ -496,7 +496,7 @@ public class Indexer {
 
 
     public void writeDocsInfoToDisk (StringBuilder sb){
-        File docsInformation = new File(path + "\\indexResults\\docsInformation.txt");
+        File docsInformation = new File(path + "\\docsInformation.txt");
         try {
             docsInformation.createNewFile();
         } catch (IOException e) {
@@ -516,7 +516,12 @@ public class Indexer {
 
         StringBuilder sb = new StringBuilder();
         StringBuilder sbShowDic = new StringBuilder();
-        TreeMap <String, String> sortedTerms = new TreeMap<>();
+        TreeMap <String, String> sortedTerms = new TreeMap<>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareToIgnoreCase(o2);
+            }
+        });
         for (String termStr: dictionary.keySet()) {
             sortedTerms.put(termStr, "");
         }
@@ -534,11 +539,11 @@ public class Indexer {
             if (termStr.length() == 0){
                 break;
             }
-            if (dictionary.get(termStr).get(2) > 1) {
+      //      if (dictionary.get(termStr).get(2) > 1) {
                 sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2) + "\n");
 //              sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
                 sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0) + "\n");
-            }
+      //      }
         }
 
         String dicPath;

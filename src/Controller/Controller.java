@@ -2,8 +2,10 @@ package Controller;
 
 import Model.Model;
 import View.View;
+import javafx.collections.ObservableList;
 
 import java.io.File;
+import java.util.HashSet;
 
 
 public class Controller {
@@ -30,4 +32,8 @@ public class Controller {
     public void loadDictionary(String savePath, File newDic) {
         model.loadDictionary (savePath, newDic);
     }
+
+/*    public HashSet<String> getLanguages() {
+        return model.getLanguages();
+    }*/
 }

@@ -30,6 +30,8 @@ public class Parse {
     int docsTotal;
     int docsInCollection;
 
+    int maxPositions = 0;
+    String maxCity = "";
     int counter;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path, String corpusPath){
@@ -222,13 +224,18 @@ public class Parse {
        for (Integer pos:positionsInDoc) {
            docCityPositions += pos + " ";
        }
+
+       if (positionsInDoc.size() > maxPositions) {
+           maxPositions = positionsInDoc.size();
+           maxCity = city;
+       }
        positionsInDoc.clear();
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [" + docCityPositions + "]" + "\n");
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
 
-       if (docsTotal > 40000){
+       if (docsTotal > 50000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms, docsInCollection, withStemming);
            terms.clear();
@@ -242,9 +249,7 @@ public class Parse {
            docsTotal = 0;
 
 
-
-
-
+           System.out.println("DocNo: " + docNo + " Max positions: " + maxPositions + "positions: [" + docCityPositions + "] " + "City: " + maxCity);
            counter++;
        }
    }
@@ -991,12 +996,11 @@ public class Parse {
     public void finished() {
         System.out.println("'finished' called in parse");
        indexer.finished(terms, docsInCollection,withStemming);
-       indexer.writeDocsInfoToDisk(sb);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);
            cityIndexer.writeDictionaryToDisk();
        }
-
+        indexer.writeDocsInfoToDisk(sb);
     }
 
     private boolean isNumeric(String str)

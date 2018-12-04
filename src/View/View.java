@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 
 public class View {
 
@@ -126,6 +127,7 @@ public class View {
     }
 
     public void setLanguages(){
+      //  HashSet<String> languages = controller.getLanguages();
         chobx_language.setItems(languages);
     }
 

@@ -1,7 +1,10 @@
 package Model;
 
+import javafx.collections.ObservableList;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 public class Model {
 
@@ -58,4 +61,8 @@ public class Model {
         index = new Indexer(savePath, isStemSelected);
         index.loadDictionary(newDic);
     }
+
+/*    public HashSet<String> setLanguages() {
+        return rf.getLanguages();
+    }*/
 }
