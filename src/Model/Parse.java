@@ -93,6 +93,7 @@ public class Parse {
        while (currentIdx < tokens.length) {
           Term term = null;
           token = tokens[currentIdx];
+          removeDelimiters(token);
           String nextToken = "";
 
           //cities
@@ -244,6 +245,40 @@ public class Parse {
            counter++;
        }
    }
+
+    private void removeDelimiters(String token) {
+       HashSet<String>delimiters = new HashSet<>();
+       setDelimiters(delimiters);
+       int i = 0;
+       char c = '#';
+       while (i < token.length() && delimiters.contains(c)){
+           c = token.charAt(i);
+           i++;
+       }
+       if((token.charAt(token.length() - 1) == '.' || token.charAt(token.length() - 1) == '-')){
+           token.substring(i - 1, token.length() - 1);
+       }
+       else {
+           token.substring(i - 1);
+       }
+    }
+
+    private void setDelimiters(HashSet<String> delimiters){
+       delimiters.add(".");
+       delimiters.add(",");
+       delimiters.add("#");
+       delimiters.add("|");
+       delimiters.add(":");
+       delimiters.add("@");
+       delimiters.add("!");
+       delimiters.add("^");
+       delimiters.add("&");
+       delimiters.add("*");
+       delimiters.add("'");
+       delimiters.add("~");
+       delimiters.add("`");
+       delimiters.add(";");
+    }
 
 
     private Term numbers (String token) {
@@ -456,8 +491,9 @@ public class Parse {
         if (token.length() > 0) {
            c = token.charAt(0);
        }
-       while (token.length() > 0 && c == '-'){
+       while (i < token.length() && c == '-'){
             i++;
+            c = token.charAt(i);
        }
        return token.substring(i);
     }

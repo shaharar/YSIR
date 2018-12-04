@@ -232,8 +232,9 @@ public class Indexer {
                     double weight = docsList.get(docNo).intValue() * currIdf;
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
                 }
-           //     String currIdfStr =
-                listPosting.add(docsListStr + "[" + currIdf + "]");
+                String currIdfStr = Double.toString(currIdf);
+                currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
+                listPosting.add(docsListStr + "[" + currIdfStr + "]");
                 pointer = currIdx;
                 termInfo = new ArrayList<>();
                 termInfo.add(pointer);
@@ -263,7 +264,9 @@ public class Indexer {
                     double weight = docsList.get(docNo).intValue() * currIdf;
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
                 }
-                listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdf + "]");
+                String currIdfStr = Double.toString(currIdf);
+                currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
+                listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
                // dictionary.put(termStr, pointer);
                 dictionary.replace(termStr,termInfo,newTermInfo);
             }

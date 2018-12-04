@@ -36,7 +36,7 @@ public class Model {
     }
 
     public boolean reset(String savePath) {
-        File dirToDelete = new File(savePath + "\\indexResults");
+        File dirToDelete = new File(savePath);
         deleteDirectory(dirToDelete);
         if (rf != null) {
             rf.reset();
