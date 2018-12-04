@@ -131,7 +131,7 @@ public class View {
 
     public void reset(){
         if (! controller.reset(savePath)){
-            showAlert("The files and memory have already been cleared");
+            showAlert("The files and memory have been cleared");
         }
         else {
             showAlert("Reset is done");

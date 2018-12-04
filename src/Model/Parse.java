@@ -168,6 +168,9 @@ public class Parse {
           //words
           else {
         //      if (!(stopWords.contains(token.toLowerCase())) || ((stopWords.contains(token.toLowerCase())) && ((token.equalsIgnoreCase("may")) || (token.equalsIgnoreCase("between")) || (token.equalsIgnoreCase("and"))))) { //if token is not a stop word
+               if (token.length() > 2 && token.charAt(token.length() - 2) == '\'' && token.charAt(token.length() - 1) == 's'){
+                   token = token.substring(0, token.length() - 2);
+               }
                   //dates
                   if (months.contains(token)) {
                       term = dates(token);
@@ -220,12 +223,12 @@ public class Parse {
            docCityPositions += pos + " ";
        }
        positionsInDoc.clear();
-      sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + docCityPositions + "\n");
+      sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [" + docCityPositions + "]" + "\n");
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
 
-       if (docsTotal > 50000){
+       if (docsTotal > 40000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms, docsInCollection, withStemming);
            terms.clear();
@@ -247,20 +250,22 @@ public class Parse {
    }
 
     private void removeDelimiters(String token) {
+       if (token.length() == 0){
+           return;
+       }
        HashSet<String>delimiters = new HashSet<>();
        setDelimiters(delimiters);
        int i = 0;
        char c = '#';
-       while (i < token.length() && delimiters.contains(c)){
+       while (i < token.length() && delimiters.contains(""+ c)){
            c = token.charAt(i);
            i++;
        }
-       if((token.charAt(token.length() - 1) == '.' || token.charAt(token.length() - 1) == '-')){
-           token.substring(i - 1, token.length() - 1);
-       }
-       else {
-           token.substring(i - 1);
-       }
+           if (token.length() > 0 && ((token.charAt(token.length() - 1) == '.' || token.charAt(token.length() - 1) == '-'))) {
+               token.substring(i - 1, token.length() - 1);
+           } else {
+               token.substring(i - 1);
+           }
     }
 
     private void setDelimiters(HashSet<String> delimiters){

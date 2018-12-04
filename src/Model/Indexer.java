@@ -186,7 +186,7 @@ public class Indexer {
             e.printStackTrace();
         }
 
-        int currIdx = listPosting.size() - 1; // the next free index in the listPosting
+        int currIdx = listPosting.size() + 1; // the next free index in the listPosting
 
         for (String termStr : listChunk) {
             Term term = terms.get(termStr);
@@ -230,10 +230,20 @@ public class Indexer {
             if (!dictionary.containsKey(termStr)) {
                 for (String docNo : docsList.keySet()) {
                     double weight = docsList.get(docNo).intValue() * currIdf;
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
+                    String weightStr = Double.toString(weight);
+                    if (weightStr.contains(".")){
+                        if(weightStr.indexOf(".") + 3 < weightStr.length()) {
+                            weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
+                        }
+                    }
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");
                 }
                 String currIdfStr = Double.toString(currIdf);
-                currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
+                if (currIdfStr.contains(".")){
+                    if(currIdfStr.indexOf(".") + 3 < currIdfStr.length()) {
+                        currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
+                    }
+                }
                 listPosting.add(docsListStr + "[" + currIdfStr + "]");
                 pointer = currIdx;
                 termInfo = new ArrayList<>();
@@ -259,14 +269,24 @@ public class Indexer {
                 newTermInfo.add(pointer);
                 newTermInfo.add(currDf);
                 newTermInfo.add(currTotalFreq);
-                String linePosting = listPosting.get(pointer);
+                String linePosting = listPosting.get(pointer - 1);
                 for (String docNo : docsList.keySet()) {
                     double weight = docsList.get(docNo).intValue() * currIdf;
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weight + ";");
+                    String weightStr = Double.toString(weight);
+                    if (weightStr.contains(".")){
+                        if(weightStr.indexOf(".") + 3 < weightStr.length()) {
+                            weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
+                        }
+                    }
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");
                 }
                 String currIdfStr = Double.toString(currIdf);
-                currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
-                listPosting.set(pointer, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
+                if (currIdfStr.contains(".")){
+                    if(currIdfStr.indexOf(".") + 3 < currIdfStr.length()) {
+                        currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
+                    }
+                }
+                listPosting.set(pointer -1, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
                // dictionary.put(termStr, pointer);
                 dictionary.replace(termStr,termInfo,newTermInfo);
             }

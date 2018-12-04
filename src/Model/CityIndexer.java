@@ -44,7 +44,7 @@ public class CityIndexer {
             e.printStackTrace();
         }
 
-        int currIdx = listPosting.size() - 1; // the next free index in the listPosting
+        int currIdx = listPosting.size() + 1; // the next free index in the listPosting
 
         for (String city : cityDocs.keySet()) {
             if (!citiesDictionary.containsKey(city.toUpperCase())) {
@@ -78,7 +78,7 @@ public class CityIndexer {
                 pointer = currIdx;
                 currIdx++;
                 citiesDictionary.put(city.toUpperCase(), pointer);
-                listPosting.add(pointer, city.toUpperCase() + " " + "country name: " + countryName + " " + "currency: " + currency + " " + "population: " + population + " " + docsListStr);
+                listPosting.add(city.toUpperCase() + " " + "country name: " + countryName + " " + "currency: " + currency + " " + "population: " + population + " " + docsListStr);
             } else {
 //                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
 //                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
@@ -95,7 +95,7 @@ public class CityIndexer {
                 for (int i = 0; i < docs.size(); i++){
                     docsListStr.append(docs.get(i) + " ");
                 }
-                listPosting.set(pointer, listPosting.get(pointer) + docsListStr);
+                listPosting.set(pointer - 1, listPosting.get(pointer - 1) + docsListStr);
             }
         }
 

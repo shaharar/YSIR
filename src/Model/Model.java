@@ -1,12 +1,7 @@
 package Model;
 
-import View.View;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Model {
 
@@ -37,7 +32,7 @@ public class Model {
 
     public boolean reset(String savePath) {
         File dirToDelete = new File(savePath);
-        deleteDirectory(dirToDelete);
+        deleteDirectory(dirToDelete, savePath);
         if (rf != null) {
             rf.reset();
             return true;
@@ -47,14 +42,16 @@ public class Model {
         }
     }
 
-    private void deleteDirectory(File dir) {
+    private void deleteDirectory(File dir, String savePath) {
         File[] filesInDir = dir.listFiles();
         if (filesInDir != null) {
             for (File file : filesInDir) {
-                deleteDirectory(file);
+                deleteDirectory(file, savePath);
             }
         }
-        dir.delete();
+        if (! dir.getAbsolutePath().equals(savePath)) {
+            dir.delete();
+        }
     }
 
     public void loadDictionary(String savePath, File newDic) {

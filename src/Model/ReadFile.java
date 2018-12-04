@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 public class ReadFile {
 
@@ -16,6 +17,7 @@ public class ReadFile {
 
     public void getFilesFromDir (String path) throws IOException {
 
+        HashSet<String> languages = new HashSet<>();
         File corpus = new File(path);
         File[] files = corpus.listFiles();
         corpus.delete();
@@ -40,25 +42,8 @@ public class ReadFile {
                 for (Element e: elements) {
                     String docWithTags = e.select("DOC").outerHtml();
                     String city = getCityByTag(e.outerHtml());
-//                    int cityIdx = docWithTags.indexOf("<F P=104>");
-//                    if (cityIdx != -1){
-//                        String subByCity = docWithTags.substring(cityIdx + 8);
-//                        city = subByCity.substring(0, subByCity.indexOf(' '));
-//                    }
-//                    city = "Johannesburg";
-//                    String [] cityTag = e.outerHtml().split("<f P=\"104\">");
-//                    String [] temspStr;
-//                    if (cityTag.length > 1){
-//                        temspStr = cityTag[1].split("</f>");
-//                        city = temspStr[0];
-//                        String [] firstStr = city.split(" ");
-//                        city = firstStr[0];
-//                    }
-//                    else{
-//                        city = cityTag[0];
-//                    }
-//                    System.out.println(e.toString());
-//                    city = "vienna";
+                    String language = getLanguageByTag(e.outerHtml());
+
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
@@ -75,6 +60,19 @@ public class ReadFile {
         String [] lines = str.split("\n");
         for (int i = 0; i < lines.length; i++){
             if (lines[i].equals(" <f p=\"104\">")){
+                tempStr = lines[i + 1].split(" ");
+                return tempStr[3];
+            }
+        }
+        return "";
+    }
+
+    private String getLanguageByTag(String str) {
+        String language = "";
+        String [] tempStr;
+        String [] lines = str.split("\n");
+        for (int i = 0; i < lines.length; i++){
+            if (lines[i].equals(" <f p=\"105\">")){
                 tempStr = lines[i + 1].split(" ");
                 return tempStr[3];
             }
