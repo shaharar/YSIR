@@ -27,12 +27,12 @@ public class ReadFile {
             if (! file.isDirectory()){ // to pass the stop words file
                 continue;
             }
-            separateFileToDocs(file);
+            separateFileToDocs(file, languages);
         }
         parse.finished();
     }
 
-    private void separateFileToDocs (File file){
+    private void separateFileToDocs(File file, HashSet<String> languages){
 
         File [] docsInFile = file.listFiles();
         for (File d : docsInFile) {
@@ -43,7 +43,7 @@ public class ReadFile {
                     String docWithTags = e.select("DOC").outerHtml();
                     String city = getCityByTag(e.outerHtml());
                     String language = getLanguageByTag(e.outerHtml());
-
+                    languages.add(language);
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);

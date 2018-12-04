@@ -442,7 +442,7 @@ public class Parse {
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
    private Term lettersCase(String token) {
        Term term = null;
-       removeDashes(token);
+       token = removeDashes(token);
        token = stemming(token);
       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
