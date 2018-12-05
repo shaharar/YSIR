@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.View">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
       <Button fx:id="btn_corpusPath" layoutX="57.0" layoutY="98.0" mnemonicParsing="false" onAction="#loadCorpusPath" prefHeight="30.0" prefWidth="109.0" text="Corpus Path" textAlignment="CENTER">
          <font>
@@ -37,7 +37,7 @@
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </CheckBox>
-      <ChoiceBox fx:id="chobx_language" layoutX="466.0" layoutY="98.0" onMouseEntered="#setLanguages" prefHeight="25.0" prefWidth="101.0" />
+      <ChoiceBox fx:id="chobx_language" layoutX="466.0" layoutY="98.0" prefHeight="25.0" prefWidth="101.0" />
       <Label layoutX="394.0" layoutY="102.0" prefHeight="25.0" prefWidth="67.0" text="Language">
          <font>
             <Font name="Calibri Bold" size="14.0" />

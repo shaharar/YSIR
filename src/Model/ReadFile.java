@@ -10,11 +10,11 @@ import java.util.HashSet;
 public class ReadFile {
 
     private Parse parse;
-  //  private HashSet<String> languages;
+    private HashSet<String> languages;
 
     public ReadFile(boolean withStemming, String path, String corpusPath) {
         parse = new Parse(withStemming, path, corpusPath);
-//        languages = new HashSet<>();
+        languages = new HashSet<>();
     }
 
     public void getFilesFromDir (String path) throws IOException {
@@ -41,8 +41,8 @@ public class ReadFile {
                 for (Element e: elements) {
                     String docWithTags = e.select("DOC").outerHtml();
                     String city = getCityByTag(e.outerHtml());
-                 //   String language = getLanguageByTag(e.outerHtml());
-                 //   languages.add(language);
+                    String language = getLanguageByTag(e.outerHtml());
+                    languages.add(language);
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
@@ -55,12 +55,29 @@ public class ReadFile {
 
     private String getCityByTag(String str) {
         String city = "";
-        String [] tempStr;
+        //String [] tempStr;
+        String tempStr;
         String [] lines = str.split("\n");
         for (int i = 0; i < lines.length; i++){
             if (lines[i].equals(" <f p=\"104\">")){
-                tempStr = lines[i + 1].split(" ");
-                return tempStr[3];
+                tempStr = lines[i + 1];
+                int j = 0;
+                while (j < tempStr.length() && tempStr.charAt(j) == ' '){
+                    j++;
+                }
+                int k = j;
+                while (k < tempStr.length() && tempStr.charAt(k) != ' ')
+                    k++;
+                return tempStr.substring(j,k);
+/*                tempStr = lines[i + 1].split(" ");
+                if (tempStr[3].equals("")){
+                    if (!tempStr[4].equals("")) {
+                        return tempStr[4];
+                    }
+                    else
+                        System.out.println("No city: " + tempStr[5]);
+                }
+                return tempStr[3];*/
             }
         }
         return "";
@@ -81,11 +98,11 @@ public class ReadFile {
 
     public void reset() {
         parse.reset();
-   //     languages.clear();
+        languages.clear();
     }
 
-/*    public HashSet<String> getLanguages() {
+    public HashSet<String> getLanguages() {
         return languages;
-    }*/
+    }
 }
 

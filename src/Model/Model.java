@@ -62,7 +62,7 @@ public class Model {
         index.loadDictionary(newDic);
     }
 
-/*    public HashSet<String> setLanguages() {
+    public HashSet<String> getLanguages() {
         return rf.getLanguages();
-    }*/
+    }
 }

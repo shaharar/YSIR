@@ -1,6 +1,7 @@
 package View;
 
-import Controller.Controller;
+//import Controller.Controller;
+import Model.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -17,9 +18,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 
-public class View {
+public class Gui {
 
-    Controller controller;
+    //Controller controller;
+    Model model;
     File corpusDirSelected = null;
     File saveDirSelected = null;
     public Button btn_corpusPath;
@@ -34,10 +36,11 @@ public class View {
     public ChoiceBox chobx_language;
     String corpusPath;
     String savePath;
-    private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian", "Russian", "Arabic");
+   // private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian", "Russian", "Arabic");
 
-    public View() {
-        controller = new Controller();
+    public Gui() {
+        //controller = new Controller();
+        model = new Model();
     }
 
     public void loadCorpusPath() {
@@ -70,10 +73,15 @@ public class View {
             return;
         } else {
             try {
-                controller.run(corpusPath, savePath);
+               // controller.run(corpusPath, savePath);
+                model.run(corpusPath,savePath);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+           // HashSet<String> languages = controller.getLanguages();
+            HashSet<String> languages = model.getLanguages();
+            chobx_language.setItems(FXCollections.observableArrayList(languages));
+            chobx_language.setDisable(false);
         }
     }
 
@@ -117,22 +125,25 @@ public class View {
             showAlert("There wasn't found a dictionary. Please load a new one");
         }
         else {
-            controller.loadDictionary (savePath, newDicFile);
+            //controller.loadDictionary (savePath, newDicFile);
+            model.loadDictionary (savePath, newDicFile);
             showAlert("Loading successful");
         }
     }
 
     public void stemming(){
-        controller.stemming (chbx_stemming.isSelected());
+        //controller.stemming (chbx_stemming.isSelected());
+        model.stemming (chbx_stemming.isSelected());
     }
 
-    public void setLanguages(){
+    public void setLanguage(){
       //  HashSet<String> languages = controller.getLanguages();
-        chobx_language.setItems(languages);
+     //   chobx_language.setItems(FXCollections.observableArrayList(languages));
     }
 
     public void reset(){
-        if (! controller.reset(savePath)){
+        //if (! controller.reset(savePath)){
+        if (! model.reset(savePath)){
             showAlert("The files and memory have been cleared");
         }
         else {
