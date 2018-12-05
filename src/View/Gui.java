@@ -1,6 +1,5 @@
 package View;
 
-//import Controller.Controller;
 import Model.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +19,6 @@ import java.util.HashSet;
 
 public class Gui {
 
-    //Controller controller;
     Model model;
     File corpusDirSelected = null;
     File saveDirSelected = null;
@@ -36,10 +34,8 @@ public class Gui {
     public ChoiceBox chobx_language;
     String corpusPath;
     String savePath;
-   // private ObservableList<String> languages = FXCollections.observableArrayList("English", "Hebrew", "French", "German", "Japanese", "Spanish", "Italian", "Russian", "Arabic");
 
     public Gui() {
-        //controller = new Controller();
         model = new Model();
     }
 
@@ -73,12 +69,10 @@ public class Gui {
             return;
         } else {
             try {
-               // controller.run(corpusPath, savePath);
                 model.run(corpusPath,savePath);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-           // HashSet<String> languages = controller.getLanguages();
             HashSet<String> languages = model.getLanguages();
             chobx_language.setItems(FXCollections.observableArrayList(languages));
             chobx_language.setDisable(false);
@@ -125,14 +119,12 @@ public class Gui {
             showAlert("There wasn't found a dictionary. Please load a new one");
         }
         else {
-            //controller.loadDictionary (savePath, newDicFile);
             model.loadDictionary (savePath, newDicFile);
             showAlert("Loading successful");
         }
     }
 
     public void stemming(){
-        //controller.stemming (chbx_stemming.isSelected());
         model.stemming (chbx_stemming.isSelected());
     }
 
@@ -142,14 +134,12 @@ public class Gui {
     }
 
     public void reset(){
-        //if (! controller.reset(savePath)){
         if (! model.reset(savePath)){
             showAlert("The files and memory have been cleared");
         }
         else {
             showAlert("Reset is done");
         }
-
     }
 
     public void setCorpusPath() {

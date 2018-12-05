@@ -8,6 +8,7 @@ public class CityIndexer {
     private HTTPRequest httpRequest;
     private CountriesCollection countries;
     private String path;
+    private int notCapital = 0;
 
 
     public CityIndexer(String path) throws IOException {
@@ -57,6 +58,7 @@ public class CityIndexer {
                     countryName = "";
                     currency = "";
                     population = "";
+                    notCapital++;
 
                 }
 //                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
@@ -167,7 +169,7 @@ public class CityIndexer {
         index(cityDocs);
         writeDictionaryToDisk();
 
-
+        System.out.println("Num of not capital: " + notCapital);
 
         System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
     }

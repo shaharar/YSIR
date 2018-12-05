@@ -219,7 +219,7 @@ public class Parse {
       }
       String docCityPositions = "";
        for (Integer pos:positionsInDoc) {
-           docCityPositions += pos + " ";
+           docCityPositions += pos + ", ";
        }
 
        //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,7 +243,7 @@ public class Parse {
 
 
 
-       if (docsTotal > 30000){
+       if (docsTotal > 50000){
            System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms, docsInCollection, withStemming);
            terms.clear();

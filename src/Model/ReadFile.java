@@ -30,6 +30,11 @@ public class ReadFile {
             separateFileToDocs(file);
         }
         parse.finished();
+
+        for (String lan: languages) {
+            System.out.println(lan + "\n");
+        }
+        System.out.println(languages.size());
     }
 
     private void separateFileToDocs(File file){
@@ -39,10 +44,18 @@ public class ReadFile {
                 org.jsoup.nodes.Document document = Jsoup.parse(d, "UTF-8");
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
-                    String docWithTags = e.select("DOC").outerHtml();
+               //     String docWithTags = e.select("DOC").outerHtml();
                     String city = getCityByTag(e.outerHtml());
                     String language = getLanguageByTag(e.outerHtml());
-                    languages.add(language);
+                    if (language.length() > 1 && (language.charAt(language.length()-1) == '.' || language.charAt(language.length()-1) == ',' || language.charAt(language.length()-1) == ';' || language.charAt(language.length()-1) == '-' || language.charAt(language.length()-1) == '3')){
+                        language = language.substring(0, language.length() - 1);
+                    }
+                    if (language.length() > 0 && language.charAt(0) == ' '){
+                        language = language.substring(1);
+                    }
+                    if (!isNumeric(language)) {
+                        languages.add(language);
+                    }
                     String docText = e.select("TEXT").text();
                     String docNo = e.select("DOCNO").text();
                     parse.parseDocText(docText, docNo, city);
@@ -55,11 +68,11 @@ public class ReadFile {
 
     private String getCityByTag(String str) {
         String city = "";
-        //String [] tempStr;
+     //   String [] tempStr;
         String tempStr;
         String [] lines = str.split("\n");
         for (int i = 0; i < lines.length; i++){
-            if (lines[i].equals(" <f p=\"104\">")){
+            if (lines[i].equals(" <f p=\"104\">") || lines[i].equals("  <f p=\"104\">") || lines[i].equals("   <f p=\"104\">") || lines[i].equals("<f p=\"104\">")){
                 tempStr = lines[i + 1];
                 int j = 0;
                 while (j < tempStr.length() && tempStr.charAt(j) == ' '){
@@ -90,6 +103,13 @@ public class ReadFile {
         for (int i = 0; i < lines.length; i++){
             if (lines[i].equals(" <f p=\"105\">")){
                 tempStr = lines[i + 1].split(" ");
+                if (tempStr[3].equals("")){
+                    if (!tempStr[4].equals("")) {
+                        return tempStr[4];
+                    }
+                    else
+                        System.out.println("No language: " + tempStr[5]);
+                }
                 return tempStr[3];
             }
         }
@@ -103,6 +123,17 @@ public class ReadFile {
 
     public HashSet<String> getLanguages() {
         return languages;
+    }
+
+    private boolean isNumeric(String str)
+    {
+        try {
+            double d = Double.parseDouble(str);
+        }
+        catch(NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 }
 
