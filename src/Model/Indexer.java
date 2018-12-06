@@ -26,6 +26,8 @@ public class Indexer {
         else{
             postingDir = "\\indexResults\\postingFiles_Stemming";
         }
+
+        //create posting files by chunks
         new File(this.path + postingDir).mkdir();
         try {
             (new File(path + postingDir + "\\posting_A.txt")).createNewFile();
@@ -61,6 +63,7 @@ public class Indexer {
         }
     }
 
+    //build the inverted index
     public void index(HashMap<String, Term> terms, int docsInCollection, boolean withStemming) {
 
         ArrayList<ArrayList<String>> chunkLists;
@@ -207,14 +210,10 @@ public class Indexer {
                 currTotalFreq += tf.intValue();
             }
             docsListStr = new StringBuilder();
-            //docsListStr.setLength(docsListStr.length());
             Integer pointer;
             if (isSmallLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toUpperCase())) {
-                    //pointer = dictionary.get(termStr.toUpperCase()).get(0);
                     termInfo = dictionary.get(termStr.toUpperCase());
-//                    termInfo.set(1, termInfo.get(1) + currDf);
-//                    termInfo.set(2, termInfo.get(2) + currTotalFreq);
                     dictionary.replace(termStr,termInfo);
                 }
             } else if (isCapitalLetter(termStr)) {
@@ -232,14 +231,15 @@ public class Indexer {
             //term doesn't exist in posting - add it to the end of the posting
             if (!dictionary.containsKey(termStr)) {
                 for (String docNo : docsList.keySet()) {
-                    double weight = docsList.get(docNo).intValue() * currIdf;
+/*                    double weight = docsList.get(docNo).intValue() * currIdf;
                     String weightStr = Double.toString(weight);
                     if (weightStr.contains(".")){
                         if(weightStr.indexOf(".") + 3 < weightStr.length()) {
                             weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
                         }
                     }
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + "; ");
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + "; ");*/
+                    docsListStr.append(docNo + ", " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")){
@@ -274,14 +274,15 @@ public class Indexer {
                 newTermInfo.add(currTotalFreq);
                 String linePosting = listPosting.get(pointer - 1);
                 for (String docNo : docsList.keySet()) {
-                    double weight = docsList.get(docNo).intValue() * currIdf;
+/*                    double weight = docsList.get(docNo).intValue() * currIdf;
                     String weightStr = Double.toString(weight);
                     if (weightStr.contains(".")){
                         if(weightStr.indexOf(".") + 3 < weightStr.length()) {
                             weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
                         }
                     }
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");
+                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");*/
+                    docsListStr.append(docNo + ", " + docsList.get(docNo) + ";");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")){
@@ -290,14 +291,12 @@ public class Indexer {
                     }
                 }
                 listPosting.set(pointer -1, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
-               // dictionary.put(termStr, pointer);
                 dictionary.replace(termStr,termInfo,newTermInfo);
             }
         }
 
 
         strPosting = new StringBuilder();
-        //strPosting.setLength(listPosting.size());
         for (String postingRec : listPosting) {
             strPosting.append(postingRec + "\n");
         }
@@ -499,7 +498,14 @@ public class Indexer {
 
 
     public void writeDocsInfoToDisk (StringBuilder sb){
-        File docsInformation = new File(path + "\\docsInformation.txt");
+        String docsPath;
+        if (!withStemming){
+            docsPath = "\\docsInformation";
+        }
+        else{
+            docsPath = "\\docsInformation_stemming";
+        }
+        File docsInformation = new File(path + docsPath + ".txt");
         try {
             docsInformation.createNewFile();
         } catch (IOException e) {
@@ -519,6 +525,7 @@ public class Indexer {
 
         StringBuilder sb = new StringBuilder();
         StringBuilder sbShowDic = new StringBuilder();
+        //sort the dictionary by keys (terms)
         TreeMap <String, String> sortedTerms = new TreeMap<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
@@ -528,23 +535,13 @@ public class Indexer {
         for (String termStr: dictionary.keySet()) {
             sortedTerms.put(termStr, "");
         }
-/*        ArrayList <String> strList = new ArrayList<>();
-        for (String termStr: dictionary.keySet()) {
-            strList.add(termStr);
-        }
-        Collections.sort(strList, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareToIgnoreCase(o2);
-            }
-        });*/
+
         for (String termStr : sortedTerms.keySet()) {
             if (termStr.length() == 0){
                 break;
             }
       //      if (dictionary.get(termStr).get(2) > 1) {
                 sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2) + "\n");
-//              sb.append(termStr + " : " + " tf - " + dictionary.get(termStr).get(2) + " df - " + dictionary.get(termStr).get(1) + " pointer - " + classifyToPosting(termStr) + " " + dictionary.get(termStr).get(0)).append("\n");
                 sb.append(termStr + " : " + dictionary.get(termStr).get(2) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(0) + "\n");
       //      }
         }
@@ -579,19 +576,8 @@ public class Indexer {
     }
 
     public void finished(HashMap<String , Term> terms, int docsInCollection, boolean withStemming) {
-        System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
         index(terms, docsInCollection, withStemming);
         writeDictionaryToDisk();
-/*        Map<String,Integer> mapCSV = new HashMap<>();
-        for (String term: dictionary.keySet()) {
-            mapCSV.put(term,dictionary.get(term).get(2));
-        }
-        try {
-            createCSVFile(mapCSV);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
     }
 
 
@@ -613,9 +599,6 @@ public class Indexer {
                 String values = line.substring(line.indexOf(':') + 2);
                 String[] valuesArr = values.split(",");
                 try {
-/*                    termInfo.add(Integer.parseInt(valuesArr[0].substring(0, valuesArr[0].indexOf(' '))));
-                    termInfo.add(Integer.parseInt(valuesArr[1].substring(1, valuesArr[0].indexOf(' '))));
-                    termInfo.add(Integer.parseInt(valuesArr[2].substring(valuesArr[2].indexOf('_') + 1)));*/
                     String v1 = valuesArr[0].substring(0, valuesArr[0].length() - 1);
                     termInfo.add(Integer.parseInt(v1));
                     String v2 = valuesArr[1].substring(1, valuesArr[1].length() - 1);
@@ -623,7 +606,6 @@ public class Indexer {
                     String v3 = valuesArr[2].substring(valuesArr[2].indexOf('_') + 1);
                     termInfo.add(Integer.parseInt(v3));
                     dictionary.put(term, termInfo);
-                   // termInfo.clear();
                 } catch (NumberFormatException e){
                     System.out.println(valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2]);
                 }
@@ -633,19 +615,4 @@ public class Indexer {
             e.printStackTrace();
         }
     }
-
-/*    public void createCSVFile (Map<String,Integer> map) throws IOException {
-        FileWriter fw = new FileWriter(path + "book.csv");
-        String[] headers = {"term","totalFreq"};
-        try (CSVPrinter printer = new CSVPrinter(fw, CSVFormat.DEFAULT.withHeader(headers))) {
-            map.forEach((author,title) -> {
-                try{
-                    printer.printRecord(author,title);
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            });
-        }
-
-    }*/
 }

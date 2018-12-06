@@ -128,11 +128,6 @@ public class Gui {
         model.stemming (chbx_stemming.isSelected());
     }
 
-    public void setLanguage(){
-      //  HashSet<String> languages = controller.getLanguages();
-     //   chobx_language.setItems(FXCollections.observableArrayList(languages));
-    }
-
     public void reset(){
         if (! model.reset(savePath)){
             showAlert("The files and memory have been cleared");
@@ -142,13 +137,17 @@ public class Gui {
         }
     }
 
-    public void setCorpusPath() {
-       // txt_corpusChooser.setText(txt_corpusChooser.getSelectedText());
+/*    public void setCorpusPath() {
         corpusPath = txt_corpusChooser.getSelectedText();
     }
 
     public void setSavePath() {
-       // txt_savePathChooser.setText(txt_savePathChooser.getSelectedText());
         savePath = txt_savePathChooser.getSelectedText();
-    }
+    }*/
+
+    /*    public void setLanguage(){
+        if (chobx_language.getItems() == null){
+            showAlert("Languages can be displayed after running");
+        }
+    }*/
 }

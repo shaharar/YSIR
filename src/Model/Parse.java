@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 public class Parse {
     private String[] tokens; // the following data structure contains tokens
     HashMap<String, Term> terms; // the following data structure contains final terms in X docs
-//    HashMap<String, HashMap<String, ArrayList <Integer>>> cityPositions;
     HashMap <String , ArrayList <String>> cityDocs;
     private HashSet <String> termsPerDoc; // the following data structure contains final terms in one doc
     private HashSet<String> stopWords; // the following data structure contains the stop words
@@ -31,15 +30,9 @@ public class Parse {
     int docsTotal;
     int docsInCollection;
 
-    int maxPositions = 0;
-    String maxCity = "";
-    String cityPositions = "";
-    String docNumber = "";
-    int counter;//////////////////////////////////////test
 
    public Parse (boolean withStemming, String path, String corpusPath){
       terms = new HashMap<>();
-//      cityPositions = new HashMap<>();
       cityDocs = new HashMap<>();
       termsPerDoc = new HashSet<>();
       stopWords = new HashSet<String>();
@@ -63,10 +56,6 @@ public class Parse {
       currentIdx = 0;
       docsTotal = 0;
       docsInCollection = 0;
-
-
-       counter = 1;//////////////////////////////////////////////////////*******************************
-       //tokens = new String[]{"($56)","$2 trillion","First","50 thousand","about","Aviad","At first","66 1/2 Dollars","35 million U.S dollars","Amit and Aviad","20.6 m Dollars","$120 billion","100 bn Dollars","$30","40 Dollars","18.24","10,123","10,123,000","7 Trillion","34 2/3", "6-7", "-13", "step-by-step 10-part","70.5%","13.86 percent"};
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -107,25 +96,12 @@ public class Parse {
            if (token.equalsIgnoreCase(city) && cityIndexer != null && !city.equals("")){
                positionsInDoc.add(position);
                if (!cityDocs.containsKey(city.toUpperCase())) {
-//                   cityDocs.put(city.toUpperCase(), new ArrayList<>);
-//                   ArrayList<Integer> positions = new ArrayList<>();
-//                   positions.add(position);
-//                   cityPositions.get(city.toUpperCase()).put(docID, positions);
                    ArrayList <String> docs = new ArrayList<>();
                    docs.add(docID);
                    cityDocs.put(city.toUpperCase(), docs);
                }
                else if (!cityDocs.get(city.toUpperCase()).contains(docID))
                {
-//                   if (cityPositions.get(city.toUpperCase()).containsKey(docID)){
-//                       ArrayList <Integer> positions = cityPositions.get(city.toUpperCase()).get(docID);
-//                       positions.add(position);
-//                   }
-//                   else{
-//                       ArrayList<Integer> positions = new ArrayList<>();
-//                       positions.add(position);
-//                       cityPositions.get(city.toUpperCase()).put(docID, positions);
-//                   }
                    cityDocs.get(city.toUpperCase()).add(docID);
                }
            }
@@ -174,35 +150,36 @@ public class Parse {
 
           //words
           else {
-               if (token.length() > 2 && token.charAt(token.length() - 2) == '\'' && token.charAt(token.length() - 1) == 's'){
+               //relevance - our rule
+               if (token.length() > 2 && (token.charAt(token.length() - 2) == '\'' || token.charAt(token.length() - 2) == '`') && token.charAt(token.length() - 1) == 's'){
                    token = token.substring(0, token.length() - 2);
                }
-                  //dates
-                  if (months.contains(token)) {
-                      term = dates(token);
-                  }
-                  //ranges
-                  else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()) {
-                      term = rangesAndExpressions(token);
-                  }
+               //dates
+               if (months.contains(token)) {
+                   term = dates(token);
+               }
+               //ranges
+               else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()) {
+                   term = rangesAndExpressions(token);
+               }
 
-                  //shortcuts
-                  else if (token.equalsIgnoreCase("Mr") || token.equalsIgnoreCase("Mrs") || token.equalsIgnoreCase("Dr")){
-                      term = shortcuts(token);
-                  }
+               //shortcuts
+               else if (token.equalsIgnoreCase("Mr") || token.equalsIgnoreCase("Mrs") || token.equalsIgnoreCase("Dr")){
+                   term = shortcuts(token);
+               }
 
-                  //measures
-                  else if (token.equalsIgnoreCase("kilogram") || token.equalsIgnoreCase("kilobyte") || token.equalsIgnoreCase("kilobytes") || token.equalsIgnoreCase("kilograms") || token.equalsIgnoreCase("gram") || token.equalsIgnoreCase("byte") || token.equalsIgnoreCase("bytes")){
-                      term = measures(token);
-                  }
+               //measures
+               else if (token.equalsIgnoreCase("kilogram") || token.equalsIgnoreCase("kilobyte") || token.equalsIgnoreCase("kilobytes") || token.equalsIgnoreCase("kilograms") || token.equalsIgnoreCase("gram") || token.equalsIgnoreCase("byte") || token.equalsIgnoreCase("bytes")){
+                   term = measures(token);
+               }
 
-                  //just words
-                  else if (!(stopWords.contains(token.toLowerCase())) && !(stopWords.contains(token.toUpperCase()))){
-                      term = lettersCase(token);
-                  }
-                  else {
-                      documentLength --;
-                  }
+               //just words
+               else if (!(stopWords.contains(token.toLowerCase())) && !(stopWords.contains(token.toUpperCase()))){
+                   term = lettersCase(token);
+               }
+               else {
+                   documentLength --;
+               }
           }
          if (term != null){
              if (!term.docs.containsKey((docNo))){
@@ -225,29 +202,13 @@ public class Parse {
            docCityPositions += pos + "  ";
        }
 
-       //////////////////////////////////////////////////////////////////////////////////////////////////////
-       if (positionsInDoc.size() > maxPositions) {
-           maxPositions = positionsInDoc.size();
-           maxCity = city;
-           cityPositions = docCityPositions;
-           docNumber = docID;
-       }
-       //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
        positionsInDoc.clear();
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
 
-
-
-
-
-
        if (docsTotal > 50000){
-           System.out.println("finished parsing, start index "  + counter );///////////////////////////////////////////////////////////////test
            indexer.index(terms, docsInCollection, withStemming);
            terms.clear();
            if (cityIndexer != null){
@@ -256,12 +217,7 @@ public class Parse {
            }
            indexer.writeDocsInfoToDisk(sb);
            sb = new StringBuilder();
-           System.out.println("index done"+ "\n");////////////////////////////////////////////////////////////test
            docsTotal = 0;
-
-
-           System.out.println("DocNo: " + docNumber + " Max positions: " + maxPositions + "positions: [" + cityPositions + "] " + "City: " + maxCity);
-           counter++;
        }
    }
 
@@ -282,25 +238,6 @@ public class Parse {
         }
         return token;
     }
-
-    private void setDelimiters(HashSet<String> delimiters){
-       delimiters.add(".");
-       delimiters.add(",");
-       delimiters.add("#");
-       delimiters.add("|");
-       delimiters.add(":");
-       delimiters.add("@");
-       delimiters.add("!");
-       delimiters.add("^");
-       delimiters.add("&");
-       delimiters.add("*");
-       delimiters.add("'");
-       delimiters.add("~");
-       delimiters.add("`");
-       delimiters.add(";");
-       delimiters.add("`");
-    }
-
 
     private Term numbers (String token) {
       double num;
@@ -505,19 +442,6 @@ public class Parse {
       }
       return term;
    }
-
-    private String removeDashes(String token) {
-        int i = 0;
-        char c = ' ';
-        if (token.length() > 0) {
-           c = token.charAt(0);
-       }
-       while (i < token.length() && c == '-'){
-            i++;
-            c = token.charAt(i);
-       }
-       return token.substring(i);
-    }
 
     // the following function adds final terms to the data structure in this format : NUMBER%.
    private Term percentage(String token) {
@@ -834,35 +758,6 @@ public class Parse {
       return term;
    }
 
-   // help function for 'dates' - the following function converts the String representation for a particular month from letters to digits.
-   private String checkMonth(String month) {
-      if (month.equals("Jan") || month.equals("JAN") || month.equals("January") || month.equals("JANUARY"))
-         return "01";
-      else if (month.equals("Feb") || month.equals("FEB") || month.equals("February") || month.equals("FEBRUARY"))
-         return "02";
-      else if (month.equals("Mar") || month.equals("MAR") || month.equals("March") || month.equals("MARCH"))
-         return "03";
-      else if (month.equals("Apr") || month.equals("APR") || month.equals("April") || month.equals("APRIL"))
-         return "04";
-      else if (month.equals("May") || month.equals("MAY"))
-         return "05";
-      else if (month.equals("Jun") || month.equals("JUN") || month.equals("June") || month.equals("JUNE"))
-         return "06";
-      else if (month.equals("Jul") || month.equals("JUL") || month.equals("July") || month.equals("JULY"))
-         return "07";
-      else if (month.equals("Aug") || month.equals("AUG") || month.equals("August") || month.equals("AUGUST"))
-         return "08";
-      else if (month.equals("Sep") || month.equals("SEP") || month.equals("September") || month.equals("SEPTEMBER"))
-         return "09";
-      else if (month.equals("Oct") || month.equals("OCT") || month.equals("October") || month.equals("OCTOBER"))
-         return "10";
-      else if (month.equals("Nov") || month.equals("NOV") || month.equals("November") || month.equals("NOVEMBER"))
-         return "11";
-      else if (month.equals("Dec") || month.equals("DEC") || month.equals("December") || month.equals("DECEMBER"))
-         return "12";
-      return "";
-   }
-
    // the following function adds final terms to the data structure in one of these formats : Word-Word, Word-Word-Word, Word-Number, Number-Word, Number-Number, Between Number and Number.
    private Term rangesAndExpressions(String token) {
        double firstNum, secondNum;
@@ -1014,6 +909,63 @@ public class Parse {
         indexer.writeDocsInfoToDisk(sb);
     }
 
+    // help function for 'dates' - the following function converts the String representation for a particular month from letters to digits.
+    private String checkMonth(String month) {
+        if (month.equals("Jan") || month.equals("JAN") || month.equals("January") || month.equals("JANUARY"))
+            return "01";
+        else if (month.equals("Feb") || month.equals("FEB") || month.equals("February") || month.equals("FEBRUARY"))
+            return "02";
+        else if (month.equals("Mar") || month.equals("MAR") || month.equals("March") || month.equals("MARCH"))
+            return "03";
+        else if (month.equals("Apr") || month.equals("APR") || month.equals("April") || month.equals("APRIL"))
+            return "04";
+        else if (month.equals("May") || month.equals("MAY"))
+            return "05";
+        else if (month.equals("Jun") || month.equals("JUN") || month.equals("June") || month.equals("JUNE"))
+            return "06";
+        else if (month.equals("Jul") || month.equals("JUL") || month.equals("July") || month.equals("JULY"))
+            return "07";
+        else if (month.equals("Aug") || month.equals("AUG") || month.equals("August") || month.equals("AUGUST"))
+            return "08";
+        else if (month.equals("Sep") || month.equals("SEP") || month.equals("September") || month.equals("SEPTEMBER"))
+            return "09";
+        else if (month.equals("Oct") || month.equals("OCT") || month.equals("October") || month.equals("OCTOBER"))
+            return "10";
+        else if (month.equals("Nov") || month.equals("NOV") || month.equals("November") || month.equals("NOVEMBER"))
+            return "11";
+        else if (month.equals("Dec") || month.equals("DEC") || month.equals("December") || month.equals("DECEMBER"))
+            return "12";
+        return "";
+    }
+
+    // the following function saves defined stop words in the memory, according to the path the user gave.
+    private void setStopWords (){
+        File stopWordsFile = new File(stopWordsPath);
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
+            String token;
+            while((token = br.readLine()) != null){
+                stopWords.add(token);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String removeDashes(String token) {
+        int i = 0;
+        char c = ' ';
+        if (token.length() > 0) {
+            c = token.charAt(0);
+        }
+        while (i < token.length() && c == '-'){
+            i++;
+            c = token.charAt(i);
+        }
+        return token.substring(i);
+    }
+
     private boolean isNumeric(String str)
     {
         try {
@@ -1023,6 +975,24 @@ public class Parse {
             return false;
         }
         return true;
+    }
+
+    private void setDelimiters(HashSet<String> delimiters){
+        delimiters.add(".");
+        delimiters.add(",");
+        delimiters.add("#");
+        delimiters.add("|");
+        delimiters.add(":");
+        delimiters.add("@");
+        delimiters.add("!");
+        delimiters.add("^");
+        delimiters.add("&");
+        delimiters.add("*");
+        delimiters.add("'");
+        delimiters.add("~");
+        delimiters.add("`");
+        delimiters.add(";");
+        delimiters.add("`");
     }
 
     private String replaceChars (String textForReplace){
@@ -1079,24 +1049,8 @@ public class Parse {
         replaceMap.put(". "," ");
     }
 
-    // the following function saves defined stop words in the memory, according to the path the user gave.
-    private void setStopWords (){
-        File stopWordsFile = new File(stopWordsPath);
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(stopWordsFile));
-            String token;
-            while((token = br.readLine()) != null){
-              //  stopWords.add(token.substring(0,token.indexOf("\r")));
-                stopWords.add(token);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    //clear all the data structures
+     //clear all the data structures
     public void reset() {
         indexer.reset();
         terms.clear();
@@ -1107,16 +1061,4 @@ public class Parse {
         sb = new StringBuilder();
         stemmer = new Stemmer();
     }
-
-/*    public static void main (String [] args){
-*//*      Parse p = new Parse(false);
-       p.stopWordsPath = "D:\\documents\\users\\shaharar\\Downloads\\ST\\stop_words.txt";
-       p.setStopWords();
-*//**//*      Document doc = new Document();
-      doc.setText("($56) $2 trillion, First, 50 Thousand, about, Aviad, At first. 66 1/2 Dollars, 35 million U.S dollars, Amit and Aviad, 20.6 m Dollars, $120 billion 100 bn Dollars $2 trillion $30 40 Dollars, 18.24 10,123, 10,123,000, 7 Trillion 34 2/3. 6-7 -13 step-by-step 10-part 70.5%, 13.86 percent");
-       p.parseDocText(doc.getText());*//**//*
-      for (String term:p.terms.keySet()) {
-         System.out.println(term);
-      }*//*
-    }*/
 }

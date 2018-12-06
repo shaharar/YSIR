@@ -11,25 +11,13 @@ public class CountryInfo {
     private String currency;
     private String population;
     private String capitalCity;
-//    private HashMap<String,ArrayList <Integer>> positionsInDocs;
 
     public CountryInfo(JSONObject cityInfo) {
         this.countryName = cityInfo.get("name").toString();
         this.currency = cityInfo.getJSONArray("currencies").getJSONObject(0).get("name").toString();
         this.population = parse(cityInfo.get("population").toString());
-/*        if (population.contains(".")){
-            population.substring(0, population.indexOf(".") + 3);
-        }*/
         this.capitalCity = cityInfo.get("capital").toString().toUpperCase();
-//        this.positionsInDocs = new HashMap<>();
     }
-
-//    public CountryInfo(String countryName, String currency, String population) {
-//        this.countryName = countryName;
-//        this.currency = currency;
-//        this.population = parse(population);
-////        this.positionsInDocs = positionsInDocs;
-//    }
 
     public String getCountryName() {
         return countryName;
@@ -43,9 +31,6 @@ public class CountryInfo {
         return population;
     }
 
-//    public HashMap<String, ArrayList <Integer>> getPositionsInDocs() {
-//        return positionsInDocs;
-//    }
 
     private String parse(String string) {
             int num;
@@ -68,7 +53,6 @@ public class CountryInfo {
                 else {
                     parseStr = (num / 1000000000) + "B";
                 }
-//            }
             return parseStr;
         }
 

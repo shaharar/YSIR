@@ -23,7 +23,7 @@ public class Model {
             rf.getFilesFromDir(corpusPath);
             long finishTime = System.nanoTime();
             long totalTime = (long)((finishTime - startTime)/1000000.0);
-            System.out.println("Total time:  " + totalTime/60000.0 + " min");
+            System.out.println("Total time:  " + totalTime + " sec");
         } catch (IOException e) {
             e.printStackTrace();
         }

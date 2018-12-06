@@ -22,19 +22,12 @@ public class ReadFile {
         File[] files = corpus.listFiles();
         corpus.delete();
         for (File file:files) {
-            //System.out.println(file.getPath().toString());
-          //  if (file.getPath().toString().equals(path + "\\stop_words.txt")){
             if (! file.isDirectory()){ // to pass the stop words file
                 continue;
             }
             separateFileToDocs(file);
         }
         parse.finished();
-
-        for (String lan: languages) {
-            System.out.println(lan + "\n");
-        }
-        System.out.println(languages.size());
     }
 
     private void separateFileToDocs(File file){
@@ -44,7 +37,6 @@ public class ReadFile {
                 org.jsoup.nodes.Document document = Jsoup.parse(d, "UTF-8");
                 org.jsoup.select.Elements elements = document.getElementsByTag("DOC");
                 for (Element e: elements) {
-               //     String docWithTags = e.select("DOC").outerHtml();
                     String city = getCityByTag(e.outerHtml());
                     String language = getLanguageByTag(e.outerHtml());
                     if (language.length() > 1 && (language.charAt(language.length()-1) == '.' || language.charAt(language.length()-1) == ',' || language.charAt(language.length()-1) == ';' || language.charAt(language.length()-1) == '-' || language.charAt(language.length()-1) == '3')){
@@ -67,8 +59,6 @@ public class ReadFile {
     }
 
     private String getCityByTag(String str) {
-        String city = "";
-     //   String [] tempStr;
         String tempStr;
         String [] lines = str.split("\n");
         for (int i = 0; i < lines.length; i++){
@@ -82,22 +72,12 @@ public class ReadFile {
                 while (k < tempStr.length() && tempStr.charAt(k) != ' ')
                     k++;
                 return tempStr.substring(j,k);
-/*                tempStr = lines[i + 1].split(" ");
-                if (tempStr[3].equals("")){
-                    if (!tempStr[4].equals("")) {
-                        return tempStr[4];
-                    }
-                    else
-                        System.out.println("No city: " + tempStr[5]);
-                }
-                return tempStr[3];*/
             }
         }
         return "";
     }
 
     private String getLanguageByTag(String str) {
-        String language = "";
         String [] tempStr;
         String [] lines = str.split("\n");
         for (int i = 0; i < lines.length; i++){
