@@ -900,7 +900,6 @@ public class Parse {
 
 
     public void finished() {
-        System.out.println("'finished' called in parse"); ///////////////////////////////////////////////////////////////////
        indexer.finished(terms, docsInCollection,withStemming);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);
@@ -1049,8 +1048,11 @@ public class Parse {
         replaceMap.put(". "," ");
     }
 
+    public int getDocsInCollection() {
+        return docsInCollection;
+    }
 
-     //clear all the data structures
+    //clear all the data structures
     public void reset() {
         indexer.reset();
         terms.clear();
@@ -1060,5 +1062,9 @@ public class Parse {
         replaceSb = new StringBuilder();
         sb = new StringBuilder();
         stemmer = new Stemmer();
+    }
+
+    public int getDicSize() {
+       return indexer.getDicSize();
     }
 }

@@ -11,6 +11,7 @@ public class Model {
     ReadFile rf;
     Indexer index;
     boolean isStemSelected;
+    long totalTime;
 
     public Model() {
         isStemSelected = false;
@@ -22,8 +23,8 @@ public class Model {
             long startTime = System.nanoTime();
             rf.getFilesFromDir(corpusPath);
             long finishTime = System.nanoTime();
-            long totalTime = (long)((finishTime - startTime)/1000000.0);
-            System.out.println("Total time:  " + totalTime + " sec");
+            totalTime = (long)((finishTime - startTime)/1000000.0);
+          //  System.out.println("Total time:  " + totalTime + " sec");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,5 +65,13 @@ public class Model {
 
     public HashSet<String> getLanguages() {
         return rf.getLanguages();
+    }
+
+    public String endOfRun() {
+        String termsMsg = "Unique terms in corpus : " + rf.getDicSize() + "\n";
+        String docsMsg = "Indexed documents : " + rf.endOfRun() + "\n";
+        String timeMsg = "Total running time : " + totalTime + " sec";
+        String message = termsMsg + docsMsg + timeMsg;
+        return message;
     }
 }

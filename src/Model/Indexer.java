@@ -222,12 +222,6 @@ public class Indexer {
                 }
             }
 
-            if (term == null){
-                System.out.println(termStr);
-                break;
-            }
-
-
             //term doesn't exist in posting - add it to the end of the posting
             if (!dictionary.containsKey(termStr)) {
                 for (String docNo : docsList.keySet()) {
@@ -607,12 +601,16 @@ public class Indexer {
                     termInfo.add(Integer.parseInt(v3));
                     dictionary.put(term, termInfo);
                 } catch (NumberFormatException e){
-                    System.out.println(valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2]);
+                  //  System.out.println(valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2]);
                 }
             }
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getDicSize() {
+        return dictionary.size();
     }
 }

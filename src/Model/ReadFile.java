@@ -87,8 +87,6 @@ public class ReadFile {
                     if (!tempStr[4].equals("")) {
                         return tempStr[4];
                     }
-                    else
-                        System.out.println("No language: " + tempStr[5]);
                 }
                 return tempStr[3];
             }
@@ -114,6 +112,14 @@ public class ReadFile {
             return false;
         }
         return true;
+    }
+
+    public int endOfRun() {
+        return parse.getDocsInCollection();
+    }
+
+    public int getDicSize(){
+        return parse.getDicSize();
     }
 }
 

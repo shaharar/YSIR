@@ -161,17 +161,8 @@ public class CityIndexer {
     }
 
     public void finished(HashMap<String , ArrayList <String>> cityDocs) {
-
-
-        System.out.println("'finished' called in index");/////////////////////////////////////////////////////////////test
-
-
         index(cityDocs);
         writeDictionaryToDisk();
-
-        System.out.println("Num of not capital: " + notCapital);
-
-        System.out.println("'finished' ended in index");//////////////////////////////////////////////////////////////test
     }
 }
 

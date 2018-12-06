@@ -60,6 +60,7 @@ public class Gui {
     }
 
     public void run () {
+        chobx_language.setDisable(true);
         if (corpusPath == null) {
             showAlert("Please insert corpus path");
             return;
@@ -70,6 +71,8 @@ public class Gui {
         } else {
             try {
                 model.run(corpusPath,savePath);
+                String message = model.endOfRun ();
+                showAlert("Running successful!\n\n" + message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -78,6 +81,7 @@ public class Gui {
             chobx_language.setDisable(false);
         }
     }
+
 
     public void showDictionary () {
         if (savePath == null){
