@@ -137,13 +137,13 @@ public class Gui {
         }
     }
 
-/*    public void setCorpusPath() {
-        corpusPath = txt_corpusChooser.getSelectedText();
+    public void setCorpusPath() {
+   //     corpusPath = txt_corpusChooser.getSelectedText();
     }
 
     public void setSavePath() {
-        savePath = txt_savePathChooser.getSelectedText();
-    }*/
+     //   savePath = txt_savePathChooser.getSelectedText();
+    }
 
     /*    public void setLanguage(){
         if (chobx_language.getItems() == null){
