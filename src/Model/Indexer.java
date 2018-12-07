@@ -610,7 +610,7 @@ public class Indexer {
         }
     }
 
-    public int getDicSize() {
-        return dictionary.size();
+    public HashMap<String, ArrayList<Integer>> getDictionary() {
+        return dictionary;
     }
 }

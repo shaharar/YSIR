@@ -89,7 +89,8 @@ public class Parse {
        while (currentIdx < tokens.length) {
           Term term = null;
           token = tokens[currentIdx];
-          token = removeDelimiters(token);
+           token = removeDashes(token);
+           token = removeDelimiters(token);
           String nextToken = "";
 
           //cities
@@ -225,17 +226,29 @@ public class Parse {
        if (token.length() == 0){
            return token;
        }
-       int i = 0;
-       char c = '#';
-       while (i < token.length() && delimiters.contains("" + c)){
-           c = token.charAt(i);
-           i++;
+       else {
+           if (!delimiters.contains(""+token.charAt(0))){
+               return token;
+           }
+           int i = 0;
+           char c;
+           while (i < token.length()){
+               c = token.charAt(i);
+                if(!delimiters.contains("" + c)) {
+                  //  i++;
+                    break;
+                }
+               i++;
+           }
+           if (i == token.length()){
+               return "";
+           }
+           if ((token.charAt(token.length() - 1) == '.' || token.charAt(token.length() - 1) == '-')) {
+               token = token.substring(i - 1, token.length() - 1);
+           } else {
+               token = token.substring(i);
+           }
        }
-        if (token.length() > 0 && ((token.charAt(token.length() - 1) == '.' || token.charAt(token.length() - 1) == '-'))) {
-            token = token.substring(i - 1, token.length() - 1);
-        } else {
-            token = token.substring(i - 1);
-        }
         return token;
     }
 
@@ -395,7 +408,6 @@ public class Parse {
    // the following function classifies lower case and upper case tokens and adds final terms to the compatible data structure.
    private Term lettersCase(String token) {
        Term term = null;
-       token = removeDashes(token);
        token = stemming(token);
       if (token.charAt(0) >= 97 && token.charAt(0) <= 122) //lower case
       {
@@ -953,16 +965,33 @@ public class Parse {
     }
 
     private String removeDashes(String token) {
-        int i = 0;
-        char c = ' ';
-        if (token.length() > 0) {
-            c = token.charAt(0);
+        if (token.length() == 0){
+            return token;
         }
-        while (i < token.length() && c == '-'){
-            i++;
-            c = token.charAt(i);
+        else {
+            //token is negative number - shouldn't remove dashes
+            if (token.length() > 1 && token.charAt(0) == '-' && Character.isDigit(token.charAt(1))) {
+                return token;
+            }
+
+            if (token.charAt(0) != '-') {
+                return token;
+            }
+            int i = 0;
+            char c;
+            while (i < token.length()) {
+                c = token.charAt(i);
+                if (c != '-') {
+                    break;
+                }
+                i++;
+            }
+            if (i == token.length()) {
+                return "";
+            } else {
+                return token.substring(i);
+            }
         }
-        return token.substring(i);
     }
 
     private boolean isNumeric(String str)
@@ -979,6 +1008,7 @@ public class Parse {
     private void setDelimiters(HashSet<String> delimiters){
         delimiters.add(".");
         delimiters.add(",");
+        delimiters.add("+");
         delimiters.add("#");
         delimiters.add("|");
         delimiters.add(":");
@@ -1064,7 +1094,7 @@ public class Parse {
         stemmer = new Stemmer();
     }
 
-    public int getDicSize() {
-       return indexer.getDicSize();
+    public HashMap<String, ArrayList<Integer>> getDictionary() {
+        return indexer.getDictionary();
     }
 }

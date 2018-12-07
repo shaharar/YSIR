@@ -15,13 +15,13 @@
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <TextField fx:id="txt_corpusChooser" onAction="#setCorpusPath" layoutX="166.0" layoutY="98.0" prefHeight="30.0" prefWidth="182.0" />
+      <TextField fx:id="txt_corpusChooser" layoutX="166.0" layoutY="98.0" prefHeight="30.0" prefWidth="182.0" />
       <Button fx:id="btn_savePath" layoutX="57.0" layoutY="147.0" mnemonicParsing="false" onAction="#saveFilesPath" prefHeight="30.0" prefWidth="109.0" text="Save files in" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <TextField fx:id="txt_savePathChooser" onAction="#setSavePath" layoutX="166.0" layoutY="147.0" prefHeight="30.0" prefWidth="182.0" />
+      <TextField fx:id="txt_savePathChooser" layoutX="166.0" layoutY="147.0" prefHeight="30.0" prefWidth="182.0" />
       <Button fx:id="btn_run" layoutX="250.0" layoutY="334.0" mnemonicParsing="false" onAction="#run" prefHeight="30.0" prefWidth="101.0" text="Run" textAlignment="CENTER" textFill="#0d0d0d">
          <font>
             <Font name="Calibri Bold" size="13.0" />

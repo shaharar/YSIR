@@ -2,19 +2,22 @@ package View;
 
 import Model.Model;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Gui {
@@ -32,6 +35,7 @@ public class Gui {
     public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
+   // public ListView <String> lv_dic = new ListView<>();
     String corpusPath;
     String savePath;
 
@@ -60,13 +64,12 @@ public class Gui {
     }
 
     public void run () {
-        chobx_language.setDisable(true);
         if (corpusPath == null) {
-            showAlert("Please insert corpus path");
+            showAlert("Please choose corpus path");
             return;
         }
         if (savePath == null) {
-            showAlert("Please insert save files path");
+            showAlert("Please choose save files path");
             return;
         } else {
             try {
@@ -104,6 +107,31 @@ public class Gui {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+/*            ArrayList<String> dicRecords = new ArrayList<>();
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(dicFile));
+                String line = "";
+                while ((line = (br.readLine())) != null) {
+                    dicRecords.add(line + System.lineSeparator());
+                }
+                br.close();
+                lv_dic.setItems(FXCollections.observableArrayList(dicRecords));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                Stage stage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                Parent root = fxmlLoader.load(getClass().getResource("showDictionary.fxml"));
+                stage.setTitle("Dictionary");
+                Scene scene = new Scene(root, 650, 500);
+                stage.setScene(scene);
+                stage.initModality((Modality.APPLICATION_MODAL));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
         }
     }
 
@@ -118,7 +146,13 @@ public class Gui {
             showAlert("Please insert save files path");
             return;
         }
-        File newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        File newDicFile;
+        if (chbx_stemming.isSelected()){
+            newDicFile = new File(savePath + "\\indexResults\\dictionary_stemming.txt");
+        }
+        else{
+            newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        }
         if (!newDicFile.exists()){
             showAlert("There wasn't found a dictionary. Please load a new one");
         }
@@ -140,18 +174,4 @@ public class Gui {
             showAlert("Reset is done");
         }
     }
-
-    public void setCorpusPath() {
-   //     corpusPath = txt_corpusChooser.getSelectedText();
-    }
-
-    public void setSavePath() {
-     //   savePath = txt_savePathChooser.getSelectedText();
-    }
-
-    /*    public void setLanguage(){
-        if (chobx_language.getItems() == null){
-            showAlert("Languages can be displayed after running");
-        }
-    }*/
 }

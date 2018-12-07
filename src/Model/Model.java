@@ -1,9 +1,9 @@
 package Model;
 
-import javafx.collections.ObservableList;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Model {
@@ -11,7 +11,7 @@ public class Model {
     ReadFile rf;
     Indexer index;
     boolean isStemSelected;
-    long totalTime;
+    double totalTime;
 
     public Model() {
         isStemSelected = false;
@@ -23,7 +23,7 @@ public class Model {
             long startTime = System.nanoTime();
             rf.getFilesFromDir(corpusPath);
             long finishTime = System.nanoTime();
-            totalTime = (long)((finishTime - startTime)/1000000.0);
+            totalTime = (double) ((finishTime - startTime)/1000000000.0);
           //  System.out.println("Total time:  " + totalTime + " sec");
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,10 +68,14 @@ public class Model {
     }
 
     public String endOfRun() {
-        String termsMsg = "Unique terms in corpus : " + rf.getDicSize() + "\n";
+        String termsMsg = "Unique terms in corpus : " + rf.getDictionary().size() + "\n";
         String docsMsg = "Indexed documents : " + rf.endOfRun() + "\n";
         String timeMsg = "Total running time : " + totalTime + " sec";
         String message = termsMsg + docsMsg + timeMsg;
         return message;
+    }
+
+    public HashMap<String, ArrayList<Integer>> showDic() {
+        return rf.getDictionary();
     }
 }
