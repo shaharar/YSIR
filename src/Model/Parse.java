@@ -235,7 +235,6 @@ public class Parse {
            while (i < token.length()){
                c = token.charAt(i);
                 if(!delimiters.contains("" + c)) {
-                  //  i++;
                     break;
                 }
                i++;
@@ -1021,7 +1020,7 @@ public class Parse {
         delimiters.add("~");
         delimiters.add("`");
         delimiters.add(";");
-        delimiters.add("`");
+        delimiters.add("/");
     }
 
     private String replaceChars (String textForReplace){
@@ -1064,7 +1063,6 @@ public class Parse {
         replaceMap.put(" -- "," ");
         replaceMap.put("- ","");
         replaceMap.put("-\n","");
-        //replaceMap.put(" -","");
         replaceMap.put("\"","");
         replaceMap.put(".\"","");
         replaceMap.put("*","");
@@ -1094,7 +1092,7 @@ public class Parse {
         stemmer = new Stemmer();
     }
 
-    public HashMap<String, ArrayList<Integer>> getDictionary() {
-        return indexer.getDictionary();
+    public int getDicSize() {
+        return indexer.getDicSize();
     }
 }

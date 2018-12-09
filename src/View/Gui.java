@@ -35,7 +35,7 @@ public class Gui {
     public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
-   // public ListView <String> lv_dic = new ListView<>();
+   // public ListView <String> lv_dic;
     String corpusPath;
     String savePath;
 
@@ -43,6 +43,7 @@ public class Gui {
         model = new Model();
     }
 
+    //load the corpus path the user chose
     public void loadCorpusPath() {
         Stage stage = new Stage();
         DirectoryChooser fc = new DirectoryChooser();
@@ -53,6 +54,7 @@ public class Gui {
         }
     }
 
+    //load the path of saving files the user chose
     public void saveFilesPath() {
         Stage stage = new Stage();
         DirectoryChooser fc = new DirectoryChooser();
@@ -63,6 +65,7 @@ public class Gui {
         }
     }
 
+    //build the inverted index
     public void run () {
         if (corpusPath == null) {
             showAlert("Please choose corpus path");
@@ -73,6 +76,7 @@ public class Gui {
             return;
         } else {
             try {
+                showAlert("Running started, please wait for the end of the process");
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -85,7 +89,43 @@ public class Gui {
         }
     }
 
+    //load dictionary file from the relevant directory
+    public void loadDictionary () {
+        if (savePath == null){
+            showAlert("Please insert save files path");
+            return;
+        }
+        File newDicFile;
+        if (chbx_stemming.isSelected()){
+            newDicFile = new File(savePath + "\\indexResults\\dictionary_stemming.txt");
+        }
+        else{
+            newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
+        }
+        if (!newDicFile.exists()){
+            showAlert("There wasn't found a dictionary. Please load a new one");
+        }
+        else {
+            model.loadDictionary (savePath, newDicFile);
+            showAlert("Loading successful");
+        }
+    }
 
+    public void stemming(){
+        model.stemming (chbx_stemming.isSelected());
+    }
+
+    //clear all directories and memory
+    public void reset(){
+        if (! model.reset(savePath)){
+            showAlert("The files and memory have been cleared");
+        }
+        else {
+            showAlert("Reset is done");
+        }
+    }
+
+    //show the dictionary file existing in the directory
     public void showDictionary () {
         if (savePath == null){
             showAlert("Please insert save files path");
@@ -139,39 +179,5 @@ public class Gui {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText(alertMessage);
         alert.show();
-    }
-
-    public void loadDictionary () {
-        if (savePath == null){
-            showAlert("Please insert save files path");
-            return;
-        }
-        File newDicFile;
-        if (chbx_stemming.isSelected()){
-            newDicFile = new File(savePath + "\\indexResults\\dictionary_stemming.txt");
-        }
-        else{
-            newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
-        }
-        if (!newDicFile.exists()){
-            showAlert("There wasn't found a dictionary. Please load a new one");
-        }
-        else {
-            model.loadDictionary (savePath, newDicFile);
-            showAlert("Loading successful");
-        }
-    }
-
-    public void stemming(){
-        model.stemming (chbx_stemming.isSelected());
-    }
-
-    public void reset(){
-        if (! model.reset(savePath)){
-            showAlert("The files and memory have been cleared");
-        }
-        else {
-            showAlert("Reset is done");
-        }
     }
 }

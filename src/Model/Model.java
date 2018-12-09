@@ -24,7 +24,6 @@ public class Model {
             rf.getFilesFromDir(corpusPath);
             long finishTime = System.nanoTime();
             totalTime = (double) ((finishTime - startTime)/1000000000.0);
-          //  System.out.println("Total time:  " + totalTime + " sec");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,14 +67,10 @@ public class Model {
     }
 
     public String endOfRun() {
-        String termsMsg = "Unique terms in corpus : " + rf.getDictionary().size() + "\n";
+        String termsMsg = "Unique terms in corpus : " + rf.getDicSize() + "\n";
         String docsMsg = "Indexed documents : " + rf.endOfRun() + "\n";
         String timeMsg = "Total running time : " + totalTime + " sec";
         String message = termsMsg + docsMsg + timeMsg;
         return message;
-    }
-
-    public HashMap<String, ArrayList<Integer>> showDic() {
-        return rf.getDictionary();
     }
 }

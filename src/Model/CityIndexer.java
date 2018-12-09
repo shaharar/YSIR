@@ -8,8 +8,6 @@ public class CityIndexer {
     private HTTPRequest httpRequest;
     private CountriesCollection countries;
     private String path;
-    private int notCapital = 0;
-
 
     public CityIndexer(String path) throws IOException {
         citiesDictionary = new HashMap<>();
@@ -58,8 +56,6 @@ public class CityIndexer {
                     countryName = "";
                     currency = "";
                     population = "";
-                    notCapital++;
-
                 }
 //                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
 //                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));

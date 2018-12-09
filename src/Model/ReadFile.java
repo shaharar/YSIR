@@ -120,8 +120,8 @@ public class ReadFile {
         return parse.getDocsInCollection();
     }
 
-    public HashMap<String, ArrayList<Integer>> getDictionary() {
-        return parse.getDictionary();
+    public int getDicSize() {
+        return parse.getDicSize();
     }
 }
 

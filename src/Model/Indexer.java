@@ -236,8 +236,8 @@ public class Indexer {
                     docsListStr.append(docNo + ", " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
-                if (currIdfStr.contains(".")){
-                    if(currIdfStr.indexOf(".") + 3 < currIdfStr.length()) {
+                if (currIdfStr.contains(".")) {
+                    if (currIdfStr.indexOf(".") + 3 < currIdfStr.length()) {
                         currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
                     }
                 }
@@ -610,7 +610,7 @@ public class Indexer {
         }
     }
 
-    public HashMap<String, ArrayList<Integer>> getDictionary() {
-        return dictionary;
+    public int getDicSize() {
+        return dictionary.size();
     }
 }
