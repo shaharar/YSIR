@@ -1,8 +1,5 @@
 package Model;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -520,7 +517,13 @@ public class Indexer {
         StringBuilder sb = new StringBuilder();
         StringBuilder sbShowDic = new StringBuilder();
         //sort the dictionary by keys (terms)
-        TreeMap <String, String> sortedTerms = new TreeMap<>(new Comparator<String>() {
+        ArrayList <String> strList = new ArrayList<>();
+        for (String termStr: dictionary.keySet()) {
+            strList.add(termStr);
+        }
+        Collections.sort(strList);
+
+/*        TreeMap <String, String> sortedTerms = new TreeMap<>(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
                 return o1.compareToIgnoreCase(o2);
@@ -528,9 +531,9 @@ public class Indexer {
         });
         for (String termStr: dictionary.keySet()) {
             sortedTerms.put(termStr, "");
-        }
+        }*/
 
-        for (String termStr : sortedTerms.keySet()) {
+        for (String termStr : strList) {
             if (termStr.length() == 0){
                 break;
             }
