@@ -123,21 +123,6 @@ public class CityIndexer {
             strList.add(termStr);
         }
         Collections.sort(strList);
-/*        TreeMap<String, String> sortedCities = new TreeMap<>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareToIgnoreCase(o2);
-            }
-        });*/
-/*        for (String cityStr: citiesDictionary.keySet()) {
-            sortedCities.put(cityStr,"");
-        }*/
-/*        Collections.sort(strList, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareToIgnoreCase(o2);
-            }
-        });*/
         for (String cityStr : strList) {
             if (cityStr.length() == 0){
                 break;

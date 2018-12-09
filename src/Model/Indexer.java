@@ -523,16 +523,6 @@ public class Indexer {
         }
         Collections.sort(strList);
 
-/*        TreeMap <String, String> sortedTerms = new TreeMap<>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareToIgnoreCase(o2);
-            }
-        });
-        for (String termStr: dictionary.keySet()) {
-            sortedTerms.put(termStr, "");
-        }*/
-
         for (String termStr : strList) {
             if (termStr.length() == 0){
                 break;
