@@ -10,6 +10,7 @@ public class Indexer {
     String path;
     private boolean withStemming;
     String postingDir;
+    private HashMap<String, ArrayList<Integer>> dictioary;
 
     // constructor
     public Indexer(String path, boolean withStemming) {
@@ -387,7 +388,7 @@ public class Indexer {
 
 
 
-    private String classifyToPosting (String term){
+    public String classifyToPosting (String term){
         char firstLetter = term.charAt(0);
         if (firstLetter == 'a' || firstLetter == 'A'){
             return "A";
@@ -605,5 +606,13 @@ public class Indexer {
 
     public int getDicSize() {
         return dictionary.size();
+    }
+
+    public HashMap<String, ArrayList<Integer>> getDictioary() {
+        return dictioary;
+    }
+
+    public String getPostingDir() {
+        return postingDir;
     }
 }

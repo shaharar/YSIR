@@ -223,7 +223,7 @@ public class Parse {
    }
 
 
-   public HashMap<String,Integer> termsPerQuery (String queryText){
+   public HashMap<String,Integer> parseQuery (String queryText){
        HashMap<String,Integer> termsPerQuery = new HashMap<>();
        currentIdx = 0;
        ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
