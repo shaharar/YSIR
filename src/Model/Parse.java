@@ -31,7 +31,7 @@ public class Parse {
     int docsInCollection;
 
 
-   public Parse (boolean withStemming, String path, String corpusPath){
+    public Parse (boolean withStemming, String path, String corpusPath){
       terms = new HashMap<>();
       cityDocs = new HashMap<>();
       termsPerDoc = new HashSet<>();
@@ -221,6 +221,125 @@ public class Parse {
            docsTotal = 0;
        }
    }
+
+
+   public HashMap<String,Integer> termsPerQuery (String queryText){
+       HashMap<String,Integer> termsPerQuery = new HashMap<>();
+       currentIdx = 0;
+       ArrayList <String> months = new ArrayList<String>(Arrays.asList("Jan", "JAN", "January", "JANUARY", //the following data structure contains months valid formats
+               "Feb", "FEB", "February", "FEBRUARY",
+               "Mar", "MAR", "March", "MARCH",
+               "Apr", "APR", "April", "APRIL",
+               "May", "MAY",
+               "Jun", "JUN", "June", "JUNE",
+               "Jul", "JUL", "July", "JULY",
+               "Aug", "AUG", "August", "AUGUST",
+               "Sep", "SEP", "September", "SEPTEMBER",
+               "Oct", "OCT", "October", "OCTOBER",
+               "Nov", "NOV", "November", "NOVEMBER",
+               "Dec", "DEC", "December", "DECEMBER"));
+       queryText = replaceChars(queryText);
+       replaceSb = new StringBuilder();
+       tokens = queryText.split(" ");
+       int queryLength = tokens.length;
+       String token;
+
+       while (currentIdx < tokens.length) {
+           Term term = null;
+           token = tokens[currentIdx];
+           token = removeDashes(token);
+           token = removeDelimiters(token);
+           String nextToken = "";
+
+            //numbers
+           if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
+               if (currentIdx + 1 < tokens.length) {
+                   nextToken = tokens[currentIdx + 1];
+               }
+               // token is a percent
+               if (nextToken.equals("percent") || nextToken.equals("percentage")) {
+                   term = percentage(token);
+               }
+
+               // token represents one of the following: a number or a price
+               else if (nextToken.equalsIgnoreCase("Thousand") || nextToken.equalsIgnoreCase("Million") || nextToken.equalsIgnoreCase("Billion") || nextToken.equalsIgnoreCase("Trillion") || nextToken.contains("/")) {
+                   // token is a price
+                   if (((currentIdx + 2 < tokens.length) && (tokens[currentIdx + 2].equals("Dollars"))) || ((currentIdx + 3 < tokens.length) && (tokens[currentIdx + 2].equals("U.S") && tokens[currentIdx + 3].equals("dollars")))) {
+                       term = prices(token);
+                   }
+                   // token is a number
+                   else {
+                       term = numbers(token);
+                   }
+               }
+               // token is a price
+               else if ((currentIdx + 1 < tokens.length && nextToken.equals("Dollars")) || ((currentIdx + 2 < tokens.length) && ((nextToken.equals("m") || nextToken.equals("bn")) && tokens[currentIdx + 2].equals("Dollars")))) {
+                   term = prices(token);
+               }
+               // token is a date
+               else if (currentIdx + 1 < tokens.length && months.contains(nextToken)) {
+                   term = dates(token);
+               } else {
+                   term = numbers(token);
+               }
+           }
+
+           //symbols
+           else if (token.contains("%")) {
+               term = percentage(token);
+           } else if (token.contains("$")) {
+               term = prices(token);
+           } else if (token.contains("-")) {
+               term = rangesAndExpressions(token);
+           }
+
+           //words
+           else {
+               //relevance - our rule
+               if (token.length() > 2 && (token.charAt(token.length() - 2) == '\'' || token.charAt(token.length() - 2) == '`') && token.charAt(token.length() - 1) == 's'){
+                   token = token.substring(0, token.length() - 2);
+               }
+               //dates
+               if (months.contains(token)) {
+                   term = dates(token);
+               }
+               //ranges
+               else if (token.equalsIgnoreCase("Between") && Pattern.compile("^[0-9] + ([,.][0-9]?)?$").matcher(token).find()) {
+                   term = rangesAndExpressions(token);
+               }
+
+               //shortcuts
+               else if (token.equalsIgnoreCase("Mr") || token.equalsIgnoreCase("Mrs") || token.equalsIgnoreCase("Dr")){
+                   term = shortcuts(token);
+               }
+
+               //measures
+               else if (token.equalsIgnoreCase("kilogram") || token.equalsIgnoreCase("kilobyte") || token.equalsIgnoreCase("kilobytes") || token.equalsIgnoreCase("kilograms") || token.equalsIgnoreCase("gram") || token.equalsIgnoreCase("byte") || token.equalsIgnoreCase("bytes")){
+                   term = measures(token);
+               }
+
+               //just words
+               else if (!(stopWords.contains(token.toLowerCase())) && !(stopWords.contains(token.toUpperCase()))){
+                   term = lettersCase(token);
+               }
+               else {
+                   queryLength --;
+               }
+           }
+           currentIdx++;
+           if (termsPerQuery.containsKey(term.getTermStr())){
+               termsPerQuery.replace(term.getTermStr(),termsPerQuery.get(term.getTermStr()) + 1); //update tf
+           }
+           else{
+               termsPerQuery.put(term.getTermStr(),0); //update tf
+           }
+       }
+
+       return termsPerQuery;
+   }
+
+
+
 
     private String removeDelimiters(String token) {
        if (token.length() == 0){
