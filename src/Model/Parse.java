@@ -29,6 +29,7 @@ public class Parse {
     private int currentIdx;
     int docsTotal;
     int docsInCollection;
+    int docsTotalLengthes;
 
 
     public Parse (boolean withStemming, String path, String corpusPath){
@@ -56,6 +57,7 @@ public class Parse {
       currentIdx = 0;
       docsTotal = 0;
       docsInCollection = 0;
+      docsTotalLengthes = 0;
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -205,6 +207,7 @@ public class Parse {
 
        positionsInDoc.clear();
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
+      docsTotalLengthes += termsPerDoc.size();
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
@@ -1198,6 +1201,8 @@ public class Parse {
     public int getDocsInCollection() {
         return docsInCollection;
     }
+
+    public int getDocsTotalLengthes() {return docsTotalLengthes; }
 
     //clear all the data structures
     public void reset() {
