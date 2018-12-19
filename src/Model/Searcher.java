@@ -20,7 +20,7 @@ public class Searcher {
         docsResults = new HashMap<>();
     }
 
-    public void search (Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
+    public void search(Indexer indexer, String query, int docsInCollection, int docsTotalLengthes, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
         parser = new Parse(withStemming,saveInPath,corpusPath);
 //        ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
         HashMap<String,Integer> queryTerms = parser.parseQuery(query);
@@ -79,7 +79,7 @@ public class Searcher {
     }
 
 
-    private void separateFileToQueries(Indexer indexer, String path, boolean withStemming, String saveInPath, String corpusPath){
+    public void separateFileToQueries(Indexer indexer, String path, int docsInCollection, int docsTotalLengthes, boolean withStemming, String saveInPath, String corpusPath){
         File queriesFile = new File(path);
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile,"UTF-8");
@@ -88,7 +88,7 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer,queryText, withStemming, saveInPath, corpusPath, queryId, queryDescription);
+                search(indexer,queryText, docsInCollection, docsTotalLengthes, withStemming, saveInPath, corpusPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();

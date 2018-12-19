@@ -74,7 +74,7 @@
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <Button layoutX="678.0" layoutY="195.0" mnemonicParsing="false" onAction="#runQueries" prefHeight="30.0" prefWidth="101.0" text="Run Queries" textAlignment="CENTER" textFill="#0d0d0d">
+      <Button layoutX="678.0" layoutY="195.0" mnemonicParsing="false" onAction="#runQueriesFile" prefHeight="30.0" prefWidth="101.0" text="Run Queries" textAlignment="CENTER" textFill="#0d0d0d">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
@@ -84,6 +84,6 @@
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <TextField fx:id="txt_corpusChooser1" layoutX="520.0" layoutY="195.0" prefHeight="30.0" prefWidth="157.0" />
+      <TextField fx:id="txt_queriesPathChooser" layoutX="520.0" layoutY="195.0" prefHeight="30.0" prefWidth="157.0" />
    </children>
 </AnchorPane>
