@@ -10,6 +10,7 @@ public class Model {
 
     ReadFile rf;
     Indexer index;
+    Searcher searcher;
     boolean isStemSelected;
     double totalTime;
 
@@ -72,5 +73,10 @@ public class Model {
         String timeMsg = "Total running time : " + totalTime + " sec";
         String message = termsMsg + docsMsg + timeMsg;
         return message;
+    }
+
+    public void runQuery(String queryText, boolean withStemming, String saveInPath, String corpusPath) {
+        searcher = new Searcher();
+        searcher.search(index,queryText,withStemming,saveInPath,corpusPath);
     }
 }

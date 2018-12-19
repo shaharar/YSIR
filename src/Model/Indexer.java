@@ -10,7 +10,6 @@ public class Indexer {
     String path;
     private boolean withStemming;
     String postingDir;
-    private HashMap<String, ArrayList<Integer>> dictioary;
 
     // constructor
     public Indexer(String path, boolean withStemming) {
@@ -231,7 +230,7 @@ public class Indexer {
                         }
                     }
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + "; ");*/
-                    docsListStr.append(docNo + ", " + docsList.get(docNo) + "; ");
+                    docsListStr.append(docNo + ": " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")) {
@@ -274,7 +273,7 @@ public class Indexer {
                         }
                     }
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");*/
-                    docsListStr.append(docNo + ", " + docsList.get(docNo) + ";");
+                    docsListStr.append(docNo + ": " + docsList.get(docNo) + ";");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")){
@@ -608,8 +607,8 @@ public class Indexer {
         return dictionary.size();
     }
 
-    public HashMap<String, ArrayList<Integer>> getDictioary() {
-        return dictioary;
+    public HashMap<String, ArrayList<Integer>> getDictionary() {
+        return dictionary;
     }
 
     public String getPostingDir() {

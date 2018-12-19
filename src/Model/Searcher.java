@@ -10,7 +10,6 @@ import java.util.HashMap;
 public class Searcher {
 
     Parse parser;
-    Indexer indexer;
     Ranker ranker;
     HashMap<String,String> docsResults;
 
@@ -18,12 +17,11 @@ public class Searcher {
         docsResults = new HashMap<>();
     }
 
-    public void search (String query, boolean withStemming, String saveInPath, String corpusPath){
+    public void search (Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath){
         parser = new Parse(withStemming,saveInPath,corpusPath);
-        indexer = new Indexer(saveInPath,withStemming);
         HashMap<String,Integer> terms = parser.parseQuery(query);
 
-        HashMap <String, ArrayList<Integer>> dictionary = indexer.getDictioary();
+        HashMap <String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         int pointer = 0;
         for (String term: terms.keySet()) {
             if(!dictionary.containsKey(term)){
@@ -38,7 +36,7 @@ public class Searcher {
             try {
                 br = new BufferedReader(new FileReader(new File(saveInPath + indexer.getPostingDir() + "\\posting_" + chunk + ".txt")));
                 String line = "";
-                int i = 0;
+                int i = 1;
                 while ((line = (br.readLine())) != null) {
                     if(i == pointer){
                         break;
@@ -61,15 +59,23 @@ public class Searcher {
 
     private void findDocsFromLine(String line, String term) {
         String docs = line.substring(0,line.indexOf("[") - 1); //get 'docsListStr'
-        String[] docsArr = docs.split(", ");
-        for (String doc:docsArr) {
+        String[] docsArr = docs.split("; ");
+        for (String docInfo : docsArr) {
+            String doc = docInfo.substring(0,docInfo.indexOf(": "));
+            String tf = docInfo.substring(docInfo.indexOf(": ") + 1);
             if(!docsResults.containsKey(doc)){
-                docsResults.put(doc,term);
+                docsResults.put(doc,term + "-" + tf);
             }
             else{
                 String termsInDoc = docsResults.get(doc);
-                docsResults.replace(doc, termsInDoc + "|" + term);
+                docsResults.replace(doc, termsInDoc + "|" + term + " -" + tf);
             }
+//            System.out.println("DocNo: "+ doc + " term&tf: " + docsResults.get(doc));
         }
+    }
+
+    public static void main(String[] args){
+        Searcher searcher = new Searcher();
+        searcher.findDocsFromLine("FBIS3-21309: 1; LA030290-0012: 2;[10.41]", "invariables");
     }
 }

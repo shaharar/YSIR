@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
       <Button fx:id="btn_corpusPath" layoutX="57.0" layoutY="98.0" mnemonicParsing="false" onAction="#loadCorpusPath" prefHeight="30.0" prefWidth="109.0" text="Corpus Path" textAlignment="CENTER">
          <font>
@@ -22,41 +22,68 @@
          </font>
       </Button>
       <TextField fx:id="txt_savePathChooser" layoutX="166.0" layoutY="147.0" prefHeight="30.0" prefWidth="182.0" />
-      <Button fx:id="btn_run" layoutX="250.0" layoutY="334.0" mnemonicParsing="false" onAction="#run" prefHeight="30.0" prefWidth="101.0" text="Run" textAlignment="CENTER" textFill="#0d0d0d">
+      <Button fx:id="btn_run" layoutX="163.0" layoutY="406.0" mnemonicParsing="false" onAction="#run" prefHeight="30.0" prefWidth="101.0" text="Run Index" textAlignment="CENTER" textFill="#0d0d0d">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <Label layoutX="182.0" layoutY="14.0" text="Search Engine" textAlignment="CENTER" textFill="#404e5e">
+      <Label layoutX="276.0" layoutY="14.0" text="Search Engine" textAlignment="CENTER" textFill="#404e5e">
          <font>
             <Font name="System Bold" size="36.0" />
          </font>
       </Label>
-      <CheckBox fx:id="chbx_stemming" layoutX="394.0" layoutY="147.0" mnemonicParsing="false" onAction="#stemming" onMouseClicked="#stemming" prefHeight="30.0" prefWidth="101.0" text="Stemming">
+      <CheckBox fx:id="chbx_stemming" layoutX="57.0" layoutY="259.0" mnemonicParsing="false" onAction="#stemming" onMouseClicked="#stemming" prefHeight="30.0" prefWidth="101.0" text="Stemming">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </CheckBox>
-      <ChoiceBox fx:id="chobx_language" layoutX="466.0" layoutY="98.0" prefHeight="25.0" prefWidth="101.0" />
-      <Label layoutX="394.0" layoutY="102.0" prefHeight="25.0" prefWidth="67.0" text="Language">
+      <ChoiceBox fx:id="chobx_language" layoutX="129.0" layoutY="210.0" prefHeight="25.0" prefWidth="101.0" />
+      <Label layoutX="57.0" layoutY="214.0" prefHeight="25.0" prefWidth="67.0" text="Language">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </Label>
-      <Button fx:id="btn_reset" layoutX="502.0" layoutY="356.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="84.0" text="Reset" textAlignment="CENTER">
+      <Button fx:id="btn_reset" layoutX="686.0" layoutY="532.0" mnemonicParsing="false" onAction="#reset" prefHeight="30.0" prefWidth="84.0" text="Reset" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <Button fx:id="btn_showDic" disable="false" layoutX="222.0" layoutY="228.0" mnemonicParsing="false" onAction="#showDictionary" prefHeight="43.0" prefWidth="119.0" text="Show Dictionary" textAlignment="CENTER">
+      <Button fx:id="btn_showDic" disable="false" layoutX="213.0" layoutY="314.0" mnemonicParsing="false" onAction="#showDictionary" prefHeight="43.0" prefWidth="119.0" text="Show Dictionary" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <Button fx:id="btn_loadDic" layoutX="66.0" layoutY="228.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="43.0" prefWidth="127.0" text="Load Dictionary" textAlignment="CENTER">
+      <Button fx:id="btn_loadDic" layoutX="57.0" layoutY="314.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="43.0" prefWidth="127.0" text="Load Dictionary" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
+      <TextField fx:id="txt_query" layoutX="483.0" layoutY="98.0" prefHeight="30.0" prefWidth="217.0" />
+      <Label layoutX="436.0" layoutY="101.0" prefHeight="25.0" prefWidth="47.0" text="Query:">
+         <font>
+            <Font name="Calibri Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="436.0" layoutY="150.0" prefHeight="25.0" prefWidth="127.0" text="Choose queries file:">
+         <font>
+            <Font name="Calibri Bold" size="14.0" />
+         </font>
+      </Label>
+      <Button fx:id="btn_browseQueries" layoutX="436.0" layoutY="195.0" mnemonicParsing="false" onAction="#browseQueriesFile" prefHeight="30.0" prefWidth="84.0" text="Browse" textAlignment="CENTER">
+         <font>
+            <Font name="Calibri Bold" size="13.0" />
+         </font>
+      </Button>
+      <Button layoutX="678.0" layoutY="195.0" mnemonicParsing="false" onAction="#runQueries" prefHeight="30.0" prefWidth="101.0" text="Run Queries" textAlignment="CENTER" textFill="#0d0d0d">
+         <font>
+            <Font name="Calibri Bold" size="13.0" />
+         </font>
+      </Button>
+      <Button layoutX="699.0" layoutY="98.0" mnemonicParsing="false" onAction="#runQuery" prefHeight="30.0" prefWidth="84.0" text="Run Query" textAlignment="CENTER" textFill="#0d0d0d">
+         <font>
+            <Font name="Calibri Bold" size="13.0" />
+         </font>
+      </Button>
+      <TextField fx:id="txt_corpusChooser1" layoutX="520.0" layoutY="195.0" prefHeight="30.0" prefWidth="157.0" />
    </children>
 </AnchorPane>

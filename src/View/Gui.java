@@ -2,6 +2,7 @@ package View;
 
 import Model.Model;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -25,6 +26,7 @@ public class Gui {
     Model model;
     File corpusDirSelected = null;
     File saveDirSelected = null;
+    File queriesDirSelected = null;
     public Button btn_corpusPath;
     public Button btn_savePath;
     public Button btn_run;
@@ -35,9 +37,12 @@ public class Gui {
     public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
+    public TextField txt_query;
+    public Button btn_browseQueries;
    // public ListView <String> lv_dic;
     String corpusPath;
     String savePath;
+    String queriesFilePath;
 
     public Gui() {
         model = new Model();
@@ -46,8 +51,8 @@ public class Gui {
     //load the corpus path the user chose
     public void loadCorpusPath() {
         Stage stage = new Stage();
-        DirectoryChooser fc = new DirectoryChooser();
-        corpusDirSelected = fc.showDialog(stage);
+        DirectoryChooser dc = new DirectoryChooser();
+        corpusDirSelected = dc.showDialog(stage);
         if (corpusDirSelected != null) {
             corpusPath = corpusDirSelected.getAbsolutePath();
             txt_corpusChooser.setText(corpusPath);
@@ -57,8 +62,8 @@ public class Gui {
     //load the path of saving files the user chose
     public void saveFilesPath() {
         Stage stage = new Stage();
-        DirectoryChooser fc = new DirectoryChooser();
-        saveDirSelected = fc.showDialog(stage);
+        DirectoryChooser dc = new DirectoryChooser();
+        saveDirSelected = dc.showDialog(stage);
         if (saveDirSelected != null) {
             savePath = saveDirSelected.getAbsolutePath();
             txt_savePathChooser.setText(savePath);
@@ -179,5 +184,22 @@ public class Gui {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText(alertMessage);
         alert.show();
+    }
+
+    public void runQuery() {
+        model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath,corpusPath);
+    }
+
+    public void runQueries() {
+    }
+
+    public void browseQueriesFile() {
+        Stage stage = new Stage();
+        DirectoryChooser dc = new DirectoryChooser();
+        queriesDirSelected = dc.showDialog(stage);
+        if (queriesDirSelected != null) {
+            queriesFilePath = queriesDirSelected.getAbsolutePath();
+            txt_savePathChooser.setText(queriesFilePath);
+        }
     }
 }
