@@ -230,7 +230,7 @@ public class Indexer {
                         }
                     }
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + "; ");*/
-                    docsListStr.append(docNo + ", " + docsList.get(docNo) + "; ");
+                    docsListStr.append(docNo + ": " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")) {
@@ -273,7 +273,7 @@ public class Indexer {
                         }
                     }
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");*/
-                    docsListStr.append(docNo + ", " + docsList.get(docNo) + ";");
+                    docsListStr.append(docNo + ": " + docsList.get(docNo) + ";");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")){

@@ -13,7 +13,6 @@ import java.util.HashMap;
 public class Searcher {
 
     Parse parser;
-    Indexer indexer;
     Ranker ranker;
     HashMap<String,String> docsResults;
 
@@ -21,9 +20,8 @@ public class Searcher {
         docsResults = new HashMap<>();
     }
 
-    public void search (String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
+    public void search (Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
         parser = new Parse(withStemming,saveInPath,corpusPath);
-        indexer = new Indexer(saveInPath,withStemming);
         ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
         HashMap<String,Integer> terms = parser.parseQuery(query);
 
@@ -65,20 +63,23 @@ public class Searcher {
 
     private void findDocsFromLine(String line, String term) {
         String docs = line.substring(0,line.indexOf("[") - 1); //get 'docsListStr'
-        String[] docsArr = docs.split(", ");
-        for (String doc:docsArr) {
+        String[] docsArr = docs.split("; ");
+        for (String docInfo : docsArr) {
+            String doc = docInfo.substring(0,docInfo.indexOf(": "));
+            String tf = docInfo.substring(docInfo.indexOf(": ") + 1);
             if(!docsResults.containsKey(doc)){
-                docsResults.put(doc,term);
+                docsResults.put(doc,term + "-" + tf);
             }
             else{
                 String termsInDoc = docsResults.get(doc);
-                docsResults.replace(doc, termsInDoc + "|" + term);
+                docsResults.replace(doc, termsInDoc + "|" + term + " -" + tf);
             }
+//            System.out.println("DocNo: "+ doc + " term&tf: " + docsResults.get(doc));
         }
     }
 
 
-    private void separateFileToQueries(String path, boolean withStemming, String saveInPath, String corpusPath){
+    private void separateFileToQueries(Indexer indexer, String path, boolean withStemming, String saveInPath, String corpusPath){
         File queriesFile = new File(path);
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile,"UTF-8");
@@ -87,10 +88,16 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(queryText, withStemming, saveInPath, corpusPath, queryId, queryDescription);
+                search(indexer,queryText, withStemming, saveInPath, corpusPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static void main(String[] args){
+        Searcher searcher = new Searcher();
+        searcher.findDocsFromLine("FBIS3-21309: 1; LA030290-0012: 2;[10.41]", "invariables");
     }
 }
