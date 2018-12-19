@@ -30,6 +30,7 @@ public class Parse {
     int docsTotal;
     int docsInCollection;
     int docsTotalLengthes;
+    private HashMap<String, Integer> docsLengthes;
 
 
     public Parse (boolean withStemming, String path, String corpusPath){
@@ -58,6 +59,7 @@ public class Parse {
       docsTotal = 0;
       docsInCollection = 0;
       docsTotalLengthes = 0;
+      docsLengthes = new HashMap<>();
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -207,6 +209,7 @@ public class Parse {
 
        positionsInDoc.clear();
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
+      docsLengthes.put(docNo, termsPerDoc.size());
       docsTotalLengthes += termsPerDoc.size();
       docsTotal++;
       docsInCollection++;
@@ -1203,6 +1206,10 @@ public class Parse {
     }
 
     public int getDocsTotalLengthes() {return docsTotalLengthes; }
+
+    public HashMap<String, Integer> getDocsLengthes() {
+        return docsLengthes;
+    }
 
     //clear all the data structures
     public void reset() {
