@@ -39,7 +39,8 @@ public class Gui {
     public ChoiceBox chobx_language;
     public TextField txt_query;
     public Button btn_browseQueries;
-   // public ListView <String> lv_dic;
+    public TextField txt_queriesPathChooser;
+    // public ListView <String> lv_dic;
     String corpusPath;
     String savePath;
     String queriesFilePath;
@@ -190,7 +191,8 @@ public class Gui {
         model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
-    public void runQueries() {
+    public void runQueriesFile() {
+        model.runQueriesFile(txt_queriesPathChooser,chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
     public void browseQueriesFile() {
@@ -199,7 +201,7 @@ public class Gui {
         queriesDirSelected = dc.showDialog(stage);
         if (queriesDirSelected != null) {
             queriesFilePath = queriesDirSelected.getAbsolutePath();
-            txt_savePathChooser.setText(queriesFilePath);
+            txt_queriesPathChooser.setText(queriesFilePath);
         }
     }
 }

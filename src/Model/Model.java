@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.scene.control.TextField;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,6 +79,10 @@ public class Model {
 
     public void runQuery(String queryText, boolean withStemming, String saveInPath, String corpusPath) {
         searcher = new Searcher();
-        searcher.search(index,queryText,withStemming,saveInPath,corpusPath);
+        searcher.search(index,queryText,rf.getDocsInCollection(),rf.getDocsTotalLengthes(),withStemming,saveInPath,corpusPath,"","");
+    }
+
+    public void runQueriesFile(TextField txt_queriesPathChooser, boolean selected, String savePath, String corpusPath) {
+        searcher.separateFileToQueries(index,txt_queriesPathChooser.getText().toString(),rf.getDocsInCollection(),rf.getDocsTotalLengthes(),selected,savePath,corpusPath);
     }
 }
