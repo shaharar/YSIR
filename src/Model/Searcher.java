@@ -22,12 +22,12 @@ public class Searcher {
 
     public void search (Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
         parser = new Parse(withStemming,saveInPath,corpusPath);
-        ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
-        HashMap<String,Integer> terms = parser.parseQuery(query);
+//        ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
+        HashMap<String,Integer> queryTerms = parser.parseQuery(query);
 
         HashMap <String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         int pointer = 0;
-        for (String term: terms.keySet()) {
+        for (String term: queryTerms.keySet()) {
             if(!dictionary.containsKey(term)){
                 continue;
             }
@@ -57,7 +57,7 @@ public class Searcher {
             }
         }
 
-        ranker.rank(docsResults, queryId, queryDescription);
+       ranker.rank(docsResults, queryTerms, queryId, queryDescription);
 
     }
 
