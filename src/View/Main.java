@@ -20,7 +20,7 @@ public class Main extends Application {
             e.printStackTrace();
         }
         primaryStage.setTitle("Search Engine");
-        Scene scene = new Scene(root, 650, 500);
+        Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
