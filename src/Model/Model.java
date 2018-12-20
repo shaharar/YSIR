@@ -77,12 +77,12 @@ public class Model {
         return message;
     }
 
-    public void runQuery(String queryText, boolean withStemming, String saveInPath, String corpusPath) {
+    public void runQuery(String queryText, boolean withStemming, String saveInPath) {
         searcher = new Searcher();
-        searcher.search(index,queryText,withStemming,saveInPath,corpusPath,"","");
+        searcher.search(index,queryText,withStemming,saveInPath,"","");
     }
 
-    public void runQueriesFile(TextField txt_queriesPathChooser, boolean selected, String savePath, String corpusPath) {
-        searcher.separateFileToQueries(index,txt_queriesPathChooser.getText().toString(),selected,savePath,corpusPath);
+    public void runQueriesFile(TextField txt_queriesPathChooser, boolean selected, String savePath) {
+        searcher.separateFileToQueries(index,txt_queriesPathChooser.getText().toString(),selected,savePath);
     }
 }

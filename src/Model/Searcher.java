@@ -20,25 +20,32 @@ public class Searcher {
         docsResults = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
-        parser = new Parse(withStemming,saveInPath,corpusPath);
+    public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String queryId, String queryDescription){
+        parser = new Parse(withStemming,saveInPath,"");
 //        ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
         HashMap<String,Integer> queryTerms = parser.parseQuery(query);
-
         HashMap <String, ArrayList<Integer>> dictionary = indexer.getDictionary();
+
+        String postingDir;
+        if (!withStemming){
+            postingDir = "\\indexResults\\postingFiles";
+        }
+        else{
+            postingDir = "\\indexResults\\postingFiles_Stemming";
+        }
         int pointer = 0;
         for (String term: queryTerms.keySet()) {
             if(!dictionary.containsKey(term)){
                 continue;
             }
             pointer = dictionary.get(term).get(0);
-            //char chunk = term.charAt(0);
-            char chunk = indexer.classifyToPosting(term).charAt(0);
+           // char chunk = indexer.classifyToPosting(term).charAt(0);
+            String chunk = ("" + term.charAt(0)).toUpperCase();
 
             //get the relevant line from posting file
             BufferedReader br = null;
             try {
-                br = new BufferedReader(new FileReader(new File(saveInPath + indexer.getPostingDir() + "\\posting_" + chunk + ".txt")));
+                br = new BufferedReader(new FileReader(new File(saveInPath + postingDir + "\\posting_" + chunk + ".txt")));
                 String line = "";
                 int i = 1;
                 while ((line = (br.readLine())) != null) {
@@ -79,7 +86,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, String path, boolean withStemming, String saveInPath, String corpusPath){
+    public void separateFileToQueries(Indexer indexer, String path, boolean withStemming, String saveInPath){
         File queriesFile = new File(path);
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile,"UTF-8");
@@ -88,7 +95,7 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer,queryText, withStemming, saveInPath, corpusPath, queryId, queryDescription);
+                search(indexer,queryText, withStemming, saveInPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();
