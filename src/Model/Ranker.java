@@ -11,7 +11,6 @@ public class Ranker {
     private double k;
     private double b;
     private TreeMap <String, Double> docsRanks;
-    private HashMap <String, Integer> docsInfo;
 
     public Ranker (){
         avdl = 0;
