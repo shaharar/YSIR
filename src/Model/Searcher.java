@@ -57,7 +57,7 @@ public class Searcher {
             }
         }
 
-       ranker.rank(docsResults, queryTerms, queryId, queryDescription);
+       ranker.rank(docsResults, queryTerms,dictionary, queryId, queryDescription);
 
     }
 

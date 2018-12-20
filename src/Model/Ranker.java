@@ -1,8 +1,7 @@
 package Model;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 
 
@@ -13,12 +12,12 @@ public class Ranker {
     private double b;
     private TreeMap <String, Double> docsRanks;
 
-    public Ranker (int docsInCollection, int docsTotalLengthes){
-        avdl = docsTotalLengthes / docsInCollection;
-        N = docsInCollection;
+    public Ranker (){
+        avdl = 0;
+        N = 0;
         docsRanks = new TreeMap<>();
     }
-    public void rank(HashMap<String, String> docsResults, HashMap<String, Integer> queryTerms, String queryId, String queryDescription) {
+    public void rank(HashMap<String, String> docsResults, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, String queryId, String queryDescription) {
         for (String docId: docsResults.keySet()) {
             double rank;
             int docTf, queryTf, df, docLength;
