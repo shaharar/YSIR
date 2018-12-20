@@ -188,11 +188,11 @@ public class Gui {
     }
 
     public void runQuery() {
-        model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath,corpusPath);
+        model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath);
     }
 
     public void runQueriesFile() {
-        model.runQueriesFile(txt_queriesPathChooser,chbx_stemming.isSelected(),savePath,corpusPath);
+        model.runQueriesFile(txt_queriesPathChooser,chbx_stemming.isSelected(),savePath);
     }
 
     public void browseQueriesFile() {
