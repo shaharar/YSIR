@@ -15,6 +15,7 @@ public class Searcher {
     Parse parser;
     Ranker ranker;
     HashMap<String,HashMap<String, Integer>> docsResults;
+    static int queryID = 1;
 
     public Searcher() {
     }

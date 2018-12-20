@@ -2,6 +2,7 @@ package View;
 
 import Model.Model;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -10,8 +11,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Gui {
@@ -30,6 +34,7 @@ public class Gui {
     public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
+    public ChoiceBox chobx_cities;
     public TextField txt_query;
     public Button btn_browseQueries;
     public TextField txt_queriesPathChooser;
@@ -37,6 +42,7 @@ public class Gui {
     String corpusPath;
     String savePath;
     public File queriesFile;
+    public Button btn_showResults;
 
     public Gui() {
         model = new Model();
@@ -61,6 +67,7 @@ public class Gui {
         if (saveDirSelected != null) {
             savePath = saveDirSelected.getAbsolutePath();
             txt_savePathChooser.setText(savePath);
+            setCities();
         }
     }
 
@@ -75,7 +82,7 @@ public class Gui {
             return;
         } else {
             try {
-                showAlert("Running started, please wait for the end of the process");
+                //showAlert("Running started, please wait for the end of the process");
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -181,10 +188,26 @@ public class Gui {
     }
 
     public void runQuery() {
+        if (corpusPath == null) {
+            showAlert("Please choose corpus path");
+            return;
+        }
+        if (savePath == null) {
+            showAlert("Please choose save files path");
+            return;
+        }
         model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
     public void runQueriesFile() {
+        if (corpusPath == null) {
+            showAlert("Please choose corpus path");
+            return;
+        }
+        if (savePath == null) {
+            showAlert("Please choose save files path");
+            return;
+        }
         model.runQueriesFile(queriesFile,chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
@@ -196,5 +219,27 @@ public class Gui {
             queriesFile = queriesFileSelected.getAbsoluteFile();
             txt_queriesPathChooser.setText(queriesFile.getAbsolutePath());
         }
+    }
+
+    //show results of query
+    public void showResults() {
+
+    }
+
+    public void setCities(){
+        ArrayList<String> cities = new ArrayList<>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(new File(savePath + "\\cityIndexResults\\citiesDictionary.txt")));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+                cities.add(line.substring(0,line.indexOf(":") - 1) + System.lineSeparator());
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        chobx_cities.setItems(FXCollections.observableArrayList(cities));
+        chobx_cities.setDisable(false);
     }
 }

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
       <Button fx:id="btn_corpusPath" layoutX="57.0" layoutY="98.0" mnemonicParsing="false" onAction="#loadCorpusPath" prefHeight="30.0" prefWidth="109.0" text="Corpus Path" textAlignment="CENTER">
          <font>
@@ -38,7 +38,7 @@
          </font>
       </CheckBox>
       <ChoiceBox fx:id="chobx_language" layoutX="129.0" layoutY="210.0" prefHeight="25.0" prefWidth="101.0" />
-      <Label layoutX="57.0" layoutY="214.0" prefHeight="25.0" prefWidth="67.0" text="Language">
+      <Label layoutX="57.0" layoutY="211.0" prefHeight="25.0" prefWidth="67.0" text="Language">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
@@ -85,5 +85,16 @@
          </font>
       </Button>
       <TextField fx:id="txt_queriesPathChooser" layoutX="520.0" layoutY="195.0" prefHeight="30.0" prefWidth="157.0" />
+      <Button fx:id="btn_showResults" disable="false" layoutX="551.0" layoutY="349.0" mnemonicParsing="false" onAction="#showResults" prefHeight="43.0" prefWidth="119.0" text="Show Results" textAlignment="CENTER">
+         <font>
+            <Font name="Calibri Bold" size="13.0" />
+         </font>
+      </Button>
+      <ChoiceBox fx:id="chobx_cities" layoutX="478.0" layoutY="253.0" prefHeight="25.0" prefWidth="101.0" />
+      <Label layoutX="436.0" layoutY="253.0" prefHeight="25.0" prefWidth="47.0" text="Cities">
+         <font>
+            <Font name="Calibri Bold" size="14.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
