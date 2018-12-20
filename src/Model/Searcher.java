@@ -14,7 +14,7 @@ public class Searcher {
 
     Parse parser;
     Ranker ranker;
-    HashMap<String,String> docsResults;
+    HashMap<String,HashMap<String, Integer>> docsResults;
 
     public Searcher() {
         docsResults = new HashMap<>();
@@ -23,6 +23,7 @@ public class Searcher {
     public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
         parser = new Parse(withStemming,saveInPath,corpusPath);
 //        ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
+        ranker = new Ranker();
         HashMap<String,Integer> queryTerms = parser.parseQuery(query);
 
         HashMap <String, ArrayList<Integer>> dictionary = indexer.getDictionary();
@@ -67,12 +68,22 @@ public class Searcher {
         for (String docInfo : docsArr) {
             String doc = docInfo.substring(0,docInfo.indexOf(": "));
             String tf = docInfo.substring(docInfo.indexOf(": ") + 1);
-            if(!docsResults.containsKey(doc)){
-                docsResults.put(doc,term + "-" + tf);
+//            if(!docsResults.containsKey(doc)){
+//                docsResults.put(doc,term + "-" + tf);
+//            }
+//            else{
+//                String termsInDoc = docsResults.get(doc);
+//                docsResults.replace(doc, termsInDoc + "|" + term + " -" + tf);
+//            }
+            if (!docsResults.containsKey(doc)){
+                HashMap<String, Integer> termsTf = new HashMap<>();
+                termsTf.put(term, Integer.parseInt(tf));
+                docsResults.put(doc, termsTf);
             }
             else{
-                String termsInDoc = docsResults.get(doc);
-                docsResults.replace(doc, termsInDoc + "|" + term + " -" + tf);
+                HashMap<String, Integer> termsTf = docsResults.get(doc);
+                termsTf.put(term, Integer.parseInt(tf));
+                docsResults.replace(doc, termsTf);
             }
 //            System.out.println("DocNo: "+ doc + " term&tf: " + docsResults.get(doc));
         }
