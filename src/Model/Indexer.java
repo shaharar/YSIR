@@ -241,18 +241,19 @@ public class Indexer {
                 listPosting.add(docsListStr + "[" + currIdfStr + "]");
                 pointer = currIdx;
                 termInfo = new ArrayList<>();
-                termInfo.add(pointer);
-                termInfo.add(currDf);
                 termInfo.add(currTotalFreq);
+                termInfo.add(currDf);
+                termInfo.add(pointer);
                 dictionary.put(termStr, termInfo);
                 currIdx++;
             }
             //term exists in posting - update the posting in the relevant line
             else {
                 termInfo = dictionary.get(termStr);
-                pointer = termInfo.get(0);
+                currTotalFreq += termInfo.get(0);
                 currDf += termInfo.get(1);
-                currTotalFreq += termInfo.get(2);
+                pointer = termInfo.get(2);
+
                 try{
                     currIdf = Math.log(docsInCollection / currDf);
                 }
@@ -260,9 +261,9 @@ public class Indexer {
                     currIdf = 0;
                 }
                 ArrayList <Integer> newTermInfo = new ArrayList<>();
-                newTermInfo.add(pointer);
-                newTermInfo.add(currDf);
                 newTermInfo.add(currTotalFreq);
+                newTermInfo.add(currDf);
+                newTermInfo.add(pointer);
                 String linePosting = listPosting.get(pointer - 1);
                 for (String docNo : docsList.keySet()) {
 /*                    double weight = docsList.get(docNo).intValue() * currIdf;
