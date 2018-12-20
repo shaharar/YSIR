@@ -17,10 +17,10 @@ public class Searcher {
     HashMap<String,HashMap<String, Integer>> docsResults;
 
     public Searcher() {
-        docsResults = new HashMap<>();
     }
 
     public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
+        docsResults = new HashMap<>();
         parser = new Parse(withStemming,saveInPath,corpusPath);
         ranker = new Ranker();
         HashMap<String,Integer> queryTerms = parser.parseQuery(query);
@@ -73,7 +73,7 @@ public class Searcher {
         String[] docsArr = docs.split("; ");
         for (String docInfo : docsArr) {
             String doc = docInfo.substring(0,docInfo.indexOf(": "));
-            String tf = docInfo.substring(docInfo.indexOf(": ") + 1);
+            String tf = docInfo.substring(docInfo.indexOf(":") + 2);
 /*            if(!docsResults.containsKey(doc)){
                 docsResults.put(doc,term + " -" + tf);
             }

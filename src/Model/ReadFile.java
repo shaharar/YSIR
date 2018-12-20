@@ -122,10 +122,6 @@ public class ReadFile {
         return parse.getDicSize();
     }
 
-/*    public int getDocsTotalLengthes(){
-       return parse.getDocsTotalLengthes();
-    }*/
-
     public int getDocsInCollection(){
         return parse.getDocsInCollection();
     }
