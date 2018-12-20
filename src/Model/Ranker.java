@@ -3,22 +3,23 @@ package Model;
 import javafx.util.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 
 public class Ranker {
     private double k;
     private double b;
 //    private TreeMap <String, Double> docsRanks;
-    private PriorityQueue <Pair <String, Double>> docsRanks = new PriorityQueue<>(new Comparator<Pair<String, Double>>() {
-    @Override
-    public int compare(Pair<String, Double> p1, Pair<String, Double> p2) {
-        return (p1.getValue().compareTo(p2.getValue()));
-    }
-});
+    private PriorityQueue <Pair <String, Double>> docsRanks;
 
     public Ranker (){
 //        docsRanks = new TreeMap<>();
+        docsRanks = new PriorityQueue<>(new Comparator<Pair<String, Double>>() {
+            @Override
+            public int compare(Pair<String, Double> p1, Pair<String, Double> p2) {
+                return (p1.getValue().compareTo(p2.getValue()));
+            }
+        });
     }
     public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary,HashMap <String, Integer> docsInfo, String queryId, String queryDescription) {
         int totalDocsLengths = 0, N;
@@ -44,6 +45,7 @@ public class Ranker {
         while (docsRanks.size() > 50){
             docsRanks.poll();
         }
+        writeResultsToDisk(queryId);
 
         //        Map <String, Double> results = new TreeMap<>();
 //        results.putAll(getTop50Docs(docsRanks));
