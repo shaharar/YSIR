@@ -26,6 +26,10 @@ public class Searcher {
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         setDocsInfo(saveInPath + "\\docsInformation.txt");
+        if(queryId.equals("")){
+            queryId = "" + Searcher.queryID;
+            Searcher.queryID++;
+        }
 
         String postingDir;
         if (!withStemming) {
