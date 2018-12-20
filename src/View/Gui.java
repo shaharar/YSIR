@@ -2,23 +2,16 @@ package View;
 
 import Model.Model;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Gui {
@@ -26,7 +19,7 @@ public class Gui {
     Model model;
     File corpusDirSelected = null;
     File saveDirSelected = null;
-    File queriesDirSelected = null;
+    File queriesFileSelected = null;
     public Button btn_corpusPath;
     public Button btn_savePath;
     public Button btn_run;
@@ -43,7 +36,7 @@ public class Gui {
     // public ListView <String> lv_dic;
     String corpusPath;
     String savePath;
-    String queriesFilePath;
+    public File queriesFile;
 
     public Gui() {
         model = new Model();
@@ -188,20 +181,20 @@ public class Gui {
     }
 
     public void runQuery() {
-        model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath);
+        model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
     public void runQueriesFile() {
-        model.runQueriesFile(txt_queriesPathChooser,chbx_stemming.isSelected(),savePath);
+        model.runQueriesFile(queriesFile,chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
     public void browseQueriesFile() {
         Stage stage = new Stage();
-        DirectoryChooser dc = new DirectoryChooser();
-        queriesDirSelected = dc.showDialog(stage);
-        if (queriesDirSelected != null) {
-            queriesFilePath = queriesDirSelected.getAbsolutePath();
-            txt_queriesPathChooser.setText(queriesFilePath);
+        FileChooser fc = new FileChooser();
+        queriesFileSelected = fc.showOpenDialog(stage);
+        if (queriesFileSelected != null) {
+            queriesFile = queriesFileSelected.getAbsoluteFile();
+            txt_queriesPathChooser.setText(queriesFile.getAbsolutePath());
         }
     }
 }

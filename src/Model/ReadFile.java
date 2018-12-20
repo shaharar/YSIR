@@ -5,8 +5,6 @@ import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class ReadFile {
@@ -124,12 +122,12 @@ public class ReadFile {
         return parse.getDicSize();
     }
 
-    public int getDocsTotalLengthes(){
-       return parse.getDocsTotalLengthes();
-    }
-
     public int getDocsInCollection(){
         return parse.getDocsInCollection();
+    }
+
+    public Indexer getIndexer (){
+       return parse.getIndexer();
     }
 }
 

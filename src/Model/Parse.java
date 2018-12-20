@@ -1,7 +1,5 @@
 package Model;
 
-import javafx.beans.binding.IntegerBinding;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -337,7 +335,7 @@ public class Parse {
                termsPerQuery.replace(term.getTermStr(),termsPerQuery.get(term.getTermStr()) + 1); //update tf
            }
            else{
-               termsPerQuery.put(term.getTermStr(),0); //update tf
+               termsPerQuery.put(term.getTermStr(),1); //update tf
            }
        }
 
@@ -1225,5 +1223,9 @@ public class Parse {
 
     public int getDicSize() {
         return indexer.getDicSize();
+    }
+
+    public Indexer getIndexer() {
+        return indexer;
     }
 }
