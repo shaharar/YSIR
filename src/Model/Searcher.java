@@ -20,8 +20,8 @@ public class Searcher {
         docsResults = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String queryId, String queryDescription){
-        parser = new Parse(withStemming,saveInPath,"");
+    public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription){
+        parser = new Parse(withStemming,saveInPath,corpusPath);
 //        ranker = new Ranker(parser.getDocsInCollection(), parser.getDocsTotalLengthes());
         HashMap<String,Integer> queryTerms = parser.parseQuery(query);
         HashMap <String, ArrayList<Integer>> dictionary = indexer.getDictionary();
@@ -38,7 +38,7 @@ public class Searcher {
             if(!dictionary.containsKey(term)){
                 continue;
             }
-            pointer = dictionary.get(term).get(0);
+            pointer = dictionary.get(term).get(2);
            // char chunk = indexer.classifyToPosting(term).charAt(0);
             String chunk = ("" + term.charAt(0)).toUpperCase();
 
@@ -75,19 +75,19 @@ public class Searcher {
             String doc = docInfo.substring(0,docInfo.indexOf(": "));
             String tf = docInfo.substring(docInfo.indexOf(": ") + 1);
             if(!docsResults.containsKey(doc)){
-                docsResults.put(doc,term + "-" + tf);
+                docsResults.put(doc,term + " -" + tf);
             }
             else{
                 String termsInDoc = docsResults.get(doc);
                 docsResults.replace(doc, termsInDoc + "|" + term + " -" + tf);
             }
-//            System.out.println("DocNo: "+ doc + " term&tf: " + docsResults.get(doc));
+          //  System.out.println("DocNo: "+ doc + " term&tf: " + docsResults.get(doc));
+            System.out.println(doc + " " + docsResults.get(doc));
         }
     }
 
 
-    public void separateFileToQueries(Indexer indexer, String path, boolean withStemming, String saveInPath){
-        File queriesFile = new File(path);
+    public void separateFileToQueries(Indexer indexer, File queriesFile, boolean withStemming, String saveInPath, String corpusPath){
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile,"UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");
@@ -95,7 +95,7 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer,queryText, withStemming, saveInPath, queryId, queryDescription);
+                search(indexer,queryText, withStemming, saveInPath, corpusPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();

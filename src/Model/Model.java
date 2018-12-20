@@ -18,6 +18,7 @@ public class Model {
 
     public Model() {
         isStemSelected = false;
+        searcher = new Searcher();
     }
 
     public void run(String corpusPath, String savePath) {
@@ -30,6 +31,7 @@ public class Model {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.index = rf.getIndexer();
     }
 
     public void stemming(boolean selected) {
@@ -77,12 +79,11 @@ public class Model {
         return message;
     }
 
-    public void runQuery(String queryText, boolean withStemming, String saveInPath) {
-        searcher = new Searcher();
-        searcher.search(index,queryText,withStemming,saveInPath,"","");
+    public void runQuery(String queryText, boolean withStemming, String saveInPath, String corpusPath) {
+        searcher.search(index,queryText,withStemming,saveInPath,corpusPath,"","");
     }
 
-    public void runQueriesFile(TextField txt_queriesPathChooser, boolean selected, String savePath) {
-        searcher.separateFileToQueries(index,txt_queriesPathChooser.getText().toString(),selected,savePath);
+    public void runQueriesFile(File queriesFile, boolean selected, String saveInPath, String corpusPath) {
+        searcher.separateFileToQueries(index,queriesFile,selected,saveInPath,corpusPath);
     }
 }

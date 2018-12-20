@@ -610,8 +610,4 @@ public class Indexer {
     public HashMap<String, ArrayList<Integer>> getDictionary() {
         return dictionary;
     }
-
-    public String getPostingDir() {
-        return postingDir;
-    }
 }
