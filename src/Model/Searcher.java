@@ -6,6 +6,7 @@ import org.jsoup.nodes.Element;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Searcher {
 
@@ -19,13 +20,16 @@ public class Searcher {
         docsInfo = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription) {
+    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, corpusPath);
         ranker = new Ranker();
+        HashSet<String> docsOfChosenCities = new HashSet<>();
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         setDocsInfo(saveInPath + "\\docsInformation.txt");
+
+        //give an ID to query if it's a regular query (not queries file)
         if(queryId.equals("")){
             queryId = "" + Searcher.queryID;
             Searcher.queryID++;
@@ -68,7 +72,55 @@ public class Searcher {
             }
         }
 
-        ranker.rank(docsResults, queryTerms, dictionary, docsInfo, queryId, queryDescription);
+        //find docs that contain the chosen cities in their text
+        for (String cityTerm : chosenCities) {
+            if (!dictionary.containsKey(cityTerm)) {
+                continue;
+            }
+            pointer = dictionary.get(cityTerm).get(2);
+            // char chunk = indexer.classifyToPosting(term).charAt(0);
+            String chunk = ("" + cityTerm.charAt(0)).toUpperCase();
+
+            //get the relevant line from posting file
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(new File(saveInPath + postingDir + "\\posting_" + chunk + ".txt")));
+                String line = "";
+                int i = 1;
+                while ((line = (br.readLine())) != null) {
+                    if (i == pointer) {
+                        break;
+                    }
+                    i++;
+                }
+                br.close();
+
+                //get docs from posting line and add them to the data structure 'docsOfChosenCities'
+                String docs = line.substring(0, line.indexOf("[") - 1); //get 'docsListStr'
+                String[] docsArr = docs.split("; ");
+                for (String docInfo : docsArr) {
+                    String doc = docInfo.substring(0, docInfo.indexOf(": "));
+                    docsOfChosenCities.add(doc);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (String city: citiesByTag) {
+            //get pointer to posting from cityDictionary
+
+            //////////////////// need to complete
+
+            //get docs from posting
+
+            /////////////////// need to complete
+            String doc="";
+            docsOfChosenCities.add(doc);
+        }
+
+        ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription);
 
     }
 
@@ -100,7 +152,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, File queriesFile, boolean withStemming, String saveInPath, String corpusPath) {
+    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath, String corpusPath) {
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");
@@ -108,7 +160,7 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer, queryText, withStemming, saveInPath, corpusPath, queryId, queryDescription);
+                search(indexer, queryText,chosenCities, citiesByTag, withStemming, saveInPath, corpusPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();

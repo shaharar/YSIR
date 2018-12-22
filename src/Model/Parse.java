@@ -110,7 +110,7 @@ public class Parse {
            }
 
           //numbers
-          else if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
+          if (token.matches("^[0-9]*+([,.][0-9]*?)*?$")) {
               if (currentIdx + 1 < tokens.length) {
                   nextToken = tokens[currentIdx + 1];
               }

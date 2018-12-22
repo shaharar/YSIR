@@ -21,7 +21,7 @@ public class Ranker {
             }
         });
     }
-    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary,HashMap <String, Integer> docsInfo, String queryId, String queryDescription) {
+    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, String queryId, String queryDescription) {
         int totalDocsLengths = 0, N;
         double avdl;
         for (Integer docLength: docsInfo.values()) {
@@ -30,17 +30,19 @@ public class Ranker {
         N = docsInfo.size();
         avdl = totalDocsLengths / N;
         for (String docId: docsResults.keySet()) {
-            double rank = 0;
-            int docTf = 0, queryTf = 0, df = 0, docLength = 0;
-            for (String term: queryTerms.keySet()) {
-                docTf = docsResults.get(docId).get(term);
-                queryTf = queryTerms.get(term);
-                df = dictionary.get(term).get(1);
-                docLength = docsInfo.get(docId);
-            }
-            rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N / df);
-            docsRanks.add(new Pair<>(docId, rank));
+            if(docsOfChosenCities.contains(docId)) {
+                double rank = 0;
+                int docTf = 0, queryTf = 0, df = 0, docLength = 0;
+                for (String term : queryTerms.keySet()) {
+                    docTf = docsResults.get(docId).get(term);
+                    queryTf = queryTerms.get(term);
+                    df = dictionary.get(term).get(1);
+                    docLength = docsInfo.get(docId);
+                }
+                rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N / df);
+                docsRanks.add(new Pair<>(docId, rank));
 //            docsRanks.put(docId, rank);
+            }
         }
         while (docsRanks.size() > 50){
             docsRanks.poll();

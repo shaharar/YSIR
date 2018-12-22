@@ -1,5 +1,6 @@
 package Model;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
 
 import java.io.File;
@@ -79,11 +80,11 @@ public class Model {
         return message;
     }
 
-    public void runQuery(String queryText, boolean withStemming, String saveInPath, String corpusPath) {
-        searcher.search(index,queryText,withStemming,saveInPath,corpusPath,"","");
+    public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList citiesByTag, boolean withStemming, String saveInPath, String corpusPath) {
+        searcher.search(index,queryText, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath,corpusPath,"","");
     }
 
-    public void runQueriesFile(File queriesFile, boolean selected, String saveInPath, String corpusPath) {
-        searcher.separateFileToQueries(index,queriesFile,selected,saveInPath,corpusPath);
+    public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList citiesByTag, boolean withStemming, String saveInPath, String corpusPath) {
+        searcher.separateFileToQueries(index,queriesFile, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath,corpusPath);
     }
 }

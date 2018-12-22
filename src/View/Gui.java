@@ -43,6 +43,7 @@ public class Gui {
     String savePath;
     public File queriesFile;
     public Button btn_showResults;
+    ArrayList<String> chosenCities;
 
     public Gui() {
         model = new Model();
@@ -196,7 +197,7 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
-        model.runQuery(txt_query.getText().toString(),chbx_stemming.isSelected(),savePath,corpusPath);
+        model.runQuery(txt_query.getText().toString(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
     public void runQueriesFile() {
@@ -208,7 +209,7 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
-        model.runQueriesFile(queriesFile,chbx_stemming.isSelected(),savePath,corpusPath);
+        model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath,corpusPath);
     }
 
     public void browseQueriesFile() {
