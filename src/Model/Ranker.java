@@ -30,7 +30,7 @@ public class Ranker {
         N = docsInfo.size();
         avdl = totalDocsLengths / N;
         for (String docId: docsResults.keySet()) {
-            if(docsOfChosenCities.contains(docId)) {
+            if(docsOfChosenCities.isEmpty() || (!docsOfChosenCities.isEmpty() && !docsOfChosenCities.contains(docId))) {
                 double rank = 0;
                 int docTf = 0, queryTf = 0, df = 0, docLength = 0;
                 for (String term : queryTerms.keySet()) {

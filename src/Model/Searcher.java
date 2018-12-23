@@ -42,6 +42,8 @@ public class Searcher {
             postingDir = "\\indexResults\\postingFiles_Stemming";
         }
         int pointer = 0;
+
+        //find docs that contain the terms in the query in their text
         for (String term : queryTerms.keySet()) {
             if (!dictionary.containsKey(term)) {
                 continue;
@@ -108,17 +110,35 @@ public class Searcher {
             }
         }
 
-        for (String city: citiesByTag) {
+        //find docs that contain the chosen cities in their city tag
+        for (String cityDicRec: citiesByTag) {
             //get pointer to posting from cityDictionary
+            pointer = Integer.parseInt(cityDicRec.substring(cityDicRec.indexOf(":")+1));
+            //get the relevant line from posting file
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(new File(saveInPath + "\\cityIndexResults" + "\\posting_city" + ".txt")));
+                String line = "";
+                int i = 1;
+                while ((line = (br.readLine())) != null) {
+                    if (i == pointer) {
+                        break;
+                    }
+                    i++;
+                }
+                br.close();
 
-            //////////////////// need to complete
-
-            //get docs from posting
-
-            /////////////////// need to complete
-            String doc="";
-            docsOfChosenCities.add(doc);
+                //get docs from posting line and add them to the data structure 'docsOfChosenCities'
+                    String docs = line.substring(line.indexOf("[") + 1, line.indexOf("]")); //get 'docsListStr'
+                    String[] docsArr = docs.split("; ");
+                    for (String doc : docsArr) {
+                        docsOfChosenCities.add(doc);
+                    }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription);
 

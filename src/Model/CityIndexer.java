@@ -69,12 +69,12 @@ public class CityIndexer {
 //                }
                 ArrayList <String> docs = cityDocs.get(city);
                 for (int i = 0; i < docs.size(); i++){
-                    docsListStr.append(docs.get(i) + " ");
+                    docsListStr.append(docs.get(i) + "; ");
                 }
                 pointer = currIdx;
                 currIdx++;
                 citiesDictionary.put(city.toUpperCase(), pointer);
-                listPosting.add(city.toUpperCase() + " " + "country name: " + countryName + " " + "currency: " + currency + " " + "population: " + population + " " + docsListStr);
+                listPosting.add(city.toUpperCase() + " " + "country name: " + countryName + " " + "currency: " + currency + " " + "population: " + population + " " + "[" + docsListStr + "]");
             } else {
 //                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
 //                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
@@ -89,9 +89,9 @@ public class CityIndexer {
 //                    }
 //                }
                 for (int i = 0; i < docs.size(); i++){
-                    docsListStr.append(docs.get(i) + " ");
+                    docsListStr.append(docs.get(i) + "; ");
                 }
-                listPosting.set(pointer - 1, listPosting.get(pointer - 1) + docsListStr);
+                listPosting.set(pointer - 1, listPosting.get(pointer - 1) + "[" + docsListStr + "]");
             }
         }
 
