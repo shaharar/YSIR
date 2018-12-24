@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<?import org.controlsfx.control.CheckComboBox?>
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
       <Button fx:id="btn_corpusPath" layoutX="57.0" layoutY="98.0" mnemonicParsing="false" onAction="#loadCorpusPath" prefHeight="30.0" prefWidth="109.0" text="Corpus Path" textAlignment="CENTER">
@@ -90,7 +91,7 @@
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <ChoiceBox fx:id="chobx_cities" layoutX="478.0" layoutY="253.0" prefHeight="25.0" prefWidth="101.0" />
+      <CheckComboBox fx:id="chobx_cities" layoutX="478.0" layoutY="253.0" prefHeight="25.0" prefWidth="101.0" />
       <Label layoutX="436.0" layoutY="253.0" prefHeight="25.0" prefWidth="47.0" text="Cities">
          <font>
             <Font name="Calibri Bold" size="14.0" />

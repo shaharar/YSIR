@@ -20,9 +20,9 @@ public class Searcher {
         docsInfo = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath, String corpusPath, String queryId, String queryDescription) {
+    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
-        parser = new Parse(withStemming, saveInPath, corpusPath);
+        parser = new Parse(withStemming, saveInPath, saveInPath);
         ranker = new Ranker();
         HashSet<String> docsOfChosenCities = new HashSet<>();
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
@@ -172,7 +172,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath, String corpusPath) {
+    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath) {
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");
@@ -180,7 +180,7 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer, queryText,chosenCities, citiesByTag, withStemming, saveInPath, corpusPath, queryId, queryDescription);
+                search(indexer, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckComboBox;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -34,7 +35,7 @@ public class Gui {
     public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
     public ChoiceBox chobx_language;
-    public ChoiceBox chobx_cities;
+    public CheckComboBox<String> chobx_cities;
     public TextField txt_query;
     public Button btn_browseQueries;
     public TextField txt_queriesPathChooser;
@@ -68,7 +69,6 @@ public class Gui {
         if (saveDirSelected != null) {
             savePath = saveDirSelected.getAbsolutePath();
             txt_savePathChooser.setText(savePath);
-            setCities();
         }
     }
 
@@ -87,6 +87,7 @@ public class Gui {
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
+                setCities();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -115,6 +116,7 @@ public class Gui {
         else {
             model.loadDictionary (savePath, newDicFile);
             showAlert("Loading successful");
+            setCities();
         }
     }
 
@@ -189,27 +191,19 @@ public class Gui {
     }
 
     public void runQuery() {
-        if (corpusPath == null) {
-            showAlert("Please choose corpus path");
-            return;
-        }
         if (savePath == null) {
             showAlert("Please choose save files path");
             return;
         }
-        model.runQuery(txt_query.getText().toString(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath,corpusPath);
+        model.runQuery(txt_query.getText().toString(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
     }
 
     public void runQueriesFile() {
-        if (corpusPath == null) {
-            showAlert("Please choose corpus path");
-            return;
-        }
         if (savePath == null) {
             showAlert("Please choose save files path");
             return;
         }
-        model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath,corpusPath);
+        model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
     }
 
     public void browseQueriesFile() {
@@ -240,7 +234,7 @@ public class Gui {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        chobx_cities.setItems(FXCollections.observableArrayList(cities));
+        //chobx_cities.setItems(FXCollections.observableArrayList(cities));
         chobx_cities.setDisable(false);
     }
 }

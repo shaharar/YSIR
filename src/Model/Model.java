@@ -80,11 +80,11 @@ public class Model {
         return message;
     }
 
-    public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList citiesByTag, boolean withStemming, String saveInPath, String corpusPath) {
-        searcher.search(index,queryText, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath,corpusPath,"","");
+    public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList citiesByTag, boolean withStemming, String saveInPath) {
+        searcher.search(index,queryText, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath,"","");
     }
 
-    public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList citiesByTag, boolean withStemming, String saveInPath, String corpusPath) {
-        searcher.separateFileToQueries(index,queriesFile, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath,corpusPath);
+    public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList citiesByTag, boolean withStemming, String saveInPath) {
+        searcher.separateFileToQueries(index,queriesFile, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath);
     }
 }
