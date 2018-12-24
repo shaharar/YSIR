@@ -1,5 +1,6 @@
 package Model;
 
+import javafx.collections.ObservableList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
@@ -20,7 +21,7 @@ public class Searcher {
         docsInfo = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
+    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
         ranker = new Ranker();
@@ -172,7 +173,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ArrayList<String> citiesByTag, boolean withStemming, String saveInPath) {
+    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");

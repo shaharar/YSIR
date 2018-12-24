@@ -2,6 +2,7 @@ package View;
 
 import Model.Model;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -195,6 +196,7 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
+        ArrayList<String> chosenCities = getChosenCities();
         model.runQuery(txt_query.getText().toString(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
     }
 
@@ -203,6 +205,7 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
+        ArrayList<String> chosenCities = getChosenCities();
         model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
     }
 
@@ -222,7 +225,7 @@ public class Gui {
     }
 
     public void setCities(){
-        ArrayList<String> cities = new ArrayList<>();
+        ObservableList<String> cities = FXCollections.observableArrayList();
         BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(new File(savePath + "\\cityIndexResults\\citiesDictionary.txt")));
@@ -234,7 +237,15 @@ public class Gui {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //chobx_cities.setItems(FXCollections.observableArrayList(cities));
+        chobx_cities.getItems().addAll(cities);
         chobx_cities.setDisable(false);
+    }
+
+    public ArrayList<String> getChosenCities(){
+       ArrayList<String> chosenCities = new ArrayList<>();
+        for (String city: chobx_cities.getCheckModel().getCheckedItems()) {
+            chosenCities.add(city);
+        }
+        return chosenCities;
     }
 }
