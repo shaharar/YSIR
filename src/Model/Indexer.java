@@ -274,7 +274,7 @@ public class Indexer {
                         }
                     }
                     docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");*/
-                    docsListStr.append(docNo + ": " + docsList.get(docNo) + ";");
+                    docsListStr.append(docNo + ": " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
                 if (currIdfStr.contains(".")){
@@ -282,7 +282,7 @@ public class Indexer {
                         currIdfStr = currIdfStr.substring(0, currIdfStr.indexOf(".") + 3);
                     }
                 }
-                listPosting.set(pointer -1, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
+                listPosting.set(pointer -1, linePosting.substring(0, linePosting.indexOf("[")) + " " + docsListStr + "[" + currIdfStr + "]");
                 dictionary.replace(termStr,termInfo,newTermInfo);
             }
         }

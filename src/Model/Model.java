@@ -81,10 +81,10 @@ public class Model {
     }
 
     public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
-        searcher.search(index,queryText, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath,"","");
+        searcher.search(index,queryText, chosenCities, citiesByTag,withStemming,saveInPath,"","");
     }
 
     public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
-        searcher.separateFileToQueries(index,queriesFile, chosenCities, (ArrayList<String>)citiesByTag,withStemming,saveInPath);
+        searcher.separateFileToQueries(index,queriesFile, chosenCities, citiesByTag,withStemming,saveInPath);
     }
 }
