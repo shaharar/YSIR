@@ -2,6 +2,9 @@ package Model;
 
 import javafx.util.Pair;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -21,7 +24,7 @@ public class Ranker {
             }
         });
     }
-    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, String queryId, String queryDescription) {
+    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, String queryId, String queryDescription, String saveInPath) {
         int totalDocsLengths = 0, N;
         double avdl;
         for (Integer docLength: docsInfo.values()) {
@@ -47,7 +50,7 @@ public class Ranker {
         while (docsRanks.size() > 50){
             docsRanks.poll();
         }
-        writeResultsToDisk(queryId);
+        writeResultsToDisk(queryId, saveInPath, docsRanks);
 
         //        Map <String, Double> results = new TreeMap<>();
 //        results.putAll(getTop50Docs(docsRanks));
@@ -76,7 +79,27 @@ public class Ranker {
 //        return docsRanks;
 //    }
 
-    public void writeResultsToDisk(String queryId){
+    public void writeResultsToDisk(String queryId, String saveInPath, PriorityQueue<Pair<String, Double>> docsRanks){
+        StringBuilder sb = new StringBuilder();
+        Iterator <Pair<String, Double>> it = docsRanks.iterator();
+        while (it.hasNext()) {
+            String docId = it.next().getKey();
+            sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
+        }
+        File rankerResults = new File(saveInPath + "results.txt");
+        try {
+            rankerResults.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(rankerResults);
+            fw.append(sb.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }

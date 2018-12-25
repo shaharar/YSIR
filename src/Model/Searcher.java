@@ -141,7 +141,7 @@ public class Searcher {
         }
 
 
-        ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription);
+        ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription, saveInPath);
 
     }
 
