@@ -12,7 +12,6 @@ import java.util.HashSet;
 public class Searcher {
 
     Parse parser;
-    Ranker ranker;
     HashMap<String, HashMap<String, Integer>> docsResults;
     private HashMap<String, Integer> docsInfo;
     static int queryID = 1;
@@ -21,10 +20,10 @@ public class Searcher {
         docsInfo = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
+    public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
-        ranker = new Ranker();
+       // ranker = new Ranker();
         HashSet<String> docsOfChosenCities = new HashSet<>();
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
@@ -100,7 +99,7 @@ public class Searcher {
 
                 //get docs from posting line and add them to the data structure 'docsOfChosenCities'
                 String docs = line.substring(0, line.indexOf("[") - 1); //get 'docsListStr'
-                String[] docsArr = docs.split("; ");
+                String[] docsArr = docs.split(";");
                 for (String docInfo : docsArr) {
                     String doc = docInfo.substring(0, docInfo.indexOf(": "));
                     docsOfChosenCities.add(doc);
@@ -112,31 +111,37 @@ public class Searcher {
         }
 
         //find docs that contain the chosen cities in their city tag
-        for (String cityDicRec: citiesByTag) {
-            //get pointer to posting from cityDictionary
-            pointer = Integer.parseInt(cityDicRec.substring(cityDicRec.indexOf(":")+1));
-            //get the relevant line from posting file
-            BufferedReader br = null;
-            try {
-                br = new BufferedReader(new FileReader(new File(saveInPath + "\\cityIndexResults" + "\\posting_city" + ".txt")));
-                String line = "";
-                int i = 1;
-                while ((line = (br.readLine())) != null) {
-                    if (i == pointer) {
-                        break;
-                    }
-                    i++;
+        if(!chosenCities.isEmpty()){
+            for (String cityDicRec: citiesByTag) {
+                //get pointer to posting from cityDictionary
+                try {
+                    pointer = cityIndexer.getCitiesDictionary().get(cityDicRec);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-                br.close();
+                //get the relevant line from posting file
+                BufferedReader br = null;
+                try {
+                    br = new BufferedReader(new FileReader(new File(saveInPath + "\\cityIndexResults" + "\\posting_city" + ".txt")));
+                    String line = "";
+                    int i = 1;
+                    while ((line = (br.readLine())) != null) {
+                        if (i == pointer) {
+                            break;
+                        }
+                        i++;
+                    }
+                    br.close();
 
-                //get docs from posting line and add them to the data structure 'docsOfChosenCities'
+                    //get docs from posting line and add them to the data structure 'docsOfChosenCities'
                     String docs = line.substring(line.indexOf("[") + 1, line.indexOf("]")); //get 'docsListStr'
                     String[] docsArr = docs.split("; ");
                     for (String doc : docsArr) {
                         docsOfChosenCities.add(doc);
                     }
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -147,7 +152,7 @@ public class Searcher {
 
     private void findDocsFromLine(String line, String term) {
         String docs = line.substring(0, line.indexOf("[") - 1); //get 'docsListStr'
-        String[] docsArr = docs.split("; ");
+        String[] docsArr = docs.split(";");
         for (String docInfo : docsArr) {
             String doc = docInfo.substring(0, docInfo.indexOf(": "));
             String tf = docInfo.substring(docInfo.indexOf(":") + 2);
@@ -160,7 +165,12 @@ public class Searcher {
             }*/
             if (!docsResults.containsKey(doc)) {
                 HashMap<String, Integer> termsTf = new HashMap<>();
-                termsTf.put(term, Integer.parseInt(tf));
+                try{
+                    termsTf.put(term, Integer.parseInt(tf));
+                }
+                catch (NumberFormatException e){
+                    e.printStackTrace();
+                }
                 docsResults.put(doc, termsTf);
             } else {
                 HashMap<String, Integer> termsTf = docsResults.get(doc);
@@ -173,7 +183,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
+    public void separateFileToQueries(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");
@@ -181,7 +191,7 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
+                search(indexer, cityIndexer, ranker, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
         } catch (IOException e) {
             e.printStackTrace();

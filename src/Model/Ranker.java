@@ -33,23 +33,27 @@ public class Ranker {
         N = docsInfo.size();
         avdl = totalDocsLengths / N;
         for (String docId: docsResults.keySet()) {
-            if(docsOfChosenCities.isEmpty() || (!docsOfChosenCities.isEmpty() && !docsOfChosenCities.contains(docId))) {
+            if(docsOfChosenCities.isEmpty() || (!docsOfChosenCities.isEmpty() && docsOfChosenCities.contains(docId))) {
                 double rank = 0;
                 int docTf = 0, queryTf = 0, df = 0, docLength = 0;
                 for (String term : queryTerms.keySet()) {
-                    docTf = docsResults.get(docId).get(term);
-                    queryTf = queryTerms.get(term);
-                    df = dictionary.get(term).get(1);
-                    docLength = docsInfo.get(docId);
+                    if(docsResults.get(docId).containsKey(term)) {
+                        docTf = docsResults.get(docId).get(term);
+                        queryTf = queryTerms.get(term);
+                        df = dictionary.get(term).get(1);
+                        docLength = docsInfo.get(docId);
+                    }
                 }
                 rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N / df);
                 docsRanks.add(new Pair<>(docId, rank));
 //            docsRanks.put(docId, rank);
             }
         }
+        System.out.println("ranked query done");
         while (docsRanks.size() > 50){
             docsRanks.poll();
         }
+        System.out.println("50 docs");
         writeResultsToDisk(queryId, saveInPath, docsRanks);
 
         //        Map <String, Double> results = new TreeMap<>();

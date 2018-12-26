@@ -149,6 +149,28 @@ public class CityIndexer {
         index(cityDocs);
         writeDictionaryToDisk();
     }
+
+    public void loadDictionary(File newCityDic) {
+        citiesDictionary.clear();
+        BufferedReader br = null;
+        try {
+            String term;
+            br = new BufferedReader(new FileReader(newCityDic));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+                term = line.substring(0, line.indexOf(':') - 1);
+                String pointer = line.substring(line.indexOf(':') + 2);
+                citiesDictionary.put(term, Integer.parseInt(pointer));
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public HashMap<String, Integer> getCitiesDictionary() {
+        return citiesDictionary;
+    }
 }
 
 
