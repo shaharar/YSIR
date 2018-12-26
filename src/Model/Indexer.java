@@ -513,6 +513,30 @@ public class Indexer {
         }
     }
 
+    public void writeEntitiesToDisk(StringBuilder entitiesSb) {
+        String entitiesPath;
+        if (!withStemming){
+            entitiesPath = "\\entitiesInformation";
+        }
+        else{
+            entitiesPath = "\\entitiesInformation_stemming";
+        }
+        File entitiesInformation = new File(path + entitiesPath + ".txt");
+        try {
+            entitiesInformation.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(entitiesInformation, true);
+            fw.append(entitiesSb.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
@@ -611,4 +635,6 @@ public class Indexer {
     public HashMap<String, ArrayList<Integer>> getDictionary() {
         return dictionary;
     }
+
+
 }

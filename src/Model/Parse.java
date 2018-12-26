@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.util.Pair;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,11 +24,13 @@ public class Parse {
     private Stemmer stemmer;
     private StringBuilder replaceSb;
     StringBuilder sb;
+    StringBuilder entitiesSb;
     String docNo;
     boolean withStemming;
     private int currentIdx;
     int docsTotal;
     int docsInCollection;
+    private HashMap <String, Integer> docEntities;
 //    int docsTotalLengthes;
 //    private HashMap<String, Integer> docsLengthes;
 
@@ -37,6 +41,7 @@ public class Parse {
       termsPerDoc = new HashSet<>();
       stopWords = new HashSet<String>();
       delimiters = new HashSet<>();
+      docEntities = new HashMap<>();
        setDelimiters(delimiters);
        stopWordsPath = corpusPath + "\\stop_words.txt";
       setStopWords();
@@ -51,6 +56,7 @@ public class Parse {
       indexer = new Indexer(path, withStemming);
       stemmer = new Stemmer();
       sb = new StringBuilder();
+      entitiesSb = new StringBuilder();
       docNo = "";
       this.withStemming = withStemming;
       currentIdx = 0;
@@ -179,6 +185,18 @@ public class Parse {
                //just words
                else if (!(stopWords.contains(token.toLowerCase())) && !(stopWords.contains(token.toUpperCase()))){
                    term = lettersCase(token);
+                   if (docEntities.containsKey(term.termStr.toUpperCase())){
+                       if (token.charAt(0) >= 97 && token.charAt(0) <= 122){ //lower case
+                           docEntities.remove(term.termStr.toUpperCase());
+                       }
+                       else{ //upper case
+                           int tf =  docEntities.get(term.termStr.toUpperCase());
+                           docEntities.replace(term.termStr.toUpperCase(),tf, tf + 1);
+                       }
+                   }
+                   else if (!(token.charAt(0) >= 97 && token.charAt(0) <= 122)){
+                       docEntities.put(token.toUpperCase(), 1);
+                   }
                }
                else {
                    documentLength --;
@@ -205,7 +223,27 @@ public class Parse {
            docCityPositions += pos + "  ";
        }
 
+       PriorityQueue <Pair <String, Integer>> sortedEntities = new PriorityQueue<>(new Comparator<Pair<String, Integer>>() {
+           @Override
+           public int compare(Pair<String, Integer> p1, Pair<String, Integer> p2) {
+               return (p1.getValue().compareTo(p2.getValue()));
+           }
+       });
+
+       for (String entity: docEntities.keySet()) {
+           sortedEntities.add(new Pair<>(entity, docEntities.get(entity)));
+       }
+
+       entitiesSb.append(docID + ": " );
+       for (int i = 0 ; i < 5; i++){
+           entitiesSb.append(sortedEntities.poll().getKey());
+       }
+       entitiesSb.append("\n");
+       docEntities.clear();
+
+
        positionsInDoc.clear();
+
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
 //      docsLengthes.put(docNo, termsPerDoc.size());
 //      docsTotalLengthes += termsPerDoc.size();
@@ -221,7 +259,9 @@ public class Parse {
                cityDocs.clear();
            }
            indexer.writeDocsInfoToDisk(sb);
+           indexer.writeEntitiesToDisk(entitiesSb);
            sb = new StringBuilder();
+           entitiesSb = new StringBuilder();
            docsTotal = 0;
        }
    }

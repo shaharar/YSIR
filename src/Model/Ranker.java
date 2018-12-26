@@ -64,10 +64,17 @@ public class Ranker {
 
     }
 
-    public PriorityQueue<Pair<String, Double>> getDocsRanks() {
-        return docsRanks;
-    }
+    public void displayQueryResults (){
+        ArrayList <String> displayResults = new ArrayList<>();
+        for (String queryId: queryResults.keySet()) {
+            String line = queryId + ": ";
+            for (String docId: queryResults.get(queryId)) {
+                line += docId + " ";
+            }
+            displayResults.add(line);
+        }
 
+    }
 
 
     //    private Map<String, Double> getTop50Docs(TreeMap<String, Double> docsRanks) {
