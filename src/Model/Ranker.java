@@ -14,6 +14,7 @@ public class Ranker {
     private double b;
 //    private TreeMap <String, Double> docsRanks;
     private PriorityQueue <Pair <String, Double>> docsRanks;
+    private HashMap <String, ArrayList <String>> queryResults;
 
     public Ranker (){
 //        docsRanks = new TreeMap<>();
@@ -23,6 +24,7 @@ public class Ranker {
                 return (p1.getValue().compareTo(p2.getValue()));
             }
         });
+        queryResults = new HashMap<>();
     }
     public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, String queryId, String queryDescription, String saveInPath) {
         int totalDocsLengths = 0, N;
@@ -49,22 +51,32 @@ public class Ranker {
 //            docsRanks.put(docId, rank);
             }
         }
-        System.out.println("ranked query done");
-        while (docsRanks.size() > 50){
-            docsRanks.poll();
+
+        ArrayList <String> docsId = new ArrayList<>();
+        for (int i = 0 ; i < 50 ; i++){
+            docsId.add(docsRanks.poll().getKey());
         }
-        System.out.println("50 docs");
-        writeResultsToDisk(queryId, saveInPath, docsRanks);
+        queryResults.put(queryId, docsId);
+
+        docsRanks.clear();
+//        writeResultsToDisk(queryId, saveInPath, docsRanks);
 
         //        Map <String, Double> results = new TreeMap<>();
 //        results.putAll(getTop50Docs(docsRanks));
 
     }
 
-    public PriorityQueue<Pair<String, Double>> getDocsRanks() {
-        return docsRanks;
-    }
+    public void displayQueryResults (){
+        ArrayList <String> displayResults = new ArrayList<>();
+        for (String queryId: queryResults.keySet()) {
+            String line = queryId + ": ";
+            for (String docId: queryResults.get(queryId)) {
+                line += docId + " ";
+            }
+            displayResults.add(line);
+        }
 
+    }
 
 
     //    private Map<String, Double> getTop50Docs(TreeMap<String, Double> docsRanks) {
@@ -83,12 +95,17 @@ public class Ranker {
 //        return docsRanks;
 //    }
 
-    public void writeResultsToDisk(String queryId, String saveInPath, PriorityQueue<Pair<String, Double>> docsRanks){
+    public void writeResultsToDisk(String saveInPath){
         StringBuilder sb = new StringBuilder();
-        Iterator <Pair<String, Double>> it = docsRanks.iterator();
-        while (it.hasNext()) {
-            String docId = it.next().getKey();
-            sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
+//        Iterator <Pair<String, Double>> it = docsRanks.iterator();
+//        while (it.hasNext()) {
+//            String docId = it.next().getKey();
+//            sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
+//        }
+        for (String queryId: queryResults.keySet()) {
+            for (String docId: queryResults.get(queryId)) {
+                sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
+            }
         }
         File rankerResults = new File(saveInPath + "results.txt");
         try {
@@ -98,7 +115,7 @@ public class Ranker {
         }
         FileWriter fw = null;
         try {
-            fw = new FileWriter(rankerResults);
+            fw = new FileWriter(rankerResults, true);
             fw.append(sb.toString());
             fw.close();
         } catch (IOException e) {

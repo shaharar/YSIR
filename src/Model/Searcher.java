@@ -23,7 +23,6 @@ public class Searcher {
     public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
-       // ranker = new Ranker();
         HashSet<String> docsOfChosenCities = new HashSet<>();
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
@@ -147,6 +146,7 @@ public class Searcher {
 
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription, saveInPath);
+        ranker.writeResultsToDisk(saveInPath);
 
     }
 
@@ -193,6 +193,7 @@ public class Searcher {
                 String queryDescription = e.select("desc").text();
                 search(indexer, cityIndexer, ranker, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
+            ranker.writeResultsToDisk(saveInPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
