@@ -53,8 +53,10 @@ public class Ranker {
         }
 
         ArrayList <String> docsId = new ArrayList<>();
-        for (int i = 0 ; i < 50 ; i++){
-            docsId.add(docsRanks.poll().getKey());
+        for (int i = 0 ; i < 50; i++){
+            if(i < docsRanks.size()) {
+                docsId.add(docsRanks.poll().getKey());
+            }
         }
         queryResults.put(queryId, docsId);
 

@@ -146,7 +146,9 @@ public class Searcher {
 
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription, saveInPath);
-        ranker.writeResultsToDisk(saveInPath);
+        if(queryId.equals(Searcher.queryID)) {
+            ranker.writeResultsToDisk(saveInPath);
+        }
 
     }
 
