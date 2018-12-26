@@ -142,7 +142,10 @@ public class Searcher {
 
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription, saveInPath);
-        ranker.writeResultsToDisk(saveInPath);
+
+//        if (queryId.equals(Searcher.queryID)){
+//            ranker.writeResultsToDisk(saveInPath);
+//        }
 
     }
 
@@ -184,7 +187,7 @@ public class Searcher {
                 String queryDescription = e.select("desc").text();
                 search(indexer,ranker, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
-            ranker.writeResultsToDisk(saveInPath);
+//            ranker.writeResultsToDisk(saveInPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
