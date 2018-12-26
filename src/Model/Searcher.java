@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class Searcher {
 
     Parse parser;
-    Ranker ranker;
+//    Ranker ranker;
     HashMap<String, HashMap<String, Integer>> docsResults;
     private HashMap<String, Integer> docsInfo;
     static int queryID = 1;
@@ -21,10 +21,10 @@ public class Searcher {
         docsInfo = new HashMap<>();
     }
 
-    public void search(Indexer indexer, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
+    public void search(Indexer indexer,Ranker ranker, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
-        ranker = new Ranker();
+//        ranker = new Ranker();
         HashSet<String> docsOfChosenCities = new HashSet<>();
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
@@ -142,6 +142,7 @@ public class Searcher {
 
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo, queryId, queryDescription, saveInPath);
+        ranker.writeResultsToDisk(saveInPath);
 
     }
 
@@ -173,7 +174,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
+    public void separateFileToQueries(Indexer indexer,Ranker ranker, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
         try {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");
@@ -181,8 +182,9 @@ public class Searcher {
                 String queryText = e.select("title").text();
                 String queryId = e.select("num").text();
                 String queryDescription = e.select("desc").text();
-                search(indexer, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
+                search(indexer,ranker, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
+            ranker.writeResultsToDisk(saveInPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
