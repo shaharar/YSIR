@@ -13,6 +13,7 @@ public class Model {
 
     ReadFile rf;
     Indexer index;
+    CityIndexer cityIndexer;
     Searcher searcher;
     boolean isStemSelected;
     double totalTime;
@@ -63,9 +64,15 @@ public class Model {
         }
     }
 
-    public void loadDictionary(String savePath, File newDic) {
+    public void loadDictionary(String savePath, File newDic, File newCitiesDic) {
         index = new Indexer(savePath, isStemSelected);
         index.loadDictionary(newDic);
+        try {
+            cityIndexer = new CityIndexer(savePath);
+            cityIndexer.loadDictionary(newCitiesDic);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public HashSet<String> getLanguages() {
@@ -81,10 +88,16 @@ public class Model {
     }
 
     public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
-        searcher.search(index,queryText, chosenCities, citiesByTag,withStemming,saveInPath,"","");
+        Ranker r = new Ranker();
+        searcher.search(index,cityIndexer,r,queryText, chosenCities, citiesByTag,withStemming,saveInPath,"","");
     }
 
     public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
-        searcher.separateFileToQueries(index,queriesFile, chosenCities, citiesByTag,withStemming,saveInPath);
+        Ranker r = new Ranker();
+        searcher.separateFileToQueries(index,cityIndexer,r,queriesFile, chosenCities, citiesByTag,withStemming,saveInPath);
+    }
+
+    public CityIndexer getCityIndexer() {
+        return cityIndexer;
     }
 }

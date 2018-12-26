@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Gui {
@@ -46,9 +47,11 @@ public class Gui {
     public File queriesFile;
     public Button btn_showResults;
     ArrayList<String> chosenCities;
+    boolean isLoaded;
 
     public Gui() {
         model = new Model();
+        isLoaded = false;
     }
 
     //load the corpus path the user chose
@@ -104,20 +107,23 @@ public class Gui {
             showAlert("Please insert save files path");
             return;
         }
-        File newDicFile;
+        File newDicFile, newCitiesDicFile;
         if (chbx_stemming.isSelected()){
             newDicFile = new File(savePath + "\\indexResults\\dictionary_stemming.txt");
         }
         else{
             newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
         }
-        if (!newDicFile.exists()){
-            showAlert("There wasn't found a dictionary. Please load a new one");
+        newCitiesDicFile = new File(savePath + "\\cityIndexResults\\citiesDictionary.txt");
+
+        if (!newDicFile.exists() && !newCitiesDicFile.exists()){
+            showAlert("Dictionaries weren't found. Please load terms dictionary and cities dictionary");
         }
         else {
-            model.loadDictionary (savePath, newDicFile);
+            model.loadDictionary (savePath, newDicFile,newCitiesDicFile);
             showAlert("Loading successful");
             setCities();
+            isLoaded = true;
         }
     }
 
@@ -196,6 +202,10 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
+        if (!isLoaded) {
+            showAlert("You should load your dictionaries before run query");
+            return;
+        }
         ArrayList<String> chosenCities = getChosenCities();
         model.runQuery(txt_query.getText().toString(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
     }
@@ -203,6 +213,10 @@ public class Gui {
     public void runQueriesFile() {
         if (savePath == null) {
             showAlert("Please choose save files path");
+            return;
+        }
+        if (!isLoaded) {
+            showAlert("You should load your dictionaries before run queries file");
             return;
         }
         ArrayList<String> chosenCities = getChosenCities();
@@ -226,7 +240,11 @@ public class Gui {
 
     public void setCities(){
         ObservableList<String> cities = FXCollections.observableArrayList();
-        BufferedReader br = null;
+        HashMap<String,Integer> citiesDic = model.getCityIndexer().getCitiesDictionary();
+        for (String city: citiesDic.keySet()) {
+            cities.add(city);
+        }
+/*        BufferedReader br = null;
         try {
             br = new BufferedReader(new FileReader(new File(savePath + "\\cityIndexResults\\citiesDictionary.txt")));
             String line = "";
@@ -236,7 +254,7 @@ public class Gui {
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         chobx_cities.getItems().addAll(cities);
         chobx_cities.setDisable(false);
     }
