@@ -185,16 +185,24 @@ public class Parse {
                //just words
                else if (!(stopWords.contains(token.toLowerCase())) && !(stopWords.contains(token.toUpperCase()))){
                    term = lettersCase(token);
-                   if (docEntities.containsKey(term.termStr.toUpperCase())){
-                       if (token.charAt(0) >= 97 && token.charAt(0) <= 122){ //lower case
+                   if (docEntities.containsKey(term.termStr.toUpperCase()) || docEntities.containsKey(term.termStr.toLowerCase())){
+                       if (token.charAt(0) >= 97 && token.charAt(0) <= 122  && docEntities.containsKey(term.termStr.toUpperCase())){ //lower case
+                           int tf = docEntities.get(term.termStr.toUpperCase());
                            docEntities.remove(term.termStr.toUpperCase());
+                           docEntities.put(term.termStr.toLowerCase(), tf + 1);
                        }
                        else{ //upper case
-                           int tf =  docEntities.get(term.termStr.toUpperCase());
+                           int tf = 0;
+                           if (docEntities.containsKey(term.termStr.toUpperCase())){
+                               tf =  docEntities.get(term.termStr.toUpperCase());
+                           }
+                           else{
+                               tf =  docEntities.get(term.termStr.toLowerCase());
+                           }
                            docEntities.replace(term.termStr.toUpperCase(),tf, tf + 1);
                        }
                    }
-                   else if (!(token.charAt(0) >= 97 && token.charAt(0) <= 122)){
+                   else if (token.charAt(0) >= 65 && token.charAt(0) <= 90){
                        docEntities.put(token.toUpperCase(), 1);
                    }
                }
@@ -226,17 +234,28 @@ public class Parse {
        PriorityQueue <Pair <String, Integer>> sortedEntities = new PriorityQueue<>(new Comparator<Pair<String, Integer>>() {
            @Override
            public int compare(Pair<String, Integer> p1, Pair<String, Integer> p2) {
-               return (p1.getValue().compareTo(p2.getValue()));
+               return ((p1.getValue().compareTo(p2.getValue())) * (-1));
            }
        });
 
        for (String entity: docEntities.keySet()) {
-           sortedEntities.add(new Pair<>(entity, docEntities.get(entity)));
+           if (entity.charAt(0) >= 65 && entity.charAt(0) <= 90){
+               sortedEntities.add(new Pair<>(entity, docEntities.get(entity)));
+           }
+
        }
+
+
 
        entitiesSb.append(docID + ": " );
        for (int i = 0 ; i < 5; i++){
-           entitiesSb.append(sortedEntities.poll().getKey());
+           Pair<String, Integer> entityPair = sortedEntities.poll();
+           String key = entityPair.getKey();
+           int value = entityPair.getValue();
+           entitiesSb.append( key + " - " + value);
+           if (i < 4){
+               entitiesSb.append(", ");
+           }
        }
        entitiesSb.append("\n");
        docEntities.clear();
@@ -1080,6 +1099,7 @@ public class Parse {
            cityIndexer.writeDictionaryToDisk();
        }
         indexer.writeDocsInfoToDisk(sb);
+        indexer.writeEntitiesToDisk(entitiesSb);
     }
 
     // help function for 'dates' - the following function converts the String representation for a particular month from letters to digits.
