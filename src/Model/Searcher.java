@@ -1,8 +1,6 @@
 package Model;
 
 import javafx.collections.ObservableList;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -24,7 +22,7 @@ public class Searcher {
         docsInfo = new HashMap<>();
     }
 
-    public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
+    public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, boolean withSemantic, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
         HashSet<String> docsOfChosenCities = new HashSet<>();
@@ -81,8 +79,11 @@ public class Searcher {
 
         //find docs that contain the chosen cities in their text
         for (String cityTerm : chosenCities) {
-            if (!dictionary.containsKey(cityTerm)) {
+            if (!dictionary.containsKey(cityTerm) && !dictionary.containsKey(cityTerm.toLowerCase())) {
                 continue;
+            }
+            if(dictionary.containsKey(cityTerm.toLowerCase())){
+                cityTerm = cityTerm.toLowerCase();
             }
             pointer = dictionary.get(cityTerm).get(2);
             // char chunk = indexer.classifyToPosting(term).charAt(0);
@@ -195,7 +196,7 @@ public class Searcher {
     }
 
 
-    public void separateFileToQueries(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
+    public void separateFileToQueries(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, File queriesFile, boolean withSemantic, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
         try {
             String allQueries = new String(Files.readAllBytes(Paths.get(queriesFile.getAbsolutePath())), Charset.defaultCharset());
             String[] allQueriesArr = allQueries.split("<top>");
@@ -221,7 +222,7 @@ public class Searcher {
                         }
                     }
                 }
-                search(indexer, cityIndexer, ranker, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
+                search(indexer, cityIndexer, ranker, queryText, withSemantic, chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
 //            ranker.writeResultsToDisk(saveInPath);
         } catch (IOException e) {

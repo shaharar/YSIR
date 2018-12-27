@@ -16,6 +16,7 @@ public class Model {
     CityIndexer cityIndexer;
     Searcher searcher;
     boolean isStemSelected;
+    boolean withSemantic;
     double totalTime;
 
     public Model() {
@@ -65,12 +66,13 @@ public class Model {
         }
     }
 
-    public void loadDictionary(String savePath, File newDic, File newCitiesDic) {
-        index = new Indexer(savePath, isStemSelected);
-        index.loadDictionary(newDic);
+    public void loadDictionary(String savePath, File newDic, File newCitiesDic, File entitiesFile) {
         try {
+            index = new Indexer(savePath, isStemSelected);
+            index.loadDictionary(newDic);
             cityIndexer = new CityIndexer(savePath);
             cityIndexer.loadDictionary(newCitiesDic);
+            searcher.loadEntities(entitiesFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,17 +90,21 @@ public class Model {
         return message;
     }
 
-    public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
+    public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, String saveInPath) {
         Ranker r = new Ranker();
-        searcher.search(index,cityIndexer,r,queryText, chosenCities, citiesByTag,withStemming,saveInPath,"","");
+        searcher.search(index,cityIndexer,r,queryText,withSemantic, chosenCities, citiesByTag,isStemSelected,saveInPath,"","");
     }
 
-    public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
+    public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, String saveInPath) {
         Ranker r = new Ranker();
-        searcher.separateFileToQueries(index,cityIndexer,r,queriesFile, chosenCities, citiesByTag,withStemming,saveInPath);
+        searcher.separateFileToQueries(index,cityIndexer,r,queriesFile,withSemantic, chosenCities, citiesByTag,isStemSelected,saveInPath);
     }
 
     public CityIndexer getCityIndexer() {
         return cityIndexer;
+    }
+
+    public void semantics(boolean selected) {
+        withSemantic = selected;
     }
 }

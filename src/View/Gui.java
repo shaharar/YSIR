@@ -36,6 +36,7 @@ public class Gui {
     public TextField txt_corpusChooser;
     public TextField txt_savePathChooser;
     public CheckBox chbx_stemming;
+    public CheckBox chbx_semantic;
     public ChoiceBox chobx_language;
     public CheckComboBox<String> chobx_cities;
     public TextField txt_query;
@@ -107,20 +108,32 @@ public class Gui {
             showAlert("Please insert save files path");
             return;
         }
-        File newDicFile, newCitiesDicFile;
+        File newDicFile, newCitiesDicFile, entitiesFile;
+
+        //load regular dictionary
         if (chbx_stemming.isSelected()){
             newDicFile = new File(savePath + "\\indexResults\\dictionary_stemming.txt");
         }
         else{
             newDicFile = new File(savePath + "\\indexResults\\dictionary.txt");
         }
+
+        //load cities dictionary
         newCitiesDicFile = new File(savePath + "\\cityIndexResults\\citiesDictionary.txt");
 
-        if (!newDicFile.exists() && !newCitiesDicFile.exists()){
-            showAlert("Dictionaries weren't found. Please load terms dictionary and cities dictionary");
+        //load entities file
+        if (chbx_stemming.isSelected()){
+            entitiesFile = new File(savePath + "\\entitiesInformation_stemming.txt");
+        }
+        else{
+            entitiesFile = new File(savePath + "\\entitiesInformation.txt");
+        }
+
+        if (!newDicFile.exists() && !newCitiesDicFile.exists() && !entitiesFile.exists()){
+            showAlert("Files weren't found. Please load terms dictionary, cities dictionary and entities file");
         }
         else {
-            model.loadDictionary (savePath, newDicFile,newCitiesDicFile);
+            model.loadDictionary (savePath, newDicFile,newCitiesDicFile,entitiesFile);
             showAlert("Loading successful");
             setCities();
             isLoaded = true;
@@ -211,7 +224,7 @@ public class Gui {
             return;
         }
         ArrayList<String> chosenCities = getChosenCities();
-        model.runQuery(txt_query.getText(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
+        model.runQuery(txt_query.getText(),chosenCities,chobx_cities.getItems(),savePath);
         showAlert("Run query done!");
     }
 
@@ -229,7 +242,7 @@ public class Gui {
             return;
         }
         ArrayList<String> chosenCities = getChosenCities();
-        model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
+        model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),savePath);
         showAlert("Run queries file done!");
     }
 
@@ -278,5 +291,9 @@ public class Gui {
             chosenCities.add(city);
         }
         return chosenCities;
+    }
+
+    public void semantics(){
+        model.semantics (chbx_semantic.isSelected());
     }
 }
