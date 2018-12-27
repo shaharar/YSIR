@@ -191,9 +191,23 @@ public class Searcher {
             org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
             org.jsoup.select.Elements elements = document.getElementsByTag("top");
             for (Element e : elements) {
-                String queryText = e.select("title").text();
-                String queryId = e.select("num").text();
-                String queryDescription = e.select("desc").text();
+                String queryId = "", queryText = "", queryDescription = "";
+                String[] lines = e.toString().split("\n");
+                for (int i = 0; i < lines.length; i++){
+                    if(lines[i].contains("<num>")){
+                        queryId = lines[i].substring(lines[i].indexOf(":") + 2);
+                    }
+                    if(lines[i].contains("<title>")){
+                        queryText = lines[i].substring(lines[i].indexOf("<title>") + 1);
+                    }
+                    if(lines[i].contains("<desc>")){
+                        i++;
+                        while(!lines[i].equals("\n")){
+                            queryDescription += lines[i];
+                            i++;
+                        }
+                    }
+                }
                 search(indexer, cityIndexer, ranker, queryText,chosenCities, citiesByTag, withStemming, saveInPath, queryId, queryDescription);
             }
 //            ranker.writeResultsToDisk(saveInPath);
