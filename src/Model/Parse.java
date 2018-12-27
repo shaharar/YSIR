@@ -31,6 +31,7 @@ public class Parse {
     int docsTotal;
     int docsInCollection;
     private HashMap <String, Integer> docEntities;
+//    private StringBuilder tfPerDocSb;
 //    int docsTotalLengthes;
 //    private HashMap<String, Integer> docsLengthes;
 
@@ -62,6 +63,7 @@ public class Parse {
       currentIdx = 0;
       docsTotal = 0;
       docsInCollection = 0;
+//        tfPerDocSb = new StringBuilder();
 //      docsTotalLengthes = 0;
 //      docsLengthes = new HashMap<>();
    }
@@ -226,6 +228,15 @@ public class Parse {
          currentIdx++;
            position++;
       }
+//       tfPerDocSb.append(docNo + ": ");
+//       for (String termStr : termsPerDoc) {
+//           Term term = terms.get(termStr);
+//           HashMap<String, AtomicInteger> docs = term.getDocs();
+//           int tfPerDoc = docs.get(docNo).intValue();
+//           tfPerDocSb.append(termStr + " " + tfPerDoc + " ");
+//       }
+//       tfPerDocSb.append("\n");
+
       String docCityPositions = "";
        for (Integer pos:positionsInDoc) {
            docCityPositions += pos + "  ";
