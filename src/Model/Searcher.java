@@ -14,6 +14,7 @@ public class Searcher {
     Parse parser;
     HashMap<String, HashMap<String, Integer>> docsResults;
     private HashMap<String, Integer> docsInfo;
+    private HashMap<String, HashMap<String, Integer>> entities;
     static int queryID = 1;
 
     public Searcher() {
@@ -223,5 +224,36 @@ public class Searcher {
 //        Searcher searcher = new Searcher();
 //        searcher.findDocsFromLine("FBIS3-21309: 1; LA030290-0012: 2;[10.41]", "invariables");
 //    }
+    }
+
+
+
+    public void loadEntities (File entities){
+        BufferedReader br = null;
+        try {
+            String term;
+            br = new BufferedReader(new FileReader(entities));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+                String docId = line.substring(0, line.indexOf(":"));
+                String [] entitiesStr = line.split(", ");
+                if (entitiesStr.length > 0){
+                    entitiesStr[0] = entitiesStr[0].substring(line.indexOf(": "));
+                }
+                for (int i = 0; i < entitiesStr.length; i++){
+                    String [] entitiesRankStr = entitiesStr[i].split(" - ");
+                    HashMap <String, Integer> entitiesInfo = new HashMap<>();
+                    entitiesInfo.put(entitiesRankStr[0], Integer.parseInt(entitiesRankStr[1]));
+                    this.entities.put(docId, entitiesInfo);
+                }
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getEntities() {
+        return entities;
     }
 }
