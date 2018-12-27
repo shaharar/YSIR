@@ -5,6 +5,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,7 +69,9 @@ public class Searcher {
                 br.close();
 
                 //get docs from posting line and add them to the data structure 'docsResults'
-                findDocsFromLine(line, term);
+                if(line != null) {
+                    findDocsFromLine(line, term);
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -158,6 +163,9 @@ public class Searcher {
         String[] docsArr = docs.split(";");
         for (String docInfo : docsArr) {
             String doc = docInfo.substring(0, docInfo.indexOf(": "));
+            while(doc.charAt(0) == ' '){
+                doc = doc.substring(1);
+            }
             String tf = docInfo.substring(docInfo.indexOf(":") + 2);
 /*            if(!docsResults.containsKey(doc)){
                 docsResults.put(doc,term + " -" + tf);
@@ -188,21 +196,25 @@ public class Searcher {
 
     public void separateFileToQueries(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath) {
         try {
-            org.jsoup.nodes.Document document = Jsoup.parse(queriesFile, "UTF-8");
-            org.jsoup.select.Elements elements = document.getElementsByTag("top");
-            for (Element e : elements) {
+            String allQueries = new String(Files.readAllBytes(Paths.get(queriesFile.getAbsolutePath())), Charset.defaultCharset());
+            String[] allQueriesArr = allQueries.split("<top>");
+
+            for (String query : allQueriesArr) {
+                if(query.equals("")){
+                    continue;
+                }
                 String queryId = "", queryText = "", queryDescription = "";
-                String[] lines = e.toString().split("\n");
+                String[] lines = query.toString().split("\n");
                 for (int i = 0; i < lines.length; i++){
                     if(lines[i].contains("<num>")){
                         queryId = lines[i].substring(lines[i].indexOf(":") + 2);
                     }
-                    if(lines[i].contains("<title>")){
-                        queryText = lines[i].substring(lines[i].indexOf("<title>") + 1);
+                    else if(lines[i].contains("<title>")){
+                        queryText = lines[i].substring(8);
                     }
-                    if(lines[i].contains("<desc>")){
+                    else if(lines[i].contains("<desc>")){
                         i++;
-                        while(!lines[i].equals("\n")){
+                        while(i < lines.length && !lines[i].equals("")){
                             queryDescription += lines[i];
                             i++;
                         }

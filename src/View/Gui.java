@@ -87,7 +87,7 @@ public class Gui {
             return;
         } else {
             try {
-                //showAlert("Running started, please wait for the end of the process");
+                showAlert("Running index started, please wait for the end of the process");
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -206,8 +206,13 @@ public class Gui {
             showAlert("You should load your dictionaries before run query");
             return;
         }
+        if(txt_query.getText().equals("")){
+            showAlert("Please enter a query");
+            return;
+        }
         ArrayList<String> chosenCities = getChosenCities();
-        model.runQuery(txt_query.getText().toString(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
+        model.runQuery(txt_query.getText(),chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
+        showAlert("Run query done!");
     }
 
     public void runQueriesFile() {
@@ -219,8 +224,13 @@ public class Gui {
             showAlert("You should load your dictionaries before run queries file");
             return;
         }
+        if(queriesFile == null){
+            showAlert("Please choose a queries file");
+            return;
+        }
         ArrayList<String> chosenCities = getChosenCities();
         model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),chbx_stemming.isSelected(),savePath);
+        showAlert("Run queries file done!");
     }
 
     public void browseQueriesFile() {
@@ -230,6 +240,9 @@ public class Gui {
         if (queriesFileSelected != null) {
             queriesFile = queriesFileSelected.getAbsoluteFile();
             txt_queriesPathChooser.setText(queriesFile.getAbsolutePath());
+        }
+        else{
+            showAlert("None file was chosen");
         }
     }
 

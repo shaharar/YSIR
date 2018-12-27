@@ -25,6 +25,8 @@ public class Ranker {
             }
         });
         queryResults = new HashMap<>();
+        b = 0.75;
+        k = 1.6;
     }
     public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, String queryId, String queryDescription, String saveInPath) {
         int totalDocsLengths = 0, N;
@@ -47,7 +49,9 @@ public class Ranker {
                     }
                 }
                 rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N / df);
-                docsRanks.add(new Pair<>(docId, rank));
+                if (rank > 0) {
+                    docsRanks.add(new Pair<>(docId, rank));
+                }
 //            docsRanks.put(docId, rank);
             }
         }
