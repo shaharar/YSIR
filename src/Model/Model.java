@@ -34,6 +34,7 @@ public class Model {
             e.printStackTrace();
         }
         this.index = rf.getIndexer();
+        this.cityIndexer = rf.getCityIndexer();
     }
 
     public void stemming(boolean selected) {

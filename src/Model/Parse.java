@@ -1288,4 +1288,8 @@ public class Parse {
     public Indexer getIndexer() {
         return indexer;
     }
+
+    public CityIndexer getCityIndexer() {
+        return cityIndexer;
+    }
 }

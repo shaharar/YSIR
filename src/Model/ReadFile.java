@@ -129,5 +129,10 @@ public class ReadFile {
     public Indexer getIndexer (){
        return parse.getIndexer();
     }
+
+    public CityIndexer getCityIndexer (){
+        return parse.getCityIndexer();
+    }
+
 }
 
