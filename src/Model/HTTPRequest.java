@@ -1,7 +1,6 @@
 package Model;
 
 import org.json.JSONObject;
-import org.jsoup.helper.HttpConnection;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

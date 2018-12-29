@@ -3,7 +3,6 @@ package View;
 import Model.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -12,11 +11,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -316,8 +312,9 @@ public class Gui {
         saveResultsDirSelected = dc.showDialog(stage);
         if (saveResultsDirSelected != null) {
             saveResultsPath = saveResultsDirSelected.getAbsolutePath();
-            txt_saveResultsChooser.setText(saveResultsPath);
+         //   txt_saveResultsChooser.setText(saveResultsPath);
         }
         model.saveResults(saveResultsPath);
+        showAlert("Results have been saved");
     }
 }

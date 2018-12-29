@@ -1,22 +1,24 @@
-/*
 package Model;
 
-import com.squareup.okhttp.OkHttpClient;
+/*import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import jdk.nashorn.internal.parser.JSONParser;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.squareup.okhttp.Response;*/
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class WordsSemantic {
     private String baseUrl;
     private HashMap<String,ArrayList<String>> semanticWords;
-    private List<Object> jsonResults;
+    private Object[] jsonResults;
 
     public WordsSemantic() {
         baseUrl = "https://api.datamuse.com/words?ml=";
@@ -38,37 +40,32 @@ public class WordsSemantic {
             }
             Object obj = null;
             try{
-                try{
-                    String responseStr = response.body().string();
-//                    obj = new JSONParser().parse(responseStr);
-//                    response.close();
-                } catch (IOException e){
+                String responseStr = response.body().string();
+                try {
+                    obj = new JSONParser().parse(responseStr);
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if(obj != null){
-                    int idx = 0;
-                    String word = "";
-                    jsonResults = ((JSONArray) obj).toList();
-                    semanticWords.put(term, new ArrayList<>());
-                    for (Object o : jsonResults){
-                        JSONObject jo = (JSONObject)(o);
-                        word = (String)(jo).get("word");
-                        semanticWords.get(term).add(idx, word);
-                        if(idx == 5){
-                            break;
-                        }
-                        idx++;
+                response.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            if(obj != null) {
+                int idx = 0;
+                String word = "";
+                jsonResults = ((JSONArray) obj).toArray();
+                semanticWords.put(term, new ArrayList<>());
+                for (Object o : jsonResults) {
+                    JSONObject jo = (JSONObject) (o);
+                    word = (String) (jo).get("word");
+                    semanticWords.get(term).add(idx, word);
+                    if (idx == 5) {
+                        break;
                     }
+                    idx++;
                 }
             }
-            catch (Exception e){
-
-            }
-//            catch (IOException e){
-//                e.printStackTrace();
-//            }
         }
         return semanticWords;
     }
 }
-*/

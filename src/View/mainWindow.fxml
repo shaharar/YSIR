@@ -23,9 +23,9 @@
          </font>
       </Button>
       <TextField fx:id="txt_savePathChooser" layoutX="166.0" layoutY="147.0" prefHeight="30.0" prefWidth="182.0" />
-      <Button fx:id="btn_run" layoutX="163.0" layoutY="406.0" mnemonicParsing="false" onAction="#run" prefHeight="30.0" prefWidth="101.0" text="Run Index" textAlignment="CENTER" textFill="#0d0d0d">
+      <Button fx:id="btn_run" layoutX="163.0" layoutY="406.0" mnemonicParsing="false" onAction="#run" prefHeight="30.0" prefWidth="101.0" text="Run Index" textAlignment="CENTER">
          <font>
-            <Font name="Calibri Bold" size="13.0" />
+            <Font name="Calibri Bold" size="15.0" />
          </font>
       </Button>
       <Label layoutX="276.0" layoutY="14.0" text="Search Engine" textAlignment="CENTER" textFill="#404e5e">
@@ -38,7 +38,7 @@
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </CheckBox>
-      <ChoiceBox fx:id="chobx_language" layoutX="129.0" layoutY="210.0" prefHeight="25.0" prefWidth="101.0" />
+      <ChoiceBox fx:id="chobx_language" layoutX="120.0" layoutY="210.0" prefHeight="25.0" prefWidth="101.0" />
       <Label layoutX="57.0" layoutY="211.0" prefHeight="25.0" prefWidth="67.0" text="Language">
          <font>
             <Font name="Calibri Bold" size="14.0" />
@@ -65,17 +65,17 @@
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="436.0" layoutY="153.0" prefHeight="25.0" prefWidth="127.0" text="Choose queries file:">
+      <Label layoutX="436.0" layoutY="144.0" prefHeight="25.0" prefWidth="127.0" text="Choose queries file:">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </Label>
-      <Button fx:id="btn_browseQueries" layoutX="436.0" layoutY="195.0" mnemonicParsing="false" onAction="#browseQueriesFile" prefHeight="30.0" prefWidth="84.0" text="Browse" textAlignment="CENTER">
+      <Button fx:id="btn_browseQueries" layoutX="436.0" layoutY="179.0" mnemonicParsing="false" onAction="#browseQueriesFile" prefHeight="30.0" prefWidth="84.0" text="Browse" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <Button layoutX="678.0" layoutY="195.0" mnemonicParsing="false" onAction="#runQueriesFile" prefHeight="30.0" prefWidth="101.0" text="Run Queries" textAlignment="CENTER" textFill="#0d0d0d">
+      <Button layoutX="685.0" layoutY="179.0" mnemonicParsing="false" onAction="#runQueriesFile" prefHeight="30.0" prefWidth="97.0" text="Run Queries" textAlignment="CENTER" textFill="#0d0d0d">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
@@ -85,28 +85,27 @@
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <TextField fx:id="txt_queriesPathChooser" layoutX="520.0" layoutY="195.0" prefHeight="30.0" prefWidth="157.0" />
-      <Button fx:id="btn_showResults" disable="false" layoutX="548.0" layoutY="346.0" mnemonicParsing="false" onAction="#showResults" prefHeight="43.0" prefWidth="119.0" text="Show Results" textAlignment="CENTER">
+      <TextField fx:id="txt_queriesPathChooser" layoutX="520.0" layoutY="179.0" prefHeight="30.0" prefWidth="164.0" />
+      <Button disable="false" layoutX="622.0" layoutY="351.0" mnemonicParsing="false" onAction="#saveResults" prefHeight="43.0" prefWidth="119.0" text="Save Results" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <CheckComboBox fx:id="chobx_cities" layoutX="516.0" layoutY="253.0" prefHeight="25.0" prefWidth="109.0" />
-      <Label layoutX="436.0" layoutY="253.0" prefHeight="25.0" prefWidth="84.0" text="Select Cities">
+      <CheckComboBox fx:id="chobx_cities" layoutX="523.0" layoutY="242.0" prefHeight="25.0" prefWidth="109.0" />
+      <Label layoutX="435.0" layoutY="242.0" prefHeight="25.0" prefWidth="84.0" text="Filter By Cities">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </Label>
-      <CheckBox fx:id="chbx_semantic" layoutX="435.0" layoutY="291.0" mnemonicParsing="false" onAction="#stemming" onMouseClicked="#semantics" prefHeight="25.0" prefWidth="202.0" text="Semantic treatment in query" wrapText="true">
+      <CheckBox fx:id="chbx_semantic" layoutX="435.0" layoutY="299.0" mnemonicParsing="false" onAction="#stemming" onMouseClicked="#semantics" prefHeight="25.0" prefWidth="202.0" text="Semantic treatment in query" wrapText="true">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </CheckBox>
-      <Button fx:id="btn_saveResults" disable="false" layoutX="461.0" layoutY="415.0" mnemonicParsing="false" onAction="#saveResults" prefHeight="30.0" prefWidth="119.0" text="Save Results" textAlignment="CENTER">
+      <Button fx:id="btn_showResults1" disable="false" layoutX="478.0" layoutY="351.0" mnemonicParsing="false" onAction="#showResults" prefHeight="43.0" prefWidth="119.0" text="Show Results" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <TextField fx:id="txt_saveResultsChooser" layoutX="579.0" layoutY="415.0" prefHeight="30.0" prefWidth="182.0" />
    </children>
 </AnchorPane>
