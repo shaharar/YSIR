@@ -15,6 +15,7 @@ public class Model {
     Indexer index;
     CityIndexer cityIndexer;
     Searcher searcher;
+    Ranker ranker;
     boolean isStemSelected;
     boolean withSemantic;
     double totalTime;
@@ -93,11 +94,13 @@ public class Model {
     public void runQuery(String queryText, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, String saveInPath) {
         Ranker r = new Ranker();
         searcher.search(index,cityIndexer,r,queryText,withSemantic, chosenCities, citiesByTag,isStemSelected,saveInPath,"","");
+        this.ranker = r;
     }
 
     public void runQueriesFile(File queriesFile, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, String saveInPath) {
         Ranker r = new Ranker();
         searcher.separateFileToQueries(index,cityIndexer,r,queriesFile,withSemantic, chosenCities, citiesByTag,isStemSelected,saveInPath);
+        this.ranker = r;
     }
 
     public CityIndexer getCityIndexer() {
@@ -106,5 +109,9 @@ public class Model {
 
     public void semantics(boolean selected) {
         withSemantic = selected;
+    }
+
+    public void saveResults(String saveResultsPath) {
+        this.ranker.writeResultsToDisk(saveResultsPath);
     }
 }

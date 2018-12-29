@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
       <Button fx:id="btn_corpusPath" layoutX="57.0" layoutY="98.0" mnemonicParsing="false" onAction="#loadCorpusPath" prefHeight="30.0" prefWidth="109.0" text="Corpus Path" textAlignment="CENTER">
          <font>
@@ -65,7 +65,7 @@
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="436.0" layoutY="150.0" prefHeight="25.0" prefWidth="127.0" text="Choose queries file:">
+      <Label layoutX="436.0" layoutY="153.0" prefHeight="25.0" prefWidth="127.0" text="Choose queries file:">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
@@ -86,13 +86,13 @@
          </font>
       </Button>
       <TextField fx:id="txt_queriesPathChooser" layoutX="520.0" layoutY="195.0" prefHeight="30.0" prefWidth="157.0" />
-      <Button fx:id="btn_showResults" disable="false" layoutX="551.0" layoutY="349.0" mnemonicParsing="false" onAction="#showResults" prefHeight="43.0" prefWidth="119.0" text="Show Results" textAlignment="CENTER">
+      <Button fx:id="btn_showResults" disable="false" layoutX="548.0" layoutY="346.0" mnemonicParsing="false" onAction="#showResults" prefHeight="43.0" prefWidth="119.0" text="Show Results" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
       </Button>
-      <CheckComboBox fx:id="chobx_cities" layoutX="478.0" layoutY="253.0" prefHeight="25.0" prefWidth="101.0" />
-      <Label layoutX="436.0" layoutY="253.0" prefHeight="25.0" prefWidth="47.0" text="Cities">
+      <CheckComboBox fx:id="chobx_cities" layoutX="516.0" layoutY="253.0" prefHeight="25.0" prefWidth="109.0" />
+      <Label layoutX="436.0" layoutY="253.0" prefHeight="25.0" prefWidth="84.0" text="Select Cities">
          <font>
             <Font name="Calibri Bold" size="14.0" />
          </font>
@@ -102,5 +102,11 @@
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </CheckBox>
+      <Button fx:id="btn_saveResults" disable="false" layoutX="461.0" layoutY="415.0" mnemonicParsing="false" onAction="#saveResults" prefHeight="30.0" prefWidth="119.0" text="Save Results" textAlignment="CENTER">
+         <font>
+            <Font name="Calibri Bold" size="13.0" />
+         </font>
+      </Button>
+      <TextField fx:id="txt_saveResultsChooser" layoutX="579.0" layoutY="415.0" prefHeight="30.0" prefWidth="182.0" />
    </children>
 </AnchorPane>

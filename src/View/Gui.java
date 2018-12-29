@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,14 +28,16 @@ public class Gui {
     File corpusDirSelected = null;
     File saveDirSelected = null;
     File queriesFileSelected = null;
-    public Button btn_corpusPath;
+    File saveResultsDirSelected = null;
+    /*    public Button btn_corpusPath;
     public Button btn_savePath;
     public Button btn_run;
     public Button btn_reset;
     public Button btn_showDic;
-    public Button btn_loadDic;
+    public Button btn_loadDic;*/
     public TextField txt_corpusChooser;
     public TextField txt_savePathChooser;
+    public TextField txt_saveResultsChooser;
     public CheckBox chbx_stemming;
     public CheckBox chbx_semantic;
     public ChoiceBox chobx_language;
@@ -45,14 +48,18 @@ public class Gui {
     // public ListView <String> lv_dic;
     String corpusPath;
     String savePath;
+    String saveResultsPath;
     public File queriesFile;
-    public Button btn_showResults;
+/*    public Button btn_showResults;
+    public Button btn_saveResults;*/
     ArrayList<String> chosenCities;
     boolean isLoaded;
+    boolean isRunIndex;
 
     public Gui() {
         model = new Model();
         isLoaded = false;
+        isRunIndex = false;
     }
 
     //load the corpus path the user chose
@@ -89,6 +96,7 @@ public class Gui {
         } else {
             try {
                 showAlert("Running index started, please wait for the end of the process");
+                Thread.sleep(3000);
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -99,6 +107,7 @@ public class Gui {
             HashSet<String> languages = model.getLanguages();
             chobx_language.setItems(FXCollections.observableArrayList(languages));
             chobx_language.setDisable(false);
+            isRunIndex = true;
         }
     }
 
@@ -146,6 +155,10 @@ public class Gui {
 
     //clear all directories and memory
     public void reset(){
+        if (savePath == null){
+            showAlert("Please insert save files path");
+            return;
+        }
         if (! model.reset(savePath)){
             showAlert("The files and memory have been cleared");
         }
@@ -215,7 +228,7 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
-        if (!isLoaded) {
+        if (!isRunIndex && !isLoaded) {
             showAlert("You should load your dictionaries before run query");
             return;
         }
@@ -233,7 +246,7 @@ public class Gui {
             showAlert("Please choose save files path");
             return;
         }
-        if (!isLoaded) {
+        if (!isRunIndex && !isLoaded) {
             showAlert("You should load your dictionaries before run queries file");
             return;
         }
@@ -295,5 +308,16 @@ public class Gui {
 
     public void semantics(){
         model.semantics (chbx_semantic.isSelected());
+    }
+
+    public void saveResults() {
+        Stage stage = new Stage();
+        DirectoryChooser dc = new DirectoryChooser();
+        saveResultsDirSelected = dc.showDialog(stage);
+        if (saveResultsDirSelected != null) {
+            saveResultsPath = saveResultsDirSelected.getAbsolutePath();
+            txt_saveResultsChooser.setText(saveResultsPath);
+        }
+        model.saveResults(saveResultsPath);
     }
 }
