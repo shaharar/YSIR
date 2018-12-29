@@ -101,7 +101,7 @@ public class Ranker {
 //        return docsRanks;
 //    }
 
-    public void writeResultsToDisk(String saveInPath){
+    public void writeResultsToDisk(String saveResultsPath){
         StringBuilder sb = new StringBuilder();
 //        Iterator <Pair<String, Double>> it = docsRanks.iterator();
 //        while (it.hasNext()) {
@@ -113,7 +113,7 @@ public class Ranker {
                 sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
             }
         }
-        File rankerResults = new File(saveInPath + "results.txt");
+        File rankerResults = new File(saveResultsPath + "\\results.txt");
         try {
             rankerResults.createNewFile();
         } catch (IOException e) {

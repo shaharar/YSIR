@@ -1,3 +1,4 @@
+/*
 package Model;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -70,3 +71,4 @@ public class WordsSemantic {
         return semanticWords;
     }
 }
+*/

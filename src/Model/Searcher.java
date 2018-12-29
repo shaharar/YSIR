@@ -17,15 +17,16 @@ public class Searcher {
     private HashMap<String, Integer> docsInfo;
     private HashMap<String, HashMap<String, Integer>> entities;
     static int queryID = 1;
-    WordsSemantic ws;
+ //   WordsSemantic ws;
 
     public Searcher() {
         docsInfo = new HashMap<>();
-        ws = new WordsSemantic();
+        entities = new HashMap<>();
+ //       ws = new WordsSemantic();
     }
 
     public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, boolean withSemantic, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
-        HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
+ //       HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
         HashSet<String> docsOfChosenCities = new HashSet<>();
@@ -33,13 +34,13 @@ public class Searcher {
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         setDocsInfo(saveInPath + "\\docsInformation.txt");
 
-        //add semantic words of each term in query to 'queryTerms'
+/*        //add semantic words of each term in query to 'queryTerms'
         for (String term : queryTerms.keySet()){
             ArrayList<String> semWords = semanticWords.get(term);
             for(String word : semWords){
                 queryTerms.put(word,null);
             }
-        }
+        }*/
 
         //give an ID to query if it's a regular query (not queries file)
         if(queryId.equals("")){
