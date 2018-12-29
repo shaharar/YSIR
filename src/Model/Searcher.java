@@ -38,7 +38,14 @@ public class Searcher {
         for (String term : queryTerms.keySet()){
             ArrayList<String> semWords = semanticWords.get(term);
             for(String word : semWords){
-                queryTerms.put(word,null);
+                Integer tf;
+                if(dictionary.containsKey(word)){
+                    tf = dictionary.get(word).get(0);
+                }
+                else{
+                    tf = Integer.parseInt("0");
+                }
+                queryTerms.put(word,tf);
             }
         }
 
