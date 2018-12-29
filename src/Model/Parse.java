@@ -259,7 +259,7 @@ public class Parse {
 
 
        entitiesSb.append(docID + ": " );
-       for (int i = 0 ; i < 5; i++){
+       for (int i = 0 ; i < 5 && sortedEntities.size() > 0; i++){
            Pair<String, Integer> entityPair = sortedEntities.poll();
            String key = entityPair.getKey();
            int value = entityPair.getValue();

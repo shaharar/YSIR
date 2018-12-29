@@ -1,12 +1,10 @@
 package Model;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.TextField;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class Model {
@@ -73,7 +71,7 @@ public class Model {
             index.loadDictionary(newDic);
             cityIndexer = new CityIndexer(savePath);
             cityIndexer.loadDictionary(newCitiesDic);
-            searcher.loadEntities(entitiesFile);
+       //     searcher.loadEntities(entitiesFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

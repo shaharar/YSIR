@@ -17,16 +17,16 @@ public class Searcher {
     private HashMap<String, Integer> docsInfo;
     private HashMap<String, HashMap<String, Integer>> entities;
     static int queryID = 1;
- //   WordsSemantic ws;
+    WordsSemantic ws;
 
     public Searcher() {
         docsInfo = new HashMap<>();
         entities = new HashMap<>();
- //       ws = new WordsSemantic();
+        ws = new WordsSemantic();
     }
 
     public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, boolean withSemantic, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
- //       HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
+        HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
         HashSet<String> docsOfChosenCities = new HashSet<>();
@@ -34,13 +34,13 @@ public class Searcher {
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         setDocsInfo(saveInPath + "\\docsInformation.txt");
 
-/*        //add semantic words of each term in query to 'queryTerms'
+        //add semantic words of each term in query to 'queryTerms'
         for (String term : queryTerms.keySet()){
             ArrayList<String> semWords = semanticWords.get(term);
             for(String word : semWords){
                 queryTerms.put(word,null);
             }
-        }*/
+        }
 
         //give an ID to query if it's a regular query (not queries file)
         if(queryId.equals("")){
@@ -277,11 +277,11 @@ public class Searcher {
                 String docId = line.substring(0, line.indexOf(":"));
                 String [] entitiesStr = line.split(", ");
                 if (entitiesStr.length > 0){
-                    entitiesStr[0] = entitiesStr[0].substring(line.indexOf(": "));
+                    entitiesStr[0] = entitiesStr[0].substring(line.indexOf(":") + 2);
                 }
+                HashMap <String, Integer> entitiesInfo = new HashMap<>();
                 for (int i = 0; i < entitiesStr.length; i++){
                     String [] entitiesRankStr = entitiesStr[i].split(" - ");
-                    HashMap <String, Integer> entitiesInfo = new HashMap<>();
                     entitiesInfo.put(entitiesRankStr[0], Integer.parseInt(entitiesRankStr[1]));
                     this.entities.put(docId, entitiesInfo);
                 }
