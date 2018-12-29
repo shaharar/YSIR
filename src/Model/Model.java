@@ -77,6 +77,7 @@ public class Model {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     public HashSet<String> getLanguages() {

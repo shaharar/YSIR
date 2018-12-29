@@ -61,7 +61,7 @@ public class Indexer {
     }
 
     //build the inverted index
-    public void index(HashMap<String, Term> terms, int docsInCollection, boolean withStemming) {
+    public void index(HashMap<String, Term> terms, HashMap <String, HashMap <String, Double>> termsWeightPerDoc, int docsInCollection, boolean withStemming) {
 
         ArrayList<ArrayList<String>> chunkLists;
         chunkLists = new ArrayList<>();
@@ -164,14 +164,14 @@ public class Indexer {
         }
 
         for (int i = 0; i < chunkLists.size(); i++) {
-            updateChunk(chunkLists.get(i), i, terms, docsInCollection);
+            updateChunk(chunkLists.get(i), i, terms,termsWeightPerDoc, docsInCollection);
             chunkLists.get(i).clear();
         }
         chunkLists.clear();
         terms.clear();
     }
 
-    private void updateChunk(ArrayList<String> listChunk, int index, HashMap <String, Term> terms, int docsInCollection) {
+    private void updateChunk(ArrayList<String> listChunk, int index, HashMap <String, Term> terms,HashMap <String, HashMap <String, Double>> termsWeightPerDoc, int docsInCollection) {
         String chunk = getChunk(index);
         ArrayList <String> listPosting = new ArrayList<>();
         StringBuilder docsListStr, strPosting;
@@ -587,8 +587,8 @@ public class Indexer {
         }
     }
 
-    public void finished(HashMap<String , Term> terms, int docsInCollection, boolean withStemming) {
-        index(terms, docsInCollection, withStemming);
+    public void finished(HashMap<String , Term> terms,HashMap <String, HashMap <String, Double>> termsWeightPerDoc,  int docsInCollection, boolean withStemming) {
+        index(terms,termsWeightPerDoc, docsInCollection, withStemming);
         writeDictionaryToDisk();
     }
 

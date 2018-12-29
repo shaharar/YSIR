@@ -274,14 +274,17 @@ public class Searcher {
             br = new BufferedReader(new FileReader(entities));
             String line = "";
             while ((line = (br.readLine())) != null) {
+                if (line.contains("--noEntities--")){
+                    break;
+                }
                 String docId = line.substring(0, line.indexOf(":"));
                 String [] entitiesStr = line.split(", ");
                 if (entitiesStr.length > 0){
-                    entitiesStr[0] = entitiesStr[0].substring(line.indexOf(": "));
+                    entitiesStr[0] = entitiesStr[0].substring(line.indexOf(":") + 2);
                 }
-                for (int i = 0; i < entitiesStr.length; i++){
+                HashMap <String, Integer> entitiesInfo = new HashMap<>();
+                for (int i = 0; i < entitiesStr.length ; i++){
                     String [] entitiesRankStr = entitiesStr[i].split(" - ");
-                    HashMap <String, Integer> entitiesInfo = new HashMap<>();
                     entitiesInfo.put(entitiesRankStr[0], Integer.parseInt(entitiesRankStr[1]));
                     this.entities.put(docId, entitiesInfo);
                 }

@@ -34,6 +34,7 @@ public class Parse {
 //    private StringBuilder tfPerDocSb;
 //    int docsTotalLengthes;
 //    private HashMap<String, Integer> docsLengthes;
+    private HashMap <String, HashMap <String, Double>> termsWeightPerDoc;
 
 
     public Parse (boolean withStemming, String path, String corpusPath){
@@ -66,6 +67,7 @@ public class Parse {
 //        tfPerDocSb = new StringBuilder();
 //      docsTotalLengthes = 0;
 //      docsLengthes = new HashMap<>();
+        termsWeightPerDoc = new HashMap<>();
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -237,6 +239,15 @@ public class Parse {
 //       }
 //       tfPerDocSb.append("\n");
 
+//       for (String termStr : termsPerDoc) {
+//           Term term = terms.get(termStr);
+//           HashMap<String, AtomicInteger> docs = term.getDocs();
+//           double tfPerDoc = docs.get(docNo).doubleValue();
+//           HashMap <String, Double> termWeight = new HashMap<>();
+//           termWeight.put(termStr, tfPerDoc);
+//           termsWeightPerDoc.put(docNo, termWeight);
+//       }
+
       String docCityPositions = "";
        for (Integer pos:positionsInDoc) {
            docCityPositions += pos + "  ";
@@ -259,12 +270,15 @@ public class Parse {
 
 
        entitiesSb.append(docID + ": " );
-       for (int i = 0 ; i < 5; i++){
+       if (sortedEntities.size() == 0){
+           entitiesSb.append("--noEntities--");
+       }
+       for (int i = 0 ; i < 5 && sortedEntities.size() > 0; i++){
            Pair<String, Integer> entityPair = sortedEntities.poll();
            String key = entityPair.getKey();
            int value = entityPair.getValue();
            entitiesSb.append( key + " - " + value);
-           if (i < 4){
+           if (sortedEntities.size() > 0){
                entitiesSb.append(", ");
            }
        }
@@ -282,7 +296,7 @@ public class Parse {
       termsPerDoc.clear();
 
        if (docsTotal > 50000){
-           indexer.index(terms, docsInCollection, withStemming);
+           indexer.index(terms,termsWeightPerDoc, docsInCollection, withStemming);
            terms.clear();
            if (cityIndexer != null){
                cityIndexer.index(cityDocs);
@@ -1104,7 +1118,7 @@ public class Parse {
 
 
     public void finished() {
-       indexer.finished(terms, docsInCollection,withStemming);
+       indexer.finished(terms,termsWeightPerDoc, docsInCollection,withStemming);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);
            cityIndexer.writeDictionaryToDisk();
