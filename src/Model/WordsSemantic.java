@@ -39,8 +39,8 @@ public class WordsSemantic {
             try{
                 try{
                     String responseStr = response.body().string();
-                    obj = new JSONParser().parse(responseStr);
-                    response.close();
+//                    obj = new JSONParser().parse(responseStr);
+//                    response.close();
                 } catch (IOException e){
                     e.printStackTrace();
                 }
@@ -60,9 +60,12 @@ public class WordsSemantic {
                     }
                 }
             }
-            catch (IOException e){
-                e.printStackTrace();
+            catch (Exception e){
+
             }
+//            catch (IOException e){
+//                e.printStackTrace();
+//            }
         }
         return semanticWords;
     }
