@@ -120,7 +120,7 @@ public class Gui {
             showAlert("Please insert save files path");
             return;
         }
-        File newDicFile, newCitiesDicFile, entitiesFile;
+        File newDicFile, newCitiesDicFile, entitiesFile, weightsPerDoc;
 
         //load regular dictionary
         if (chbx_stemming.isSelected()){
@@ -141,11 +141,20 @@ public class Gui {
             entitiesFile = new File(savePath + "\\entitiesInformation.txt");
         }
 
+        //load weights doc
+        if (chbx_stemming.isSelected()){
+            weightsPerDoc = new File(savePath + "\\indexResults\\docsWeights_stemming.txt");
+        }
+        else{
+            weightsPerDoc = new File(savePath + "\\indexResults\\docsWeights.txt");
+        }
+
+
         if (!newDicFile.exists() && !newCitiesDicFile.exists() && !entitiesFile.exists()){
             showAlert("Files weren't found. Please load terms dictionary, cities dictionary and entities file");
         }
         else {
-            model.loadDictionary (savePath, newDicFile,newCitiesDicFile,entitiesFile);
+            model.loadDictionary (savePath, newDicFile,newCitiesDicFile,entitiesFile, weightsPerDoc);
             showAlert("Loading successful");
             setCities();
             isLoaded = true;
