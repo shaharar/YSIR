@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.util.Pair;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -7,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Indexer {
 
     private HashMap <String, ArrayList <Integer>> dictionary;
+    private HashMap <String, HashMap <String, Double>> termsWeightsPerDoc;
+    private HashMap <String, Double> weightsPerDoc;
     String path;
     private boolean withStemming;
     String postingDir;
@@ -14,6 +18,8 @@ public class Indexer {
     // constructor
     public Indexer(String path, boolean withStemming) {
         dictionary = new HashMap<>();
+        termsWeightsPerDoc = new HashMap<>();
+        weightsPerDoc = new HashMap<>();
         this.path = path;
         this.withStemming = withStemming;
         new File(this.path + "\\indexResults").mkdir();
@@ -61,7 +67,7 @@ public class Indexer {
     }
 
     //build the inverted index
-    public void index(HashMap<String, Term> terms, HashMap <String, HashMap <String, Double>> termsWeightPerDoc, int docsInCollection, boolean withStemming) {
+    public void index(HashMap<String, Term> terms,HashMap <String, Integer> docsLengths, int docsInCollection, boolean withStemming) {
 
         ArrayList<ArrayList<String>> chunkLists;
         chunkLists = new ArrayList<>();
@@ -164,14 +170,14 @@ public class Indexer {
         }
 
         for (int i = 0; i < chunkLists.size(); i++) {
-            updateChunk(chunkLists.get(i), i, terms,termsWeightPerDoc, docsInCollection);
+            updateChunk(chunkLists.get(i),docsLengths, i, terms, docsInCollection);
             chunkLists.get(i).clear();
         }
         chunkLists.clear();
         terms.clear();
     }
 
-    private void updateChunk(ArrayList<String> listChunk, int index, HashMap <String, Term> terms,HashMap <String, HashMap <String, Double>> termsWeightPerDoc, int docsInCollection) {
+    private void updateChunk(ArrayList<String> listChunk,HashMap <String, Integer> docsLengths, int index, HashMap <String, Term> terms, int docsInCollection) {
         String chunk = getChunk(index);
         ArrayList <String> listPosting = new ArrayList<>();
         StringBuilder docsListStr, strPosting;
@@ -203,6 +209,21 @@ public class Indexer {
             }catch (ArithmeticException e){
                 currIdf = 0;
             }
+//------------------------------------------------------------------------------------------------cossimilarity
+            for (String docId:docsList.keySet()){
+                int tf = docsList.get(docId).intValue() / docsLengths.get(docId);
+                if (!termsWeightsPerDoc.containsKey(docId) || !termsWeightsPerDoc.get(docId).containsKey(termStr)){
+                    HashMap <String, Double> tfIdf = new HashMap<>();
+                    tfIdf.put(termStr, tf * currIdf);
+                    termsWeightsPerDoc.put(docId,tfIdf);
+                }
+                else{
+                    termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
+                }
+
+            }
+//------------------------------------------------------------------------------------------------
+
             for (AtomicInteger tf:docsList.values()) {
                 currTotalFreq += tf.intValue();
             }
@@ -260,6 +281,7 @@ public class Indexer {
                 catch (ArithmeticException e){
                     currIdf = 0;
                 }
+
                 ArrayList <Integer> newTermInfo = new ArrayList<>();
                 newTermInfo.add(currTotalFreq);
                 newTermInfo.add(currDf);
@@ -586,10 +608,54 @@ public class Indexer {
             e.printStackTrace();
         }
     }
+    
+    
+    
+    public void writeWeigthsPerDocToDisk (){
+        for (String docId:termsWeightsPerDoc.keySet()) {
+            double totalWeightPerDoc = 0;
+            for (String termStr:termsWeightsPerDoc.get(docId).keySet()) {
+                totalWeightPerDoc += Math.pow(termsWeightsPerDoc.get(docId).get(termStr).doubleValue(), 2);
+            }
+            weightsPerDoc.put(docId, totalWeightPerDoc);
+        }
 
-    public void finished(HashMap<String , Term> terms,HashMap <String, HashMap <String, Double>> termsWeightPerDoc,  int docsInCollection, boolean withStemming) {
-        index(terms,termsWeightPerDoc, docsInCollection, withStemming);
+
+
+        StringBuilder sb = new StringBuilder();
+
+        for (String docId:weightsPerDoc.keySet()) {
+            sb.append(docId + ":" + weightsPerDoc.get(docId) + "\n");
+        }
+
+
+        String weightPerDocPath;
+        if (!withStemming){
+            weightPerDocPath = "\\indexResults\\docsWeights";
+        }
+        else{
+            weightPerDocPath = "\\indexResults\\docsWeights_stemming";
+        }
+        File weightPerDc = new File(path + weightPerDocPath + ".txt");
+        try {
+            weightPerDc.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(weightPerDc);
+            fw.write(sb.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void finished(HashMap<String , Term> terms,HashMap <String, Integer> docsLengths, int docsInCollection, boolean withStemming) {
+        index(terms,docsLengths, docsInCollection, withStemming);
         writeDictionaryToDisk();
+        writeWeigthsPerDocToDisk();
     }
 
 
@@ -628,8 +694,28 @@ public class Indexer {
         }
     }
 
+    public void loadWeightsPerDoc (File newWeightsPerDoc){
+        weightsPerDoc.clear();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(newWeightsPerDoc));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+                String [] splitLine = line.split(":");
+                weightsPerDoc.put(splitLine[0], Double.parseDouble(splitLine[1]));
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public int getDicSize() {
         return dictionary.size();
+    }
+
+    public HashMap<String, Double> getWeightsPerDoc() {
+        return weightsPerDoc;
     }
 
     public HashMap<String, ArrayList<Integer>> getDictionary() {

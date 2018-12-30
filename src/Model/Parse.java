@@ -31,10 +31,11 @@ public class Parse {
     int docsTotal;
     int docsInCollection;
     private HashMap <String, Integer> docEntities;
+    private HashMap <String, Integer> docsLengths;
 //    private StringBuilder tfPerDocSb;
 //    int docsTotalLengthes;
 //    private HashMap<String, Integer> docsLengthes;
-    private HashMap <String, HashMap <String, Double>> termsWeightPerDoc;
+//    private HashMap <String, HashMap <String, Pair <Integer, Double>>> termsWeightPerDoc;
 
 
     public Parse (boolean withStemming, String path, String corpusPath){
@@ -44,6 +45,7 @@ public class Parse {
       stopWords = new HashSet<String>();
       delimiters = new HashSet<>();
       docEntities = new HashMap<>();
+      docsLengths = new HashMap<>();
        setDelimiters(delimiters);
        stopWordsPath = corpusPath + "\\stop_words.txt";
       setStopWords();
@@ -67,7 +69,7 @@ public class Parse {
 //        tfPerDocSb = new StringBuilder();
 //      docsTotalLengthes = 0;
 //      docsLengthes = new HashMap<>();
-        termsWeightPerDoc = new HashMap<>();
+//        termsWeightPerDoc = new HashMap<>();
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -242,9 +244,10 @@ public class Parse {
 //       for (String termStr : termsPerDoc) {
 //           Term term = terms.get(termStr);
 //           HashMap<String, AtomicInteger> docs = term.getDocs();
-//           double tfPerDoc = docs.get(docNo).doubleValue();
-//           HashMap <String, Double> termWeight = new HashMap<>();
-//           termWeight.put(termStr, tfPerDoc);
+//           int tfPerDoc = docs.get(docNo).intValue();
+//           HashMap <String, Pair<Integer, Double>> termWeight = new HashMap<>();
+//           Pair <Integer, Double> tfIdf = new Pair<Integer, Double>(tfPerDoc, 0.0);
+//           termWeight.put(termStr, tfIdf);
 //           termsWeightPerDoc.put(docNo, termWeight);
 //       }
 
@@ -289,14 +292,14 @@ public class Parse {
        positionsInDoc.clear();
 
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
-//      docsLengthes.put(docNo, termsPerDoc.size());
+      docsLengths.put(docNo, termsPerDoc.size());
 //      docsTotalLengthes += termsPerDoc.size();
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
 
        if (docsTotal > 50000){
-           indexer.index(terms,termsWeightPerDoc, docsInCollection, withStemming);
+           indexer.index(terms,docsLengths, docsInCollection, withStemming);
            terms.clear();
            if (cityIndexer != null){
                cityIndexer.index(cityDocs);
@@ -1118,7 +1121,7 @@ public class Parse {
 
 
     public void finished() {
-       indexer.finished(terms,termsWeightPerDoc, docsInCollection,withStemming);
+       indexer.finished(terms,docsLengths, docsInCollection,withStemming);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);
            cityIndexer.writeDictionaryToDisk();

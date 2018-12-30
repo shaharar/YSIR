@@ -25,10 +25,10 @@ public class Ranker {
             }
         });
         queryResults = new HashMap<>();
-        b = 0.75;
-        k = 1.6;
+        b = 0.3;
+        k = 1.2;
     }
-    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, String queryId, String queryDescription, String saveInPath) {
+    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, HashMap <String, Double> weightsPerDoc, String queryId, String queryDescription, String saveInPath) {
         int totalDocsLengths = 0, N;
         double avdl;
         for (Integer docLength: docsInfo.values()) {
@@ -39,6 +39,10 @@ public class Ranker {
         for (String docId: docsResults.keySet()) {
             if(docsOfChosenCities.isEmpty() || (!docsOfChosenCities.isEmpty() && docsOfChosenCities.contains(docId))) {
                 double rank = 0;
+                double cosSimilarity = 0;
+                double cosSimilarityNumerator = 0;
+                double docTermsWeights = weightsPerDoc.get(docId);
+                double queryTermsWeights = 0;
                 int docTf = 0, queryTf = 0, df = 0, docLength = 0;
                 for (String term : queryTerms.keySet()) {
                     if(docsResults.get(docId).containsKey(term)) {
@@ -46,11 +50,14 @@ public class Ranker {
                         queryTf = queryTerms.get(term);
                         df = dictionary.get(term).get(1);
                         docLength = docsInfo.get(docId);
+                        cosSimilarityNumerator += docTf / docLength;
+                        queryTermsWeights += Math.pow(1, 2);
                     }
                 }
                 rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N / df);
+                cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
                 if (rank > 0) {
-                    docsRanks.add(new Pair<>(docId, rank));
+                    docsRanks.add(new Pair<>(docId, 0.8 * rank + 0.2 * cosSimilarity));
                 }
 //            docsRanks.put(docId, rank);
             }
