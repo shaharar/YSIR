@@ -25,8 +25,8 @@ public class Ranker {
             }
         });
         queryResults = new HashMap<>();
-        b = 0.75;
-        k = 1.6;
+        b = 0.3;
+        k = 1.2;
     }
     public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, HashMap <String, Double> weightsPerDoc, String queryId, String queryDescription, String saveInPath) {
         int totalDocsLengths = 0, N;
