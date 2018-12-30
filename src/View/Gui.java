@@ -3,11 +3,15 @@ package View;
 import Model.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
@@ -42,6 +46,7 @@ public class Gui {
     public Button btn_browseQueries;
     public TextField txt_queriesPathChooser;
     // public ListView <String> lv_dic;
+    public ListView<String> lv_results;
     String corpusPath;
     String savePath;
     String saveResultsPath;
@@ -51,6 +56,8 @@ public class Gui {
     ArrayList<String> chosenCities;
     boolean isLoaded;
     boolean isRunIndex;
+    public TextField txt_docNo;
+    String chosenDocNo;
 
     public Gui() {
         model = new Model();
@@ -270,7 +277,31 @@ public class Gui {
 
     //show results of query
     public void showResults() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("showResults.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = new Stage();
+        Scene scene = new Scene(root, 700, 500);
+        stage.setScene(scene);
 
+        //ShowResultsView showRes = fxmlLoader.getController();
+        Gui gui = fxmlLoader.getController();
+        HashMap<String, ArrayList<String>> results = model.showResults();
+        ArrayList<String> resultsList = new ArrayList<>();
+        for (String queryID : results.keySet()){
+            String docs = results.get(queryID).toString();
+            String lineInListView = queryID + ":\n" + docs;
+            resultsList.add(lineInListView);
+        }
+        //showRes.lv_results.setItems(FXCollections.observableArrayList(resultsList));
+        gui.lv_results.setItems(FXCollections.observableArrayList(resultsList));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
+        //showRes.lv_results.setStyle("-fx-font-style: Calibri;-fx-font-weight:bold;");
     }
 
     public void setCities(){
@@ -316,5 +347,40 @@ public class Gui {
         }
         model.saveResults(saveResultsPath);
         showAlert("Results have been saved");
+    }
+
+    public void showEntities() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("docNoForEntities.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = new Stage();
+        Scene scene = new Scene(root, 370, 155);
+        stage.setScene(scene);
+
+      //  Gui gui = fxmlLoader.getController();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
+/*        chosenDocNo = gui.txt_docNo.getText();
+        System.out.println(chosenDocNo);*/
+    }
+
+    public void entitiesOfDoc() {
+      //  chosenDocNo = txt_docNo.getText();
+        if(txt_docNo == null){
+            showAlert("Please enter docNo from query results");
+            return;
+        }
+        HashMap<String, HashMap<String, Integer>> allEntities = model.showEntities();
+        System.out.println(txt_docNo.getText());
+        HashMap<String, Integer> entitiesOfDoc = allEntities.get(txt_docNo.getText());
+        String fiveEntities = "";
+        for(String entity : entitiesOfDoc.keySet()){
+            fiveEntities += entity + " - " + entitiesOfDoc.get(entity) + "\n";
+        }
+        showAlert(fiveEntities);
     }
 }

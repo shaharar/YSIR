@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Model {
@@ -75,7 +76,6 @@ public class Model {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public HashSet<String> getLanguages() {
@@ -112,5 +112,13 @@ public class Model {
 
     public void saveResults(String saveResultsPath) {
         this.ranker.writeResultsToDisk(saveResultsPath);
+    }
+
+    public HashMap<String, ArrayList <String>> showResults() {
+        return ranker.getQueryResults();
+    }
+
+    public HashMap<String, HashMap<String, Integer>> showEntities() {
+        return searcher.getEntities();
     }
 }

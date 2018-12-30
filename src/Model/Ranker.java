@@ -127,6 +127,9 @@ public class Ranker {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public HashMap<String, ArrayList<String>> getQueryResults() {
+        return queryResults;
     }
 }

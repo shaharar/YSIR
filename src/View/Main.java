@@ -15,7 +15,7 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent root = null;
         try {
-            root = fxmlLoader.load(getClass().getResource("mainWindow.fxml"));
+            root = fxmlLoader.load(getClass().getClassLoader().getResource("mainWindow.fxml"));
         } catch (IOException e) {
             e.printStackTrace();
         }

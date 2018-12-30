@@ -274,11 +274,11 @@ public class Searcher {
 
 
 
-    public void loadEntities (File entities){
+    public void loadEntities (File entitiesFile){
         BufferedReader br = null;
         try {
             String term;
-            br = new BufferedReader(new FileReader(entities));
+            br = new BufferedReader(new FileReader(entitiesFile));
             String line = "";
             while ((line = (br.readLine())) != null) {
                 if (line.contains("--noEntities--")){
@@ -293,8 +293,9 @@ public class Searcher {
                 for (int i = 0; i < entitiesStr.length ; i++){
                     String [] entitiesRankStr = entitiesStr[i].split(" - ");
                     entitiesInfo.put(entitiesRankStr[0], Integer.parseInt(entitiesRankStr[1]));
-                    this.entities.put(docId, entitiesInfo);
                 }
+                entities.put(docId, entitiesInfo);
+
             }
             br.close();
         } catch (IOException e) {
