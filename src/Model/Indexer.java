@@ -211,7 +211,7 @@ public class Indexer {
             }
 //------------------------------------------------------------------------------------------------cossimilarity
             for (String docId:docsList.keySet()){
-                int tf = docsList.get(docId).intValue() / docsLengths.get(docId);
+                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
                 if (!termsWeightsPerDoc.containsKey(docId) || !termsWeightsPerDoc.get(docId).containsKey(termStr)){
                     HashMap <String, Double> tfIdf = new HashMap<>();
                     tfIdf.put(termStr, tf * currIdf);
@@ -631,10 +631,10 @@ public class Indexer {
 
         String weightPerDocPath;
         if (!withStemming){
-            weightPerDocPath = "\\indexResults\\docsWeights";
+            weightPerDocPath = "\\docsWeights";
         }
         else{
-            weightPerDocPath = "\\indexResults\\docsWeights_stemming";
+            weightPerDocPath = "\\docsWeights_stemming";
         }
         File weightPerDc = new File(path + weightPerDocPath + ".txt");
         try {
