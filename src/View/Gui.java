@@ -152,7 +152,7 @@ public class Gui {
 
         //load languages
         languagesFile = new File(savePath + "\\languages.txt");
-/*        HashSet<String> languages = new HashSet<>();
+        HashSet<String> languages = new HashSet<>();
         BufferedReader br = null;
         try {
             String term;
@@ -165,7 +165,7 @@ public class Gui {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        chobx_language.setItems(FXCollections.observableArrayList(languages));*/
+        chobx_language.setItems(FXCollections.observableArrayList(languages));
 
         if (!newDicFile.exists() && !newCitiesDicFile.exists() && !entitiesFile.exists() && !weightsPerDoc.exists() && !languagesFile.exists()){
             showAlert("Files weren't found. Please load all files again");
