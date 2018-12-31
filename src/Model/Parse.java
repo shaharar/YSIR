@@ -281,7 +281,7 @@ public class Parse {
            String key = entityPair.getKey();
            int value = entityPair.getValue();
            entitiesSb.append( key + " - " + value);
-           if (sortedEntities.size() > 1){
+           if (!(sortedEntities.size() == 0 || i == 4)){
                entitiesSb.append(", ");
            }
        }
