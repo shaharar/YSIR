@@ -77,18 +77,18 @@ public class Ranker {
 //        results.putAll(getTop50Docs(docsRanks));
 
     }
-
-    public void displayQueryResults (){
-        ArrayList <String> displayResults = new ArrayList<>();
-        for (String queryId: queryResults.keySet()) {
-            String line = queryId + ": ";
-            for (String docId: queryResults.get(queryId)) {
-                line += docId + " ";
-            }
-            displayResults.add(line);
-        }
-
-    }
+//
+//    public void displayQueryResults (){
+//        ArrayList <String> displayResults = new ArrayList<>();
+//        for (String queryId: queryResults.keySet()) {
+//            String line = queryId + ": ";
+//            for (String docId: queryResults.get(queryId)) {
+//                line += docId + " ";
+//            }
+//            displayResults.add(line);
+//        }
+//
+//    }
 
 
     //    private Map<String, Double> getTop50Docs(TreeMap<String, Double> docsRanks) {
