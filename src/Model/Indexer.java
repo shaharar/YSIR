@@ -575,7 +575,7 @@ public class Indexer {
                 break;
             }
       //      if (dictionary.get(termStr).get(2) > 1) {
-                sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(2) + "\n");
+                sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(0) + "\n");
                 sb.append(termStr + " : " + dictionary.get(termStr).get(0) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(2) + "\n");
       //      }
         }

@@ -29,7 +29,11 @@ public class Searcher {
     }
 
     public void search(Indexer indexer, CityIndexer cityIndexer, Ranker ranker, String query, boolean withSemantic, ArrayList<String> chosenCities, ObservableList<String> citiesByTag, boolean withStemming, String saveInPath, String queryId, String queryDescription) {
-        HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
+/*        HashMap<String,ArrayList<String>> semanticWords = new HashMap<>();
+        if(withSemantic){
+            semanticWords = ws.connectToApi(query);
+        }*/
+        String[] originalQueryTerms = query.split(" ");
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
         HashSet<String> docsOfChosenCities = new HashSet<>();
@@ -37,30 +41,31 @@ public class Searcher {
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         setDocsInfo(saveInPath + "\\docsInformation.txt");
 
-        if(withStemming){
-            for(String word : semanticWords.keySet()){
-                ArrayList<String> wordValue = semanticWords.get(word);
-                String wordAfterStem = parser.stemming(word);
-                semanticWords.remove(word);
-                semanticWords.put(wordAfterStem,wordValue);
-             //  semanticWords.replace(newKey,wordValue);
-            }
-        }
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
-            ArrayList<String> queryTermsKeys = new ArrayList<>();
+            HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
+            if(withStemming){
+                for(String word : semanticWords.keySet()){
+                    ArrayList<String> wordValue = semanticWords.get(word);
+                    String wordAfterStem = parser.stemming(word);
+                    semanticWords.remove(word);
+                    semanticWords.put(wordAfterStem,wordValue);
+                    //  semanticWords.replace(newKey,wordValue);
+                }
+            }
+/*            ArrayList<String> queryTermsKeys = new ArrayList<>();
             for(String queryTerm : queryTerms.keySet()){
                 queryTermsKeys.add(queryTerm);
-            }
-            for (String term : queryTermsKeys) {
+            }*/
+            for (String term : originalQueryTerms) {
                 ArrayList<String> semWords = semanticWords.get(term);
                 for (String word : semWords) {
-                    Integer tf;
-                    if (dictionary.containsKey(word)) {
+                    Integer tf = Integer.parseInt("1");
+/*                    if (dictionary.containsKey(word)) {
                         tf = dictionary.get(word).get(0);
                     } else {
                         tf = Integer.parseInt("0");
-                    }
+                    }*/
                     queryTerms.put(word, tf);
                 }
             }
@@ -81,10 +86,19 @@ public class Searcher {
         int pointer = 0;
 
         //find docs that contain the terms in the query in their text
+        HashMap<String, Integer> queryTermsIgnoreCase = new HashMap<>();
         for (String term : queryTerms.keySet()) {
-            if (!dictionary.containsKey(term)) {
+            String originTerm = term;
+            if (!dictionary.containsKey(term.toUpperCase()) && !dictionary.containsKey(term.toLowerCase())) {
                 continue;
             }
+            if(dictionary.containsKey(term.toLowerCase())){
+                term = term.toLowerCase();
+            }
+            else {
+                term = term.toUpperCase();
+            }
+            queryTermsIgnoreCase.put(term,queryTerms.get(originTerm));
             pointer = dictionary.get(term).get(2);
             // char chunk = indexer.classifyToPosting(term).charAt(0);
             String chunk = ("" + term.charAt(0)).toUpperCase();
@@ -187,7 +201,7 @@ public class Searcher {
         }
 
 
-        ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo,indexer.getWeightsPerDoc(), queryId, queryDescription, saveInPath);
+        ranker.rank(docsResults, docsOfChosenCities, queryTermsIgnoreCase, dictionary, docsInfo,indexer.getWeightsPerDoc(), queryId, queryDescription, saveInPath);
     }
 
     private void findDocsFromLine(String line, String term) {
@@ -217,8 +231,9 @@ public class Searcher {
                 docsResults.put(doc, termsTf);
             } else {
                 HashMap<String, Integer> termsTf = docsResults.get(doc);
-                termsTf.put(term, Integer.parseInt(tf));
-                docsResults.replace(doc, termsTf);
+                HashMap<String, Integer> newTermsTf = termsTf;
+                newTermsTf.put(term, Integer.parseInt(tf));
+                docsResults.replace(doc, termsTf, newTermsTf);
             }
             //  System.out.println("DocNo: "+ doc + " term&tf: " + docsResults.get(doc));
             //    System.out.println(doc + " " + docsResults.get(doc));

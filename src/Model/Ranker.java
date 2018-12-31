@@ -20,11 +20,11 @@ public class Ranker {
         docsRanks = new PriorityQueue<>(new Comparator<Pair<String, Double>>() {
             @Override
             public int compare(Pair<String, Double> p1, Pair<String, Double> p2) {
-                return (p1.getValue().compareTo(p2.getValue()));
+                return (p1.getValue().compareTo(p2.getValue())) * -1;
             }
         });
         queryResults = new HashMap<>();
-        b = 0.3;
+        b = 0.38;
         k = 1.2;
     }
     public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, HashMap <String, Double> weightsPerDoc, String queryId, String queryDescription, String saveInPath) {
@@ -49,14 +49,18 @@ public class Ranker {
                         queryTf = queryTerms.get(term);
                         df = dictionary.get(term).get(1);
                         docLength = docsInfo.get(docId);
-                        cosSimilarityNumerator += docTf / docLength;
+                  //      cosSimilarityNumerator += docTf / docLength;
                         queryTermsWeights += Math.pow(1, 2);
+                        rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log((N + 1)/ df);
                     }
                 }
-                rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N / df);
-                cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
+//                rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log(N + 1/ df);
+
+
+           //     cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
                 if (rank > 0) {
-                    docsRanks.add(new Pair<>(docId, 0.8 * rank + 0.2 * cosSimilarity));
+             //       docsRanks.add(new Pair<>(docId, 0.8 * rank + 0.2 * cosSimilarity));
+                    docsRanks.add(new Pair<>(docId, rank));
                 }
 //            docsRanks.put(docId, rank);
             }

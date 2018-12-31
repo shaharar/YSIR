@@ -419,7 +419,7 @@ public class Parse {
            }
            currentIdx++;
            if (termsPerQuery.containsKey(term.getTermStr())){
-               termsPerQuery.replace(term.getTermStr(),termsPerQuery.get(term.getTermStr()) + 1); //update tf
+               termsPerQuery.replace(term.getTermStr(), termsPerQuery.get(term.getTermStr()),termsPerQuery.get(term.getTermStr()) + 1); //update tf
            }
            else{
                termsPerQuery.put(term.getTermStr(),1); //update tf

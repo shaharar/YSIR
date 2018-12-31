@@ -46,7 +46,7 @@ public class Gui {
     public TextField txt_query;
     public Button btn_browseQueries;
     public TextField txt_queriesPathChooser;
-    // public ListView <String> lv_dic;
+    public ListView <String> lv_dic;
     public ListView<String> lv_results;
     String corpusPath;
     String savePath;
@@ -213,12 +213,25 @@ public class Gui {
             showAlert("There wasn't found a dictionary. Please load a new one");
         }
         else {
-            try {
+/*            try {
                 Desktop.getDesktop().open(dicFile);
             } catch (IOException e) {
                 e.printStackTrace();
+            }*/
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("showDictionary.fxml"));
+            Parent root = null;
+            try {
+                root = fxmlLoader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-/*            ArrayList<String> dicRecords = new ArrayList<>();
+            Stage stage = new Stage();
+            Scene scene = new Scene(root, 600, 400);
+            stage.setScene(scene);
+
+            Gui gui = fxmlLoader.getController();
+            gui.model = this.model;
+            ArrayList<String> dicRecords = new ArrayList<>();
             BufferedReader br = null;
             try {
                 br = new BufferedReader(new FileReader(dicFile));
@@ -227,22 +240,12 @@ public class Gui {
                     dicRecords.add(line + System.lineSeparator());
                 }
                 br.close();
-                lv_dic.setItems(FXCollections.observableArrayList(dicRecords));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            try {
-                Stage stage = new Stage();
-                FXMLLoader fxmlLoader = new FXMLLoader();
-                Parent root = fxmlLoader.load(getClass().getResource("showDictionary.fxml"));
-                stage.setTitle("Dictionary");
-                Scene scene = new Scene(root, 650, 500);
-                stage.setScene(scene);
-                stage.initModality((Modality.APPLICATION_MODAL));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+            gui.lv_dic.setItems(FXCollections.observableArrayList(dicRecords));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
         }
     }
 
