@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
       <Button fx:id="btn_corpusPath" layoutX="57.0" layoutY="98.0" mnemonicParsing="false" onAction="#loadCorpusPath" prefHeight="30.0" prefWidth="109.0" text="Corpus Path" textAlignment="CENTER">
          <font>
@@ -86,7 +86,7 @@
          </font>
       </Button>
       <TextField fx:id="txt_queriesPathChooser" layoutX="520.0" layoutY="179.0" prefHeight="30.0" prefWidth="164.0" />
-      <Button disable="false" layoutX="622.0" layoutY="351.0" mnemonicParsing="false" onAction="#saveResults" prefHeight="43.0" prefWidth="119.0" text="Save Results" textAlignment="CENTER">
+      <Button disable="false" layoutX="553.0" layoutY="357.0" mnemonicParsing="false" onAction="#saveResults" prefHeight="43.0" prefWidth="119.0" text="Save Results" textAlignment="CENTER">
          <font>
             <Font name="Calibri Bold" size="13.0" />
          </font>
@@ -102,10 +102,5 @@
             <Font name="Calibri Bold" size="14.0" />
          </font>
       </CheckBox>
-      <Button fx:id="btn_showResults1" disable="false" layoutX="478.0" layoutY="351.0" mnemonicParsing="false" onAction="#showResults" prefHeight="43.0" prefWidth="119.0" text="Show Results" textAlignment="CENTER">
-         <font>
-            <Font name="Calibri Bold" size="13.0" />
-         </font>
-      </Button>
    </children>
 </AnchorPane>

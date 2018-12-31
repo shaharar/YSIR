@@ -127,8 +127,8 @@ public class Ranker {
         }
         FileWriter fw = null;
         try {
-            fw = new FileWriter(rankerResults, true);
-            fw.append(sb.toString());
+            fw = new FileWriter(rankerResults);
+            fw.write(sb.toString());
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
