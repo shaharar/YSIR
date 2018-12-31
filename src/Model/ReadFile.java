@@ -4,7 +4,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 public class ReadFile {
@@ -134,5 +137,25 @@ public class ReadFile {
         return parse.getCityIndexer();
     }
 
+    public void writeLanguagesToDisk (String savePath){
+        StringBuilder sb = new StringBuilder();
+        for (String lang : languages) {
+            sb.append(lang + "\n");
+        }
+        File languagesFile = new File(savePath + "\\languages.txt");
+        try {
+            languagesFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(languagesFile);
+            fw.write(sb.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 

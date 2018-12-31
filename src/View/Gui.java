@@ -17,7 +17,9 @@ import javafx.util.Pair;
 import org.controlsfx.control.CheckComboBox;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -119,7 +121,7 @@ public class Gui {
             showAlert("Please insert save files path");
             return;
         }
-        File newDicFile, newCitiesDicFile, entitiesFile, weightsPerDoc;
+        File newDicFile, newCitiesDicFile, entitiesFile, weightsPerDoc, languagesFile;
 
         //load regular dictionary
         if (chbx_stemming.isSelected()){
@@ -148,9 +150,25 @@ public class Gui {
             weightsPerDoc = new File(savePath + "\\docsWeights.txt");
         }
 
+        //load languages
+        languagesFile = new File(savePath + "\\languages.txt");
+/*        HashSet<String> languages = new HashSet<>();
+        BufferedReader br = null;
+        try {
+            String term;
+            br = new BufferedReader(new FileReader(languagesFile));
+            String line = "";
+            while ((line = (br.readLine())) != null) {
+                languages.add(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        chobx_language.setItems(FXCollections.observableArrayList(languages));*/
 
-        if (!newDicFile.exists() && !newCitiesDicFile.exists() && !entitiesFile.exists()){
-            showAlert("Files weren't found. Please load terms dictionary, cities dictionary and entities file");
+        if (!newDicFile.exists() && !newCitiesDicFile.exists() && !entitiesFile.exists() && !weightsPerDoc.exists() && !languagesFile.exists()){
+            showAlert("Files weren't found. Please load all files again");
         }
         else {
             model.loadDictionary (savePath, newDicFile,newCitiesDicFile,entitiesFile, weightsPerDoc);

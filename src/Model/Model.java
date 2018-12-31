@@ -29,6 +29,7 @@ public class Model {
             rf = new ReadFile(isStemSelected, savePath, corpusPath);
             long startTime = System.nanoTime();
             rf.getFilesFromDir(corpusPath);
+            rf.writeLanguagesToDisk(savePath);
             long finishTime = System.nanoTime();
             totalTime = (double) ((finishTime - startTime)/1000000000.0);
         } catch (IOException e) {
