@@ -37,6 +37,15 @@ public class Searcher {
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
         setDocsInfo(saveInPath + "\\docsInformation.txt");
 
+        if(withStemming){
+            for(String word : semanticWords.keySet()){
+                ArrayList<String> wordValue = semanticWords.get(word);
+                String wordAfterStem = parser.stemming(word);
+                semanticWords.remove(word);
+                semanticWords.put(wordAfterStem,wordValue);
+             //  semanticWords.replace(newKey,wordValue);
+            }
+        }
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
             ArrayList<String> queryTermsKeys = new ArrayList<>();
@@ -137,7 +146,6 @@ public class Searcher {
                     String doc = docInfo.substring(0, docInfo.indexOf(": "));
                     docsOfChosenCities.add(doc);
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -180,11 +188,6 @@ public class Searcher {
 
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo,indexer.getWeightsPerDoc(), queryId, queryDescription, saveInPath);
-
-//        if (queryId.equals(Searcher.queryID)){
-//            ranker.writeResultsToDisk(saveInPath);
-//        }
-
     }
 
     private void findDocsFromLine(String line, String term) {

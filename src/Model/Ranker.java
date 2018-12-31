@@ -91,30 +91,17 @@ public class Ranker {
 //    }
 
 
-    //    private Map<String, Double> getTop50Docs(TreeMap<String, Double> docsRanks) {
-//        Comparator <String> valueComparator = new Comparator<String>() {
-//            @Override
-//            public int compare(String s1, String s2) {
-//                return docsRanks.get(s1).compareTo(docsRanks.get(s2));
-//            }
-//        };
-//        TreeMap <String, Double> sortedResultsByValues = new TreeMap<>(valueComparator);
-//        sortedResultsByValues.putAll(docsRanks);
-//        return sortedResultsByValues;
-//    }
-//
-//    public TreeMap<String, Double> getDocsRanks() {
-//        return docsRanks;
-//    }
-
     public void writeResultsToDisk(String saveResultsPath){
+        PriorityQueue <String> sortedQueryIDs = new PriorityQueue<>();
+        for (String queryID: queryResults.keySet()) {
+            sortedQueryIDs.add(queryID);
+        }
         StringBuilder sb = new StringBuilder();
-//        Iterator <Pair<String, Double>> it = docsRanks.iterator();
-//        while (it.hasNext()) {
-//            String docId = it.next().getKey();
-//            sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
-//        }
-        for (String queryId: queryResults.keySet()) {
+        while(sortedQueryIDs.size() > 0){
+            String queryId = sortedQueryIDs.poll();
+            if(queryId.endsWith(" ")){
+                queryId = queryId.substring(0,queryId.length() - 1);
+            }
             for (String docId: queryResults.get(queryId)) {
                 sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
             }

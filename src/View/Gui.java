@@ -13,14 +13,13 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.controlsfx.control.CheckComboBox;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class Gui {
 
@@ -99,7 +98,7 @@ public class Gui {
         } else {
             try {
                 showAlert("Running index started, please wait for the end of the process");
-                Thread.sleep(3000);
+              //  Thread.sleep(3000);
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -286,35 +285,6 @@ public class Gui {
         }
     }
 
-    //show results of query
-    public void showResults() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("showResults.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Stage stage = new Stage();
-        Scene scene = new Scene(root, 700, 500);
-        stage.setScene(scene);
-
-        Gui gui = fxmlLoader.getController();
-        gui.model = this.model;
-        HashMap<String, ArrayList<String>> results = model.showResults();
-        ArrayList<String> resultsList = new ArrayList<>();
-        for (String queryID : results.keySet()){
-            String docs = results.get(queryID).toString();
-            String lineInListView = queryID + ":\n" + docs;
-            resultsList.add(lineInListView);
-        }
-        //ShowResultsView showRes = fxmlLoader.getController();
-        //showRes.lv_results.setItems(FXCollections.observableArrayList(resultsList));
-        gui.lv_results.setItems(FXCollections.observableArrayList(resultsList));
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
-        //showRes.lv_results.setStyle("-fx-font-style: Calibri;-fx-font-weight:bold;");
-    }
 
     public void setCities(){
         ObservableList<String> cities = FXCollections.observableArrayList();
@@ -361,6 +331,40 @@ public class Gui {
         showAlert("Results have been saved");
     }
 
+    //show results of query
+    public void showResults() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("showResults.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = new Stage();
+        Scene scene = new Scene(root, 700, 500);
+        stage.setScene(scene);
+
+        Gui gui = fxmlLoader.getController();
+        gui.model = this.model;
+        HashMap<String, ArrayList<String>> results = model.showResults();
+        PriorityQueue <String> sortedQueryIDs = new PriorityQueue<>();
+        for (String queryID: results.keySet()) {
+            sortedQueryIDs.add(queryID);
+        }
+        ArrayList<String> resultsList = new ArrayList<>();
+        while(sortedQueryIDs.size() > 0) {
+            String queryID = sortedQueryIDs.poll();
+            String docs = results.get(queryID).toString();
+            String lineInListView = "Query " + queryID + ":\n" + docs;
+            resultsList.add(lineInListView);
+        }
+        //ShowResultsView showRes = fxmlLoader.getController();
+        //showRes.lv_results.setItems(FXCollections.observableArrayList(resultsList));
+        gui.lv_results.setItems(FXCollections.observableArrayList(resultsList));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
+        //showRes.lv_results.setStyle("-fx-font-style: Calibri;-fx-font-weight:bold;");
+    }
 
     public void searchEntities() {
         HashMap<String, HashMap<String, Integer>> allEntities = model.showEntities();
@@ -369,9 +373,23 @@ public class Gui {
             return;
         }
         HashMap<String, Integer> entitiesOfDoc = allEntities.get(txt_docNo.getText());
+        PriorityQueue <Pair<String, Integer>> sortedEntities = new PriorityQueue<>(new Comparator<Pair<String, Integer>>() {
+            @Override
+            public int compare(Pair<String, Integer> p1, Pair<String, Integer> p2) {
+                return ((p1.getValue().compareTo(p2.getValue())) * (-1));
+            }
+        });
+
+        for (String entity: entitiesOfDoc.keySet()) {
+            if (entity.charAt(0) >= 65 && entity.charAt(0) <= 90){
+                sortedEntities.add(new Pair<>(entity, entitiesOfDoc.get(entity)));
+            }
+
+        }
         String fiveEntities = "";
-        for(String entity : entitiesOfDoc.keySet()){
-            fiveEntities += entity + " - " + entitiesOfDoc.get(entity) + "\n";
+        while(sortedEntities.size() > 0){
+            Pair<String,Integer> entity = sortedEntities.poll();
+            fiveEntities += entity.getKey() + " - " + entity.getValue() + "\n";
         }
         showAlert(fiveEntities);
     }

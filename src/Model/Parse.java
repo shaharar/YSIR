@@ -1112,7 +1112,7 @@ public class Parse {
         return term;
     }
 
-    private String stemming (String token){
+    public String stemming (String token){
         if(withStemming){
             return stemmer.stem(token);
         }
