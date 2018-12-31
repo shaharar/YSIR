@@ -2,7 +2,10 @@ package Model;
 
 import javafx.collections.ObservableList;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,17 +38,22 @@ public class Searcher {
         setDocsInfo(saveInPath + "\\docsInformation.txt");
 
         //add semantic words of each term in query to 'queryTerms'
-        for (String term : queryTerms.keySet()){
-            ArrayList<String> semWords = semanticWords.get(term);
-            for(String word : semWords){
-                Integer tf;
-                if(dictionary.containsKey(word)){
-                    tf = dictionary.get(word).get(0);
+        if(withSemantic) {
+            ArrayList<String> queryTermsKeys = new ArrayList<>();
+            for(String queryTerm : queryTerms.keySet()){
+                queryTermsKeys.add(queryTerm);
+            }
+            for (String term : queryTermsKeys) {
+                ArrayList<String> semWords = semanticWords.get(term);
+                for (String word : semWords) {
+                    Integer tf;
+                    if (dictionary.containsKey(word)) {
+                        tf = dictionary.get(word).get(0);
+                    } else {
+                        tf = Integer.parseInt("0");
+                    }
+                    queryTerms.put(word, tf);
                 }
-                else{
-                    tf = Integer.parseInt("0");
-                }
-                queryTerms.put(word,tf);
             }
         }
 

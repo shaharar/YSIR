@@ -59,7 +59,7 @@ public class WordsSemantic {
                     JSONObject jo = (JSONObject) (o);
                     word = (String) (jo).get("word");
                     semanticWords.get(term).add(idx, word);
-                    if (idx == 5) {
+                    if (idx == 2) {
                         break;
                     }
                     idx++;
