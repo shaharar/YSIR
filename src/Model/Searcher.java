@@ -188,11 +188,6 @@ public class Searcher {
 
 
         ranker.rank(docsResults, docsOfChosenCities, queryTerms, dictionary, docsInfo,indexer.getWeightsPerDoc(), queryId, queryDescription, saveInPath);
-
-//        if (queryId.equals(Searcher.queryID)){
-//            ranker.writeResultsToDisk(saveInPath);
-//        }
-
     }
 
     private void findDocsFromLine(String line, String term) {

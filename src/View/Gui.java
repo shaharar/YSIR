@@ -98,7 +98,7 @@ public class Gui {
         } else {
             try {
                 showAlert("Running index started, please wait for the end of the process");
-                Thread.sleep(3000);
+              //  Thread.sleep(3000);
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -347,8 +347,13 @@ public class Gui {
         Gui gui = fxmlLoader.getController();
         gui.model = this.model;
         HashMap<String, ArrayList<String>> results = model.showResults();
+        PriorityQueue <String> sortedQueryIDs = new PriorityQueue<>();
+        for (String queryID: results.keySet()) {
+            sortedQueryIDs.add(queryID);
+        }
         ArrayList<String> resultsList = new ArrayList<>();
-        for (String queryID : results.keySet()){
+        while(sortedQueryIDs.size() > 0) {
+            String queryID = sortedQueryIDs.poll();
             String docs = results.get(queryID).toString();
             String lineInListView = "Query " + queryID + ":\n" + docs;
             resultsList.add(lineInListView);
