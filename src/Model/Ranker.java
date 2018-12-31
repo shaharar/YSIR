@@ -12,7 +12,6 @@ import java.util.*;
 public class Ranker {
     private double k;
     private double b;
-//    private TreeMap <String, Double> docsRanks;
     private PriorityQueue <Pair <String, Double>> docsRanks;
     private HashMap <String, ArrayList <String>> queryResults;
 

@@ -15,12 +15,12 @@ import java.util.HashSet;
 
 public class Searcher {
 
-    Parse parser;
-    HashMap<String, HashMap<String, Integer>> docsResults;
+    private Parse parser;
+    private HashMap<String, HashMap<String, Integer>> docsResults;
     private HashMap<String, Integer> docsInfo;
     private HashMap<String, HashMap<String, Integer>> entities;
     static int queryID = 1;
-    WordsSemantic ws;
+    private WordsSemantic ws;
 
     public Searcher() {
         docsInfo = new HashMap<>();
