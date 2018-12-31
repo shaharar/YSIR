@@ -299,8 +299,8 @@ public class Gui {
         Scene scene = new Scene(root, 700, 500);
         stage.setScene(scene);
 
-        //ShowResultsView showRes = fxmlLoader.getController();
         Gui gui = fxmlLoader.getController();
+        gui.model = this.model;
         HashMap<String, ArrayList<String>> results = model.showResults();
         ArrayList<String> resultsList = new ArrayList<>();
         for (String queryID : results.keySet()){
@@ -308,6 +308,7 @@ public class Gui {
             String lineInListView = queryID + ":\n" + docs;
             resultsList.add(lineInListView);
         }
+        //ShowResultsView showRes = fxmlLoader.getController();
         //showRes.lv_results.setItems(FXCollections.observableArrayList(resultsList));
         gui.lv_results.setItems(FXCollections.observableArrayList(resultsList));
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -360,33 +361,13 @@ public class Gui {
         showAlert("Results have been saved");
     }
 
-/*    public void showEntities() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("docNoForEntities.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Stage stage = new Stage();
-        Scene scene = new Scene(root, 370, 155);
-        stage.setScene(scene);
-
-      //  Gui gui = fxmlLoader.getController();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
-*//*        chosenDocNo = gui.txt_docNo.getText();
-        System.out.println(chosenDocNo);*//*
-    }*/
 
     public void searchEntities() {
-      //  chosenDocNo = txt_docNo.getText();
-        if(txt_docNo == null){
+        HashMap<String, HashMap<String, Integer>> allEntities = model.showEntities();
+        if(txt_docNo == null || !allEntities.containsKey(txt_docNo.getText())){
             showAlert("Please enter docNo from results");
             return;
         }
-        HashMap<String, HashMap<String, Integer>> allEntities = model.showEntities();
-        System.out.println(txt_docNo.getText());
         HashMap<String, Integer> entitiesOfDoc = allEntities.get(txt_docNo.getText());
         String fiveEntities = "";
         for(String entity : entitiesOfDoc.keySet()){
