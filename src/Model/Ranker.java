@@ -12,7 +12,6 @@ import java.util.*;
 public class Ranker {
     private double k;
     private double b;
-//    private TreeMap <String, Double> docsRanks;
     private PriorityQueue <Pair <String, Double>> docsRanks;
     private HashMap <String, ArrayList <String>> queryResults;
 
@@ -69,6 +68,9 @@ public class Ranker {
                 docsId.add(docsRanks.poll().getKey());
             }
         }
+        if (queryId.endsWith(" ")){
+            queryId = queryId.substring(0, queryId.length() - 1);
+        }
         queryResults.put(queryId, docsId);
 
         docsRanks.clear();
@@ -78,18 +80,18 @@ public class Ranker {
 //        results.putAll(getTop50Docs(docsRanks));
 
     }
-
-    public void displayQueryResults (){
-        ArrayList <String> displayResults = new ArrayList<>();
-        for (String queryId: queryResults.keySet()) {
-            String line = queryId + ": ";
-            for (String docId: queryResults.get(queryId)) {
-                line += docId + " ";
-            }
-            displayResults.add(line);
-        }
-
-    }
+//
+//    public void displayQueryResults (){
+//        ArrayList <String> displayResults = new ArrayList<>();
+//        for (String queryId: queryResults.keySet()) {
+//            String line = queryId + ": ";
+//            for (String docId: queryResults.get(queryId)) {
+//                line += docId + " ";
+//            }
+//            displayResults.add(line);
+//        }
+//
+//    }
 
 
     public void writeResultsToDisk(String saveResultsPath){
@@ -100,9 +102,9 @@ public class Ranker {
         StringBuilder sb = new StringBuilder();
         while(sortedQueryIDs.size() > 0){
             String queryId = sortedQueryIDs.poll();
-            if(queryId.endsWith(" ")){
-                queryId = queryId.substring(0,queryId.length() - 1);
-            }
+//            if(queryId.endsWith(" ")){
+//                queryId = queryId.substring(0,queryId.length() - 1);
+//            }
             for (String docId: queryResults.get(queryId)) {
                 sb.append(queryId + " 0 " + docId + " 1 42.38 mt\n");
             }
