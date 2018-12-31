@@ -73,7 +73,7 @@ public class Model {
             index.loadWeightsPerDoc(weightsPerDoc);
             cityIndexer = new CityIndexer(savePath);
             cityIndexer.loadDictionary(newCitiesDic);
-            searcher.loadEntities(entitiesFile);
+   //         searcher.loadEntities(entitiesFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

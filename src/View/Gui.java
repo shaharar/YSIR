@@ -143,10 +143,10 @@ public class Gui {
 
         //load weights doc
         if (chbx_stemming.isSelected()){
-            weightsPerDoc = new File(savePath + "\\indexResults\\docsWeights_stemming.txt");
+            weightsPerDoc = new File(savePath + "\\docsWeights_stemming.txt");
         }
         else{
-            weightsPerDoc = new File(savePath + "\\indexResults\\docsWeights.txt");
+            weightsPerDoc = new File(savePath + "\\docsWeights.txt");
         }
 
 
@@ -250,7 +250,8 @@ public class Gui {
         }
         ArrayList<String> chosenCities = getChosenCities();
         model.runQuery(txt_query.getText(),chosenCities,chobx_cities.getItems(),savePath);
-        showAlert("Run query done!");
+      // showAlert("Run query done!");
+        showResults();
     }
 
     public void runQueriesFile() {
@@ -268,7 +269,8 @@ public class Gui {
         }
         ArrayList<String> chosenCities = getChosenCities();
         model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),savePath);
-        showAlert("Run queries file done!");
+      //  showAlert("Run queries file done!");
+        showResults();
     }
 
     public void browseQueriesFile() {
@@ -358,7 +360,7 @@ public class Gui {
         showAlert("Results have been saved");
     }
 
-    public void showEntities() {
+/*    public void showEntities() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("docNoForEntities.fxml"));
         Parent root = null;
         try {
@@ -373,14 +375,14 @@ public class Gui {
       //  Gui gui = fxmlLoader.getController();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
-/*        chosenDocNo = gui.txt_docNo.getText();
-        System.out.println(chosenDocNo);*/
-    }
+*//*        chosenDocNo = gui.txt_docNo.getText();
+        System.out.println(chosenDocNo);*//*
+    }*/
 
-    public void entitiesOfDoc() {
+    public void searchEntities() {
       //  chosenDocNo = txt_docNo.getText();
         if(txt_docNo == null){
-            showAlert("Please enter docNo from query results");
+            showAlert("Please enter docNo from results");
             return;
         }
         HashMap<String, HashMap<String, Integer>> allEntities = model.showEntities();
