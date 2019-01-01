@@ -33,6 +33,7 @@ public class Searcher {
         if(withSemantic){
             semanticWords = ws.connectToApi(query);
         }*/
+        String originQuery = query;
         String[] originalQueryTerms = query.split(" ");
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
@@ -44,11 +45,11 @@ public class Searcher {
 
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
-            HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
-            
+            HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(originQuery);
+
             ArrayList<String> semanticWordsKeys = new ArrayList<>();
             for(String semWord : semanticWords.keySet()) {
-                semanticWordsKeys.add(semWord);
+                semanticWordsKeys.addAll(semanticWords.get(semWord));
             }
             if(withStemming){
                 for(String word : semanticWordsKeys){
