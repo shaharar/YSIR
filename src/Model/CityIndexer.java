@@ -57,16 +57,7 @@ public class CityIndexer {
                     currency = "";
                     population = "";
                 }
-//                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
-//                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
                 docsListStr = new StringBuilder();
-//                for (String docID : positionsInDocs.keySet()) {
-//                    docsListStr.append(docID + " : ");
-//                    ArrayList<Integer> positions = positionsInDocs.get(docID);
-//                    for (Integer position : positions) {
-//                        docsListStr.append(position + " ");
-//                    }
-//                }
                 ArrayList <String> docs = cityDocs.get(city);
                 for (int i = 0; i < docs.size(); i++){
                     docsListStr.append(docs.get(i) + "; ");
@@ -76,18 +67,9 @@ public class CityIndexer {
                 citiesDictionary.put(city.toUpperCase(), pointer);
                 listPosting.add(city.toUpperCase() + " " + "country name: " + countryName + " " + "currency: " + currency + " " + "population: " + population + " " + "[" + docsListStr + "]");
             } else {
-//                HashMap<String, ArrayList<Integer>> positionsInDocs = new HashMap<>();
-//                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
                 pointer = citiesDictionary.get(city.toUpperCase());
                 docsListStr = new StringBuilder();
                 ArrayList <String> docs = cityDocs.get(city);
-//                for (String docID : positionsInDocs.keySet()) {
-//                    docsListStr.append(docID + " : ");
-//                    ArrayList<Integer> positions = positionsInDocs.get(docID);
-//                    for (Integer position : positions) {
-//                        docsListStr.append(position + " ");
-//                    }
-//                }
                 for (int i = 0; i < docs.size(); i++){
                     docsListStr.append(docs.get(i) + "; ");
                 }
@@ -120,14 +102,15 @@ public class CityIndexer {
         StringBuilder sb = new StringBuilder();
         ArrayList <String> strList = new ArrayList<>();
         for (String termStr: citiesDictionary.keySet()) {
-            strList.add(termStr);
+            if(!(termStr.equals("THE") || termStr.equals("N") || termStr.equals("PARIS/LE") || termStr.equals("BY"))) {
+                strList.add(termStr);
+            }
         }
         Collections.sort(strList);
         for (String cityStr : strList) {
-            if (cityStr.length() == 0 || cityStr.equals("THE") || cityStr.equals("N") || cityStr.equals("PARIS/LE") || cityStr.equals("BY")){
-                break;
+            if (cityStr.length() != 0){
+                sb.append(cityStr + " : " + citiesDictionary.get(cityStr)).append("\n");
             }
-            sb.append(cityStr + " : " + citiesDictionary.get(cityStr)).append("\n");
         }
         File dictionary = new File(path + "\\cityIndexResults\\citiesDictionary.txt");
         try {
@@ -176,34 +159,6 @@ public class CityIndexer {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//            if (cities.containsKey(city.toUpperCase())){
-//                HashMap<String, ArrayList <Integer>> positionsInDocs = cities.get(city.toUpperCase()).getPositionsInDocs();
-//                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
-//
-//            }
-//            else{
-//                CountryInfo country = countries.getCountries().get(city.toUpperCase());
-//                String countryName = country.getCountryName();
-//                String currency = country.getCurrency();
-//                String population = country.getPopulation();
-//                HashMap<String, ArrayList <Integer>> positionsInDocs = new HashMap<>();
-//                positionsInDocs.putAll(citiesPositions.get(city.toUpperCase()));
-//                CountryInfo countryInfo = new CountryInfo(countryName, currency, population, positionsInDocs);
-//            }
 
 
 

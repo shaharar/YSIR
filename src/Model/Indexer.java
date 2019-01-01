@@ -79,33 +79,10 @@ public class Indexer {
         for (String str:terms.keySet()) {
             termsStrArr.add(str);
         }
-        System.out.println(termsStrArr.size() + "\n");
 
-
-        System.out.println("terms size in index: " + terms.size());
-        System.out.println(terms.containsKey("FALKLAND"));
-        System.out.println("docs size is: " + terms.get("FALKLAND").docs.size());
-        System.out.println(terms.keySet().contains("FALKLAND"));
-        HashMap <String, AtomicInteger> docs = terms.get("FALKLAND").docs;
-        for (String doc:docs.keySet()) {
-            System.out.println(doc + ": " + docs.get(doc));
-        }
-        System.out.println("\n");
-
-        int j = 0;
         for (int i = 0; i < termsStrArr.size(); i++){
-            j++;
             String termStr = termsStrArr.get(i);
             if (termStr.length() != 0){
-                if (termStr.equals("FALKLAND") ){
-                    System.out.println("FALKLAND IN TERMS" + "\n");
-                }
-//            if (termStr.equals("FALKLAND") ){
-//                for (String doc:terms.get("FALKLAND").docs.keySet()) {
-//                    System.out.println(doc + ": " + terms.get("FALKLAND").docs.get(doc));
-//                }
-//                System.out.println("\n");
-//            }
                 String chunk = "";
                 chunk = classifyToPosting(termStr);
                 switch (chunk) {
@@ -197,16 +174,9 @@ public class Indexer {
             }
 
         }
-        System.out.println(j + "\n");
 
-//        if (chunkLists.get(5).contains("FALKLAND")){
-//            System.out.println("**************************************");
-//            System.out.println("FALKLAND APPEARS HERE");
-//            System.out.println("\n");
-//        }
         for (int i = 0; i < chunkLists.size(); i++) {
             updateChunk(chunkLists.get(i),docsLengths, i, terms, docsInCollection);
-//            chunkLists.get(i).clear();
         }
         chunkLists.clear();
         terms.clear();
@@ -235,12 +205,6 @@ public class Indexer {
         for (String termStr : listChunk) {
             Term term = terms.get(termStr);
             HashMap <String, AtomicInteger> docsList = term.getDocs();
-//            if (termStr.equalsIgnoreCase("falkland")){
-//                for (String doc:docsList.keySet()) {
-//                    System.out.println(doc + ": " + docsList.get(doc));
-//                }
-//                System.out.println("\n");
-//            }
             ArrayList <Integer> termInfo;
             int currDf = docsList.size();
             int currTotalFreq = 0;
@@ -273,7 +237,6 @@ public class Indexer {
             if (isSmallLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toUpperCase())) {
                     termInfo = dictionary.get(termStr.toUpperCase());
-//                    dictionary.replace(termStr,termInfo);
                     dictionary.remove(termStr.toUpperCase());
                     dictionary.put(termStr, termInfo);
                 }
@@ -286,14 +249,6 @@ public class Indexer {
             //term doesn't exist in posting - add it to the end of the posting
             if (!dictionary.containsKey(termStr)) {
                 for (String docNo : docsList.keySet()) {
-/*                    double weight = docsList.get(docNo).intValue() * currIdf;
-                    String weightStr = Double.toString(weight);
-                    if (weightStr.contains(".")){
-                        if(weightStr.indexOf(".") + 3 < weightStr.length()) {
-                            weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
-                        }
-                    }
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + "; ");*/
                     docsListStr.append(docNo + ": " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
@@ -331,14 +286,6 @@ public class Indexer {
                 newTermInfo.add(pointer);
                 String linePosting = listPosting.get(pointer - 1);
                 for (String docNo : docsList.keySet()) {
-/*                    double weight = docsList.get(docNo).intValue() * currIdf;
-                    String weightStr = Double.toString(weight);
-                    if (weightStr.contains(".")){
-                        if(weightStr.indexOf(".") + 3 < weightStr.length()) {
-                            weightStr = weightStr.substring(0, weightStr.indexOf(".") + 3);
-                        }
-                    }
-                    docsListStr.append(docNo + " " + docsList.get(docNo) + " " + weightStr + ";");*/
                     docsListStr.append(docNo + ": " + docsList.get(docNo) + "; ");
                 }
                 String currIdfStr = Double.toString(currIdf);
@@ -350,16 +297,6 @@ public class Indexer {
                 listPosting.set(pointer -1, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
                 dictionary.replace(termStr,termInfo,newTermInfo);
             }
-
-//            if (termStr.equalsIgnoreCase("falkland")){
-//                System.out.println(dictionary.get(termStr).get(0) + "," + dictionary.get(termStr).get(1) + "," + dictionary.get(termStr).get(2));
-//                System.out.println(listPosting.get(pointer - 1));
-//                System.out.println("docsList:");
-//                for (String docId:docsList.keySet()) {
-//                    System.out.println(docId + " " + docsList.get(docId));
-//                }
-//                System.out.println("\n");
-//            }
         }
 
 
@@ -624,13 +561,12 @@ public class Indexer {
         Collections.sort(strList);
 
         for (String termStr : strList) {
-            if (termStr.length() == 0){
-                break;
-            }
-      //      if (dictionary.get(termStr).get(2) > 1) {
+            if (termStr.length() != 0){
+                //      if (dictionary.get(termStr).get(0) > 1) {
                 sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(0) + "\n");
                 sb.append(termStr + " : " + dictionary.get(termStr).get(0) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(2) + "\n");
-      //      }
+                //      }
+            }
         }
 
         String dicPath;
@@ -738,7 +674,6 @@ public class Indexer {
                     termInfo.add(Integer.parseInt(v3));
                     dictionary.put(term, termInfo);
                 } catch (NumberFormatException e){
-                  //  System.out.println(valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2]);
                 }
             }
             br.close();

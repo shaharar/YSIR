@@ -48,6 +48,7 @@ public class Gui {
     public TextField txt_docNo;
     public MenuButton mBtn_menuCities;
     ObservableList<String> cities;
+
     public Gui() {
         model = new Model();
         isLoaded = false;
