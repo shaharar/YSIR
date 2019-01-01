@@ -327,6 +327,7 @@ public class Gui {
     public void saveResults() {
         if(!isRunQuery){
             showAlert("Please run query or queries file");
+            return;
         }
         Stage stage = new Stage();
         DirectoryChooser dc = new DirectoryChooser();
