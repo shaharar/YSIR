@@ -232,7 +232,9 @@ public class Indexer {
             if (isSmallLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toUpperCase())) {
                     termInfo = dictionary.get(termStr.toUpperCase());
-                    dictionary.replace(termStr,termInfo);
+//                    dictionary.replace(termStr,termInfo);
+                    dictionary.remove(termStr.toUpperCase());
+                    dictionary.put(termStr, termInfo);
                 }
             } else if (isCapitalLetter(termStr)) {
                 if (dictionary.containsKey(termStr.toLowerCase())) {
