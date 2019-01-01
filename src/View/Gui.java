@@ -14,9 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.controlsfx.control.CheckComboBox;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,19 +28,12 @@ public class Gui {
     File saveDirSelected = null;
     File queriesFileSelected = null;
     File saveResultsDirSelected = null;
-    /*    public Button btn_corpusPath;
-    public Button btn_savePath;
-    public Button btn_run;
-    public Button btn_reset;
-    public Button btn_showDic;
-    public Button btn_loadDic;*/
     public TextField txt_corpusChooser;
     public TextField txt_savePathChooser;
     public TextField txt_saveResultsChooser;
     public CheckBox chbx_stemming;
     public CheckBox chbx_semantic;
     public ChoiceBox chobx_language;
-    public CheckComboBox<String> chobx_cities;
     public TextField txt_query;
     public Button btn_browseQueries;
     public TextField txt_queriesPathChooser;
@@ -52,14 +43,11 @@ public class Gui {
     String savePath;
     String saveResultsPath;
     public File queriesFile;
-/*    public Button btn_showResults;
-    public Button btn_saveResults;*/
-    ArrayList<String> chosenCities;
     boolean isLoaded;
     boolean isRunIndex;
     public TextField txt_docNo;
-    String chosenDocNo;
-
+    public MenuButton mBtn_menuCities;
+    ObservableList<String> cities;
     public Gui() {
         model = new Model();
         isLoaded = false;
@@ -100,7 +88,6 @@ public class Gui {
         } else {
             try {
                 showAlert("Running index started, please wait for the end of the process");
-              //  Thread.sleep(3000);
                 model.run(corpusPath,savePath);
                 String message = model.endOfRun ();
                 showAlert("Running successful!\n\n" + message);
@@ -269,7 +256,7 @@ public class Gui {
             return;
         }
         ArrayList<String> chosenCities = getChosenCities();
-        model.runQuery(txt_query.getText(),chosenCities,chobx_cities.getItems(),savePath);
+        model.runQuery(txt_query.getText(),chosenCities,cities,savePath);
       // showAlert("Run query done!");
         showResults();
     }
@@ -288,7 +275,7 @@ public class Gui {
             return;
         }
         ArrayList<String> chosenCities = getChosenCities();
-        model.runQueriesFile(queriesFile,chosenCities,chobx_cities.getItems(),savePath);
+        model.runQueriesFile(queriesFile,chosenCities,cities,savePath);
       //  showAlert("Run queries file done!");
         showResults();
     }
@@ -308,30 +295,24 @@ public class Gui {
 
 
     public void setCities(){
-        ObservableList<String> cities = FXCollections.observableArrayList();
+        cities = FXCollections.observableArrayList();
         HashMap<String,Integer> citiesDic = model.getCityIndexer().getCitiesDictionary();
         for (String city: citiesDic.keySet()) {
             cities.add(city);
         }
-/*        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(new File(savePath + "\\cityIndexResults\\citiesDictionary.txt")));
-            String line = "";
-            while ((line = (br.readLine())) != null) {
-                cities.add(line.substring(0,line.indexOf(":") - 1) + System.lineSeparator());
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        chobx_cities.getItems().addAll(cities);
-        chobx_cities.setDisable(false);
+         for(String c : cities){
+            CheckMenuItem checkItem = new CheckMenuItem();
+            checkItem.setText(c);
+            mBtn_menuCities.getItems().add(checkItem);
+         }
     }
 
     public ArrayList<String> getChosenCities(){
        ArrayList<String> chosenCities = new ArrayList<>();
-        for (String city: chobx_cities.getCheckModel().getCheckedItems()) {
-            chosenCities.add(city);
+        for (MenuItem menuItem : mBtn_menuCities.getItems()) {
+            CheckMenuItem checkItem = (CheckMenuItem)menuItem;
+            if(checkItem.isSelected())
+                chosenCities.add(checkItem.getText());
         }
         return chosenCities;
     }
@@ -346,7 +327,6 @@ public class Gui {
         saveResultsDirSelected = dc.showDialog(stage);
         if (saveResultsDirSelected != null) {
             saveResultsPath = saveResultsDirSelected.getAbsolutePath();
-         //   txt_saveResultsChooser.setText(saveResultsPath);
         }
         model.saveResults(saveResultsPath);
         showAlert("Results have been saved");
@@ -379,12 +359,10 @@ public class Gui {
             String lineInListView = "Query " + queryID + ":\n" + docs;
             resultsList.add(lineInListView);
         }
-        //ShowResultsView showRes = fxmlLoader.getController();
-        //showRes.lv_results.setItems(FXCollections.observableArrayList(resultsList));
         gui.lv_results.setItems(FXCollections.observableArrayList(resultsList));
+        gui.lv_results.setStyle("-fx-font-style: Calibri;-fx-font-weight:bold;");
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
-        //showRes.lv_results.setStyle("-fx-font-style: Calibri;-fx-font-weight:bold;");
     }
 
     public void searchEntities() {
