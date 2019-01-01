@@ -107,6 +107,10 @@ public class Parse {
            token = removeDelimiters(token);
           String nextToken = "";
 
+          if (token.equalsIgnoreCase("falkland")){
+              System.out.println(token + " " + docNo);
+          }
+
           //cities
            if (token.equalsIgnoreCase(city) && cityIndexer != null && !city.equals("")){
                positionsInDoc.add(position);
@@ -292,7 +296,7 @@ public class Parse {
        positionsInDoc.clear();
 
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
-      docsLengths.put(docNo, termsPerDoc.size());
+      docsLengths.put(docNo, documentLength);
 //      docsTotalLengthes += termsPerDoc.size();
       docsTotal++;
       docsInCollection++;
