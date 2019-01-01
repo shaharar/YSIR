@@ -75,103 +75,138 @@ public class Indexer {
             chunkLists.add(new ArrayList<>());
         }
 
-        for (String termStr : terms.keySet()) {
-            String chunk = "";
-            if (termStr.length() == 0){
-                break;
-            }
-            chunk = classifyToPosting(termStr);
-            switch (chunk) {
-                case "A":
-                    chunkLists.get(0).add(termStr);
-                    break;
-                case "B":
-                    chunkLists.get(1).add(termStr);
-                    break;
-                case "C":
-                    chunkLists.get(2).add(termStr);
-                    break;
-                case "D":
-                    chunkLists.get(3).add(termStr);
-                    break;
-                case "E":
-                    chunkLists.get(4).add(termStr);
-                    break;
-                case "F":
-                    chunkLists.get(5).add(termStr);
-                    break;
-                case "G":
-                    chunkLists.get(6).add(termStr);
-                    break;
-                case "H":
-                    chunkLists.get(7).add(termStr);
-                    break;
-                case "I":
-                    chunkLists.get(8).add(termStr);
-                    break;
-                case "J":
-                    chunkLists.get(9).add(termStr);
-                    break;
-                case "K":
-                    chunkLists.get(10).add(termStr);
-                    break;
-                case "L":
-                    chunkLists.get(11).add(termStr);
-                    break;
-                case "M":
-                    chunkLists.get(12).add(termStr);
-                    break;
-                case "N":
-                    chunkLists.get(13).add(termStr);
-                    break;
-                case "O":
-                    chunkLists.get(14).add(termStr);
-                    break;
-                case "P":
-                    chunkLists.get(15).add(termStr);
-                    break;
-                case "Q":
-                    chunkLists.get(16).add(termStr);
-                    break;
-                case "R":
-                    chunkLists.get(17).add(termStr);
-                    break;
-                case "S":
-                    chunkLists.get(18).add(termStr);
-                    break;
-                case "T":
-                    chunkLists.get(19).add(termStr);
-                    break;
-                case "U":
-                    chunkLists.get(20).add(termStr);
-                    break;
-                case "V":
-                    chunkLists.get(21).add(termStr);
-                    break;
-                case "W":
-                    chunkLists.get(22).add(termStr);
-                    break;
-                case "X":
-                    chunkLists.get(23).add(termStr);
-                    break;
-                case "Y":
-                    chunkLists.get(24).add(termStr);
-                    break;
-                case "Z":
-                    chunkLists.get(25).add(termStr);
-                    break;
-                case "numbers":
-                    chunkLists.get(26).add(termStr);
-                    break;
-                case "other":
-                    chunkLists.get(27).add(termStr);
-                    break;
-            }
+        ArrayList <String> termsStrArr = new ArrayList<>();
+        for (String str:terms.keySet()) {
+            termsStrArr.add(str);
         }
+        System.out.println(termsStrArr.size() + "\n");
 
+
+        System.out.println("terms size in index: " + terms.size());
+        System.out.println(terms.containsKey("FALKLAND"));
+        System.out.println("docs size is: " + terms.get("FALKLAND").docs.size());
+        System.out.println(terms.keySet().contains("FALKLAND"));
+        HashMap <String, AtomicInteger> docs = terms.get("FALKLAND").docs;
+        for (String doc:docs.keySet()) {
+            System.out.println(doc + ": " + docs.get(doc));
+        }
+        System.out.println("\n");
+
+        int j = 0;
+        for (int i = 0; i < termsStrArr.size(); i++){
+            j++;
+            String termStr = termsStrArr.get(i);
+            if (termStr.length() != 0){
+                if (termStr.equals("FALKLAND") ){
+                    System.out.println("FALKLAND IN TERMS" + "\n");
+                }
+//            if (termStr.equals("FALKLAND") ){
+//                for (String doc:terms.get("FALKLAND").docs.keySet()) {
+//                    System.out.println(doc + ": " + terms.get("FALKLAND").docs.get(doc));
+//                }
+//                System.out.println("\n");
+//            }
+                String chunk = "";
+                chunk = classifyToPosting(termStr);
+                switch (chunk) {
+                    case "A":
+                        chunkLists.get(0).add(termStr);
+                        break;
+                    case "B":
+                        chunkLists.get(1).add(termStr);
+                        break;
+                    case "C":
+                        chunkLists.get(2).add(termStr);
+                        break;
+                    case "D":
+                        chunkLists.get(3).add(termStr);
+                        break;
+                    case "E":
+                        chunkLists.get(4).add(termStr);
+                        break;
+                    case "F":
+                        chunkLists.get(5).add(termStr);
+                        break;
+                    case "G":
+                        chunkLists.get(6).add(termStr);
+                        break;
+                    case "H":
+                        chunkLists.get(7).add(termStr);
+                        break;
+                    case "I":
+                        chunkLists.get(8).add(termStr);
+                        break;
+                    case "J":
+                        chunkLists.get(9).add(termStr);
+                        break;
+                    case "K":
+                        chunkLists.get(10).add(termStr);
+                        break;
+                    case "L":
+                        chunkLists.get(11).add(termStr);
+                        break;
+                    case "M":
+                        chunkLists.get(12).add(termStr);
+                        break;
+                    case "N":
+                        chunkLists.get(13).add(termStr);
+                        break;
+                    case "O":
+                        chunkLists.get(14).add(termStr);
+                        break;
+                    case "P":
+                        chunkLists.get(15).add(termStr);
+                        break;
+                    case "Q":
+                        chunkLists.get(16).add(termStr);
+                        break;
+                    case "R":
+                        chunkLists.get(17).add(termStr);
+                        break;
+                    case "S":
+                        chunkLists.get(18).add(termStr);
+                        break;
+                    case "T":
+                        chunkLists.get(19).add(termStr);
+                        break;
+                    case "U":
+                        chunkLists.get(20).add(termStr);
+                        break;
+                    case "V":
+                        chunkLists.get(21).add(termStr);
+                        break;
+                    case "W":
+                        chunkLists.get(22).add(termStr);
+                        break;
+                    case "X":
+                        chunkLists.get(23).add(termStr);
+                        break;
+                    case "Y":
+                        chunkLists.get(24).add(termStr);
+                        break;
+                    case "Z":
+                        chunkLists.get(25).add(termStr);
+                        break;
+                    case "numbers":
+                        chunkLists.get(26).add(termStr);
+                        break;
+                    case "other":
+                        chunkLists.get(27).add(termStr);
+                        break;
+                }
+            }
+
+        }
+        System.out.println(j + "\n");
+
+//        if (chunkLists.get(5).contains("FALKLAND")){
+//            System.out.println("**************************************");
+//            System.out.println("FALKLAND APPEARS HERE");
+//            System.out.println("\n");
+//        }
         for (int i = 0; i < chunkLists.size(); i++) {
             updateChunk(chunkLists.get(i),docsLengths, i, terms, docsInCollection);
-            chunkLists.get(i).clear();
+//            chunkLists.get(i).clear();
         }
         chunkLists.clear();
         terms.clear();
@@ -200,6 +235,12 @@ public class Indexer {
         for (String termStr : listChunk) {
             Term term = terms.get(termStr);
             HashMap <String, AtomicInteger> docsList = term.getDocs();
+//            if (termStr.equalsIgnoreCase("falkland")){
+//                for (String doc:docsList.keySet()) {
+//                    System.out.println(doc + ": " + docsList.get(doc));
+//                }
+//                System.out.println("\n");
+//            }
             ArrayList <Integer> termInfo;
             int currDf = docsList.size();
             int currTotalFreq = 0;
@@ -210,22 +251,22 @@ public class Indexer {
                 currIdf = 0;
             }
 //------------------------------------------------------------------------------------------------cossimilarity
-            for (String docId:docsList.keySet()){
-                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
-                if (!termsWeightsPerDoc.containsKey(docId) || !termsWeightsPerDoc.get(docId).containsKey(termStr)){
-                    HashMap <String, Double> tfIdf = new HashMap<>();
-                    tfIdf.put(termStr, tf * currIdf);
-                    termsWeightsPerDoc.put(docId,tfIdf);
-                }
-                else{
-                    termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
-                }
-
-            }
+//            for (String docId:docsList.keySet()){
+//                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
+//                if (!termsWeightsPerDoc.containsKey(docId) || !termsWeightsPerDoc.get(docId).containsKey(termStr)){
+//                    HashMap <String, Double> tfIdf = new HashMap<>();
+//                    tfIdf.put(termStr, tf * currIdf);
+//                    termsWeightsPerDoc.put(docId,tfIdf);
+//                }
+//                else{
+//                    termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
+//                }
+//
+//            }
 //------------------------------------------------------------------------------------------------
 
-            for (AtomicInteger tf:docsList.values()) {
-                currTotalFreq += tf.intValue();
+            for (String docId:docsList.keySet()) {
+                currTotalFreq += docsList.get(docId).intValue();
             }
             docsListStr = new StringBuilder();
             Integer pointer;
@@ -309,6 +350,16 @@ public class Indexer {
                 listPosting.set(pointer -1, linePosting.substring(0, linePosting.indexOf("[")) + docsListStr + "[" + currIdfStr + "]");
                 dictionary.replace(termStr,termInfo,newTermInfo);
             }
+
+//            if (termStr.equalsIgnoreCase("falkland")){
+//                System.out.println(dictionary.get(termStr).get(0) + "," + dictionary.get(termStr).get(1) + "," + dictionary.get(termStr).get(2));
+//                System.out.println(listPosting.get(pointer - 1));
+//                System.out.println("docsList:");
+//                for (String docId:docsList.keySet()) {
+//                    System.out.println(docId + " " + docsList.get(docId));
+//                }
+//                System.out.println("\n");
+//            }
         }
 
 

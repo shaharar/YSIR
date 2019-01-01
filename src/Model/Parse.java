@@ -107,9 +107,9 @@ public class Parse {
            token = removeDelimiters(token);
           String nextToken = "";
 
-          if (token.equalsIgnoreCase("falkland")){
-              System.out.println(token + " " + docNo);
-          }
+//          if (token.equalsIgnoreCase("falkland")){
+//              System.out.println(token + " " + docNo);
+//          }
 
           //cities
            if (token.equalsIgnoreCase(city) && cityIndexer != null && !city.equals("")){
@@ -233,6 +233,11 @@ public class Parse {
                  frequentTerm = term.getTermStr();
             }
          }
+
+//           if (token.equalsIgnoreCase("falkland")){
+//               System.out.println(term.termStr + " " + terms.get(term.termStr).termStr + " " + terms.get(term.termStr).docs.get(docNo));
+//               System.out.println("\n");
+//           }
          currentIdx++;
            position++;
       }
@@ -303,6 +308,14 @@ public class Parse {
       termsPerDoc.clear();
 
        if (docsTotal > 50000){
+//           for (String falklandDocs:terms.get("FALKLAND").docs.keySet()) {
+//               System.out.println(falklandDocs + ": " + terms.get("FALKLAND").docs.get(falklandDocs) );
+//           }
+//           System.out.println("\n");
+           System.out.println("terms size in parse: " + terms.size());
+           System.out.println(terms.containsKey("FALKLAND"));
+           System.out.println("docs size is: " + terms.get("FALKLAND").docs.size());
+           System.out.println("\n");
            indexer.index(terms,docsLengths, docsInCollection, withStemming);
            terms.clear();
            if (cityIndexer != null){
@@ -1125,6 +1138,10 @@ public class Parse {
 
 
     public void finished() {
+        System.out.println("terms size in parse: " + terms.size());
+        System.out.println(terms.containsKey("FALKLAND"));
+        System.out.println("docs size is: " + terms.get("FALKLAND").docs.size());
+        System.out.println("\n");
        indexer.finished(terms,docsLengths, docsInCollection,withStemming);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);
