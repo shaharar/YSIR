@@ -45,6 +45,7 @@ public class Searcher {
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
             HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
+            
             ArrayList<String> semanticWordsKeys = new ArrayList<>();
             for(String semWord : semanticWords.keySet()) {
                 semanticWordsKeys.add(semWord);
