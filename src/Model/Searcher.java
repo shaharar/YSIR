@@ -52,24 +52,13 @@ public class Searcher {
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
             HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(originQuery);
-            if (queryId.contains("352")){
-                for (String str:semanticWords.keySet()) {
-                    System.out.println(semanticWords.get(str).get(0));
-                    System.out.println(semanticWords.get(str).get(1));
-                    System.out.println(semanticWords.get(str).get(2));
-                }
-            }
 
             ArrayList<String> semanticWordsKeys = new ArrayList<>();
             for(String semWord : semanticWords.keySet()) {
-                if (semanticWords.get(semWord) == null){
-                    System.out.println(queryId);
-                }
                 semanticWordsKeys.addAll(semanticWords.get(semWord));
             }
             if(withStemming){
                 for(String word : semanticWordsKeys){
-
                     ArrayList<String> wordValue = semanticWords.get(word);
                     String wordAfterStem = parser.stemming(word);
                     semanticWords.remove(word);
