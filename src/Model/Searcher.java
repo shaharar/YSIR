@@ -40,7 +40,13 @@ public class Searcher {
         query = "" + query + queryDescription;
         HashMap<String, Integer> queryTerms = parser.parseQuery(query);
         HashMap<String, ArrayList<Integer>> dictionary = indexer.getDictionary();
-        setDocsInfo(saveInPath + "\\docsInformation.txt");
+        if (!withStemming){
+            setDocsInfo(saveInPath + "\\docsInformation.txt");
+        }
+        else{
+            setDocsInfo(saveInPath + "\\docsInformation_stemming.txt");
+        }
+
 
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
