@@ -45,8 +45,12 @@ public class Searcher {
         //add semantic words of each term in query to 'queryTerms'
         if(withSemantic) {
             HashMap<String,ArrayList<String>> semanticWords = ws.connectToApi(query);
+            ArrayList<String> semanticWordsKeys = new ArrayList<>();
+            for(String semWord : semanticWords.keySet()) {
+                semanticWordsKeys.add(semWord);
+            }
             if(withStemming){
-                for(String word : semanticWords.keySet()){
+                for(String word : semanticWordsKeys){
                     ArrayList<String> wordValue = semanticWords.get(word);
                     String wordAfterStem = parser.stemming(word);
                     semanticWords.remove(word);
@@ -309,7 +313,7 @@ public class Searcher {
             String line = "";
             while ((line = (br.readLine())) != null) {
                 if (line.contains("--noEntities--")){
-                    break;
+                    continue;
                 }
                 String docId = line.substring(0, line.indexOf(":"));
                 String [] entitiesStr = line.split(", ");

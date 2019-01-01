@@ -38,10 +38,10 @@ public class Ranker {
         for (String docId: docsResults.keySet()) {
             if(docsOfChosenCities.isEmpty() || (!docsOfChosenCities.isEmpty() && docsOfChosenCities.contains(docId))) {
                 double rank = 0;
-                double cosSimilarity = 0;
+ /*               double cosSimilarity = 0;
                 double cosSimilarityNumerator = 0;
                 double docTermsWeights = weightsPerDoc.get(docId);
-                double queryTermsWeights = 0;
+                double queryTermsWeights = 0;*/
                 int docTf = 0, queryTf = 0, df = 0, docLength = 0;
                 for (String term : queryTerms.keySet()) {
                     if(docsResults.get(docId).containsKey(term)) {
@@ -49,15 +49,15 @@ public class Ranker {
                         queryTf = queryTerms.get(term);
                         df = dictionary.get(term).get(1);
                         docLength = docsInfo.get(docId);
-                        cosSimilarityNumerator += docTf / docLength;
-                        queryTermsWeights += Math.pow(1, 2);
+/*                        cosSimilarityNumerator += docTf / docLength;
+                        queryTermsWeights += Math.pow(1, 2);*/
                         rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log((N + 1)/ df);
                     }
                 }
-                cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
+              //  cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
                 if (rank > 0) {
-                    docsRanks.add(new Pair<>(docId, 0.8 * rank + 0.2 * cosSimilarity));
-             //       docsRanks.add(new Pair<>(docId, rank));
+              //      docsRanks.add(new Pair<>(docId, 0.8 * rank + 0.2 * cosSimilarity));
+                    docsRanks.add(new Pair<>(docId, rank));
                 }
             }
         }
