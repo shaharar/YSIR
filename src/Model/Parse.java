@@ -32,10 +32,6 @@ public class Parse {
     int docsInCollection;
     private HashMap <String, Integer> docEntities;
     private HashMap <String, Integer> docsLengths;
-//    private StringBuilder tfPerDocSb;
-//    int docsTotalLengthes;
-//    private HashMap<String, Integer> docsLengthes;
-//    private HashMap <String, HashMap <String, Pair <Integer, Double>>> termsWeightPerDoc;
 
 
     public Parse (boolean withStemming, String path, String corpusPath){
@@ -66,10 +62,6 @@ public class Parse {
       currentIdx = 0;
       docsTotal = 0;
       docsInCollection = 0;
-//        tfPerDocSb = new StringBuilder();
-//      docsTotalLengthes = 0;
-//      docsLengthes = new HashMap<>();
-//        termsWeightPerDoc = new HashMap<>();
    }
 
    // the following function parses the text of a specific document by the defined rules
@@ -106,10 +98,6 @@ public class Parse {
            token = removeDashes(token);
            token = removeDelimiters(token);
           String nextToken = "";
-
-//          if (token.equalsIgnoreCase("falkland")){
-//              System.out.println(token + " " + docNo);
-//          }
 
           //cities
            if (token.equalsIgnoreCase(city) && cityIndexer != null && !city.equals("")){
@@ -234,31 +222,9 @@ public class Parse {
             }
          }
 
-//           if (token.equalsIgnoreCase("falkland")){
-//               System.out.println(term.termStr + " " + terms.get(term.termStr).termStr + " " + terms.get(term.termStr).docs.get(docNo));
-//               System.out.println("\n");
-//           }
          currentIdx++;
            position++;
       }
-//       tfPerDocSb.append(docNo + ": ");
-//       for (String termStr : termsPerDoc) {
-//           Term term = terms.get(termStr);
-//           HashMap<String, AtomicInteger> docs = term.getDocs();
-//           int tfPerDoc = docs.get(docNo).intValue();
-//           tfPerDocSb.append(termStr + " " + tfPerDoc + " ");
-//       }
-//       tfPerDocSb.append("\n");
-
-//       for (String termStr : termsPerDoc) {
-//           Term term = terms.get(termStr);
-//           HashMap<String, AtomicInteger> docs = term.getDocs();
-//           int tfPerDoc = docs.get(docNo).intValue();
-//           HashMap <String, Pair<Integer, Double>> termWeight = new HashMap<>();
-//           Pair <Integer, Double> tfIdf = new Pair<Integer, Double>(tfPerDoc, 0.0);
-//           termWeight.put(termStr, tfIdf);
-//           termsWeightPerDoc.put(docNo, termWeight);
-//       }
 
       String docCityPositions = "";
        for (Integer pos:positionsInDoc) {
@@ -302,20 +268,11 @@ public class Parse {
 
       sb.append(docNo + ": " + termsPerDoc.size() + ", " + documentLength +", " + frequentTerm + ", " + maxTf + ", " + city + " [  " + docCityPositions + "]" + "\n");
       docsLengths.put(docNo, documentLength);
-//      docsTotalLengthes += termsPerDoc.size();
       docsTotal++;
       docsInCollection++;
       termsPerDoc.clear();
 
        if (docsTotal > 50000){
-//           for (String falklandDocs:terms.get("FALKLAND").docs.keySet()) {
-//               System.out.println(falklandDocs + ": " + terms.get("FALKLAND").docs.get(falklandDocs) );
-//           }
-//           System.out.println("\n");
-           System.out.println("terms size in parse: " + terms.size());
-           System.out.println(terms.containsKey("FALKLAND"));
-           System.out.println("docs size is: " + terms.get("FALKLAND").docs.size());
-           System.out.println("\n");
            indexer.index(terms,docsLengths, docsInCollection, withStemming);
            terms.clear();
            if (cityIndexer != null){
@@ -435,11 +392,12 @@ public class Parse {
                }
            }
            currentIdx++;
-           if (termsPerQuery.containsKey(term.getTermStr())){
-               termsPerQuery.replace(term.getTermStr(), termsPerQuery.get(term.getTermStr()),termsPerQuery.get(term.getTermStr()) + 1); //update tf
-           }
-           else{
-               termsPerQuery.put(term.getTermStr(),1); //update tf
+           if(term != null) {
+               if (termsPerQuery.containsKey(term.getTermStr())) {
+                   termsPerQuery.replace(term.getTermStr(), termsPerQuery.get(term.getTermStr()), termsPerQuery.get(term.getTermStr()) + 1); //update tf
+               } else {
+                   termsPerQuery.put(term.getTermStr(), 1); //update tf
+               }
            }
        }
 
@@ -1138,10 +1096,6 @@ public class Parse {
 
 
     public void finished() {
-        System.out.println("terms size in parse: " + terms.size());
-        System.out.println(terms.containsKey("FALKLAND"));
-        System.out.println("docs size is: " + terms.get("FALKLAND").docs.size());
-        System.out.println("\n");
        indexer.finished(terms,docsLengths, docsInCollection,withStemming);
        if (cityIndexer != null){
            cityIndexer.finished(cityDocs);

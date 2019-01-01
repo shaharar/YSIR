@@ -45,13 +45,16 @@ public class Gui {
     public File queriesFile;
     boolean isLoaded;
     boolean isRunIndex;
+    boolean isRunQuery;
     public TextField txt_docNo;
     public MenuButton mBtn_menuCities;
     ObservableList<String> cities;
+
     public Gui() {
         model = new Model();
         isLoaded = false;
         isRunIndex = false;
+        isRunQuery = false;
     }
 
     //load the corpus path the user chose
@@ -257,7 +260,7 @@ public class Gui {
         }
         ArrayList<String> chosenCities = getChosenCities();
         model.runQuery(txt_query.getText(),chosenCities,cities,savePath);
-      // showAlert("Run query done!");
+        isRunQuery = true;
         showResults();
     }
 
@@ -276,7 +279,7 @@ public class Gui {
         }
         ArrayList<String> chosenCities = getChosenCities();
         model.runQueriesFile(queriesFile,chosenCities,cities,savePath);
-      //  showAlert("Run queries file done!");
+        isRunQuery = true;
         showResults();
     }
 
@@ -322,6 +325,9 @@ public class Gui {
     }
 
     public void saveResults() {
+        if(!isRunQuery){
+            showAlert("Please run query or queries file");
+        }
         Stage stage = new Stage();
         DirectoryChooser dc = new DirectoryChooser();
         saveResultsDirSelected = dc.showDialog(stage);
