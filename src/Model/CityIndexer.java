@@ -124,7 +124,7 @@ public class CityIndexer {
         }
         Collections.sort(strList);
         for (String cityStr : strList) {
-            if (cityStr.length() == 0){
+            if (cityStr.length() == 0 || cityStr.equals("THE") || cityStr.equals("N") || cityStr.equals("PARIS/LE") || cityStr.equals("BY")){
                 break;
             }
             sb.append(cityStr + " : " + citiesDictionary.get(cityStr)).append("\n");
