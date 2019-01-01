@@ -23,6 +23,7 @@ public class WordsSemantic {
     }
 
     public HashMap<String,ArrayList<String>> connectToApi (String query){
+        semanticWords = new HashMap<>();
         String url;
         String[] queryTerms = query.split(" ");
         for(String term : queryTerms){
