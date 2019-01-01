@@ -257,7 +257,7 @@ public class Parse {
            int value = entityPair.getValue();
            entitiesSb.append( key + " - " + value);
            if (!(sortedEntities.size() == 0 || i == 4)){
-               entitiesSb.append(", ");
+               entitiesSb.append("; ");
            }
        }
        entitiesSb.append("\n");
