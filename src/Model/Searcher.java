@@ -314,26 +314,29 @@ public class Searcher {
 
     public void loadEntities (File entitiesFile){
         BufferedReader br = null;
+        int lineNum = 0;
         try {
             String term;
             br = new BufferedReader(new FileReader(entitiesFile));
             String line = "";
             while ((line = (br.readLine())) != null) {
-                if (line.contains("--noEntities--")){
-                    continue;
+                lineNum++;
+                if (!line.contains("--noEntities--")) {
+                    String docId = line.substring(0, line.indexOf(":"));
+                    String [] entitiesStr = line.split("; ");
+                    if (entitiesStr.length > 0){
+                        entitiesStr[0] = entitiesStr[0].substring(line.indexOf(":") + 2);
+                    }
+                    HashMap <String, Integer> entitiesInfo = new HashMap<>();
+                    for (int i = 0; i < entitiesStr.length ; i++){
+                        String [] entitiesRankStr = entitiesStr[i].split(" - ");
+                        if (entitiesRankStr.length < 2){
+                            System.out.println(lineNum + " " + entitiesRankStr[0]);
+                        }
+                        entitiesInfo.put(entitiesRankStr[0], Integer.parseInt(entitiesRankStr[1]));
+                    }
+                    entities.put(docId, entitiesInfo);
                 }
-                String docId = line.substring(0, line.indexOf(":"));
-                String [] entitiesStr = line.split(", ");
-                if (entitiesStr.length > 0){
-                    entitiesStr[0] = entitiesStr[0].substring(line.indexOf(":") + 2);
-                }
-                HashMap <String, Integer> entitiesInfo = new HashMap<>();
-                for (int i = 0; i < entitiesStr.length ; i++){
-                    String [] entitiesRankStr = entitiesStr[i].split(" - ");
-                    entitiesInfo.put(entitiesRankStr[0], Integer.parseInt(entitiesRankStr[1]));
-                }
-                entities.put(docId, entitiesInfo);
-
             }
             br.close();
         } catch (IOException e) {
