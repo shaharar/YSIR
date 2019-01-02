@@ -216,7 +216,7 @@ public class Gui {
                 e.printStackTrace();
             }
             Stage stage = new Stage();
-            Scene scene = new Scene(root, 600, 400);
+            Scene scene = new Scene(root, 300, 600);
             stage.setScene(scene);
 
             Gui gui = fxmlLoader.getController();

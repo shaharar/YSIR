@@ -215,7 +215,7 @@ public class Indexer {
                 currIdf = 0;
             }
 //------------------------------------------------------------------------------------------------cossimilarity
-            for (String docId:docsList.keySet()){
+/*            for (String docId:docsList.keySet()){
                 double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
                 if (!termsWeightsPerDoc.containsKey(docId) || !termsWeightsPerDoc.get(docId).containsKey(termStr)){
                     HashMap <String, Double> tfIdf = new HashMap<>();
@@ -226,7 +226,29 @@ public class Indexer {
                     termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
                 }
 
+            }*/
+
+            for (String docId:docsList.keySet()){
+                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
+                if (!termsWeightsPerDoc.containsKey(docId)){
+                    HashMap <String, Double> tfIdf = new HashMap<>();
+                    tfIdf.put(termStr, tf * currIdf);
+                    termsWeightsPerDoc.put(docId,tfIdf);
+                }
+                else{
+                    if (!(termsWeightsPerDoc.get(docId).containsKey(termStr))){
+                        HashMap <String, Double> tfIdf = termsWeightsPerDoc.get(docId);
+                        tfIdf.put(termStr, tf * currIdf);
+                        termsWeightsPerDoc.replace(docId,termsWeightsPerDoc.get(docId), tfIdf);
+                    }
+                    else{
+                        termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
+                    }
+                }
+
             }
+
+
 //------------------------------------------------------------------------------------------------
 
             for (String docId:docsList.keySet()) {
@@ -709,6 +731,5 @@ public class Indexer {
     public HashMap<String, ArrayList<Integer>> getDictionary() {
         return dictionary;
     }
-
 
 }

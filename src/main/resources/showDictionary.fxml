@@ -5,6 +5,6 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.Gui">
    <children>
-      <ListView fx:id="lv_dic" layoutX="4.0" layoutY="2.0" prefHeight="391.0" prefWidth="593.0" />
+      <ListView fx:id="lv_dic" layoutX="4.0" layoutY="2.0" prefHeight="591.0" prefWidth="293.0" />
    </children>
 </AnchorPane>
