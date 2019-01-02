@@ -33,7 +33,12 @@ public class Parse {
     private HashMap <String, Integer> docEntities;
     private HashMap <String, Integer> docsLengths;
 
-
+    /**
+     * constructor
+     * @param withStemming
+     * @param path
+     * @param corpusPath
+     */
     public Parse (boolean withStemming, String path, String corpusPath){
       terms = new HashMap<>();
       cityDocs = new HashMap<>();
@@ -64,7 +69,12 @@ public class Parse {
       docsInCollection = 0;
    }
 
-   // the following function parses the text of a specific document by the defined rules
+    /**
+     * the following function parses the text of a specific document by the defined rules
+     * @param docText
+     * @param docID
+     * @param city
+     */
    public void parseDocText(String docText, String docID, String city) {
 
        termsPerDoc = new HashSet<>();
@@ -287,7 +297,11 @@ public class Parse {
        }
    }
 
-
+    /**
+     * the following function parses the text of a specific query by the defined rules
+     * @param queryText
+     * @return
+     */
    public HashMap<String,Integer> parseQuery (String queryText){
        HashMap<String,Integer> termsPerQuery = new HashMap<>();
        currentIdx = 0;
@@ -405,8 +419,11 @@ public class Parse {
    }
 
 
-
-
+    /**
+     * the following function removes delimiters from a string
+     * @param token
+     * @return
+     */
     private String removeDelimiters(String token) {
        if (token.length() == 0){
            return token;

@@ -17,11 +17,19 @@ public class WordsSemantic {
     private HashMap<String,ArrayList<String>> semanticWords;
     private Object[] jsonResults;
 
+    /**
+     * constructor
+     */
     public WordsSemantic() {
         baseUrl = "https://api.datamuse.com/words?ml=";
         semanticWords = new HashMap<>();
     }
 
+    /**
+     * the following function connects to semantic context api and retrieves relevant data
+     * @param query
+     * @return
+     */
     public HashMap<String,ArrayList<String>> connectToApi (String query){
         semanticWords = new HashMap<>();
         String url;

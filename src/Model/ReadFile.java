@@ -15,11 +15,22 @@ public class ReadFile {
     private Parse parse;
     private HashSet<String> languages;
 
+    /**
+     * constructor
+     * @param withStemming
+     * @param path
+     * @param corpusPath
+     */
     public ReadFile(boolean withStemming, String path, String corpusPath) {
         parse = new Parse(withStemming, path, corpusPath);
         languages = new HashSet<>();
     }
 
+    /**
+     * the following function reads files from a directory in the given path
+     * @param path
+     * @throws IOException
+     */
     public void getFilesFromDir (String path) throws IOException {
         File corpus = new File(path);
         File[] files = corpus.listFiles();
@@ -33,6 +44,10 @@ public class ReadFile {
         parse.finished();
     }
 
+    /**
+     * the following function separates file to docs by labels
+     * @param file
+     */
     private void separateFileToDocs(File file){
         File [] docsInFile = file.listFiles();
         for (File d : docsInFile) {
@@ -61,6 +76,11 @@ public class ReadFile {
         }
     }
 
+    /**
+     * the following function reads city by tag <fp=104></fp=104>
+     * @param str
+     * @return
+     */
     private String getCityByTag(String str) {
         String tempStr;
         String [] lines = str.split("\n");
@@ -80,6 +100,11 @@ public class ReadFile {
         return "";
     }
 
+    /**
+     * the following function reads language by tag <fp=105></fp=105>
+     * @param str
+     * @return
+     */
     private String getLanguageByTag(String str) {
         String [] tempStr;
         String [] lines = str.split("\n");
@@ -97,15 +122,27 @@ public class ReadFile {
         return "";
     }
 
+    /**
+     * the following function resets program's memory
+     */
     public void reset() {
         parse.reset();
         languages.clear();
     }
 
+    /**
+     * getter
+     * @return
+     */
     public HashSet<String> getLanguages() {
         return languages;
     }
 
+    /**
+     * the following function returns whether a string represents a numeric value
+     * @param str
+     * @return
+     */
     private boolean isNumeric(String str)
     {
         try {
@@ -121,22 +158,42 @@ public class ReadFile {
         return parse.getDocsInCollection();
     }
 
+    /**
+     * getter
+     * @return
+     */
     public int getDicSize() {
         return parse.getDicSize();
     }
 
+    /**
+     * getter
+     * @return
+     */
     public int getDocsInCollection(){
         return parse.getDocsInCollection();
     }
 
+    /**
+     * getter
+     * @return
+     */
     public Indexer getIndexer (){
        return parse.getIndexer();
     }
 
+    /**
+     * getter
+     * @return
+     */
     public CityIndexer getCityIndexer (){
         return parse.getCityIndexer();
     }
 
+    /**
+     * the following function writes languages file to disk
+     * @param savePath
+     */
     public void writeLanguagesToDisk (String savePath){
         StringBuilder sb = new StringBuilder();
         for (String lang : languages) {
