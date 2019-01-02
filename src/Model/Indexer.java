@@ -210,17 +210,22 @@ public class Indexer {
             int currTotalFreq = 0;
             double currIdf = 0;
             try {
-                currIdf = Math.log(docsInCollection / currDf);
+                currIdf = Math.log10(docsInCollection / currDf);
             }catch (ArithmeticException e){
                 currIdf = 0;
             }
 //------------------------------------------------------------------------------------------------cossimilarity
             for (String docId:docsList.keySet()){
                 double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
-                if (!termsWeightsPerDoc.containsKey(docId) || !termsWeightsPerDoc.get(docId).containsKey(termStr)){
+                if (!termsWeightsPerDoc.containsKey(docId)){
                     HashMap <String, Double> tfIdf = new HashMap<>();
                     tfIdf.put(termStr, tf * currIdf);
                     termsWeightsPerDoc.put(docId,tfIdf);
+                }
+                else if (!termsWeightsPerDoc.get(docId).containsKey(termStr)){
+                    HashMap <String, Double> tfIdf = termsWeightsPerDoc.get(docId);
+                    tfIdf.put(termStr, tf * currIdf);
+                    termsWeightsPerDoc.replace(docId,termsWeightsPerDoc.get(docId), tfIdf);
                 }
                 else{
                     termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
@@ -274,7 +279,7 @@ public class Indexer {
                 pointer = termInfo.get(2);
 
                 try{
-                    currIdf = Math.log(docsInCollection / currDf);
+                    currIdf = Math.log10(docsInCollection / currDf);
                 }
                 catch (ArithmeticException e){
                     currIdf = 0;
