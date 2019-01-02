@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Indexer {
 
     private HashMap <String, ArrayList <Integer>> dictionary;
-    private HashMap <String, HashMap <String, Double>> termsWeightsPerDoc;
-    private HashMap <String, Double> weightsPerDoc;
+//    private HashMap <String, HashMap <String, Double>> termsWeightsPerDoc;
+//    private HashMap <String, Double> weightsPerDoc;
     String path;
     private boolean withStemming;
     String postingDir;
@@ -18,8 +18,8 @@ public class Indexer {
     // constructor
     public Indexer(String path, boolean withStemming) {
         dictionary = new HashMap<>();
-        termsWeightsPerDoc = new HashMap<>();
-        weightsPerDoc = new HashMap<>();
+//        termsWeightsPerDoc = new HashMap<>();
+//        weightsPerDoc = new HashMap<>();
         this.path = path;
         this.withStemming = withStemming;
         new File(this.path + "\\indexResults").mkdir();
@@ -215,23 +215,23 @@ public class Indexer {
                 currIdf = 0;
             }
 //------------------------------------------------------------------------------------------------cossimilarity
-            for (String docId:docsList.keySet()){
-                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
-                if (!termsWeightsPerDoc.containsKey(docId)){
-                    HashMap <String, Double> tfIdf = new HashMap<>();
-                    tfIdf.put(termStr, tf * currIdf);
-                    termsWeightsPerDoc.put(docId,tfIdf);
-                }
-                else if (!termsWeightsPerDoc.get(docId).containsKey(termStr)){
-                    HashMap <String, Double> tfIdf = termsWeightsPerDoc.get(docId);
-                    tfIdf.put(termStr, tf * currIdf);
-                    termsWeightsPerDoc.replace(docId,termsWeightsPerDoc.get(docId), tfIdf);
-                }
-                else{
-                    termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
-                }
-
-            }
+//            for (String docId:docsList.keySet()){
+//                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
+//                if (!termsWeightsPerDoc.containsKey(docId)){
+//                    HashMap <String, Double> tfIdf = new HashMap<>();
+//                    tfIdf.put(termStr, tf * currIdf);
+//                    termsWeightsPerDoc.put(docId,tfIdf);
+//                }
+//                else if (!termsWeightsPerDoc.get(docId).containsKey(termStr)){
+//                    HashMap <String, Double> tfIdf = termsWeightsPerDoc.get(docId);
+//                    tfIdf.put(termStr, tf * currIdf);
+//                    termsWeightsPerDoc.replace(docId,termsWeightsPerDoc.get(docId), tfIdf);
+//                }
+//                else{
+//                    termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
+//                }
+//
+//            }
 //------------------------------------------------------------------------------------------------
 
             for (String docId:docsList.keySet()) {
@@ -567,10 +567,10 @@ public class Indexer {
 
         for (String termStr : strList) {
             if (termStr.length() != 0){
-                //      if (dictionary.get(termStr).get(0) > 1) {
-                sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(0) + "\n");
-                sb.append(termStr + " : " + dictionary.get(termStr).get(0) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(2) + "\n");
-                //      }
+//                if (dictionary.get(termStr).get(0) > 1) {
+                    sbShowDic.append(termStr + " : " + dictionary.get(termStr).get(0) + "\n");
+                    sb.append(termStr + " : " + dictionary.get(termStr).get(0) + " , " + dictionary.get(termStr).get(1) + " , " + classifyToPosting(termStr) + "_" + dictionary.get(termStr).get(2) + "\n");
+//                }
             }
         }
 
@@ -605,51 +605,51 @@ public class Indexer {
     
     
     
-    public void writeWeigthsPerDocToDisk (){
-        for (String docId:termsWeightsPerDoc.keySet()) {
-            double totalWeightPerDoc = 0;
-            for (String termStr:termsWeightsPerDoc.get(docId).keySet()) {
-                totalWeightPerDoc += Math.pow(termsWeightsPerDoc.get(docId).get(termStr).doubleValue(), 2);
-            }
-            weightsPerDoc.put(docId, totalWeightPerDoc);
-        }
-
-
-
-        StringBuilder sb = new StringBuilder();
-
-        for (String docId:weightsPerDoc.keySet()) {
-            sb.append(docId + ":" + weightsPerDoc.get(docId) + "\n");
-        }
-
-
-        String weightPerDocPath;
-        if (!withStemming){
-            weightPerDocPath = "\\docsWeights";
-        }
-        else{
-            weightPerDocPath = "\\docsWeights_stemming";
-        }
-        File weightPerDc = new File(path + weightPerDocPath + ".txt");
-        try {
-            weightPerDc.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(weightPerDc);
-            fw.write(sb.toString());
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void writeWeigthsPerDocToDisk (){
+//        for (String docId:termsWeightsPerDoc.keySet()) {
+//            double totalWeightPerDoc = 0;
+//            for (String termStr:termsWeightsPerDoc.get(docId).keySet()) {
+//                totalWeightPerDoc += Math.pow(termsWeightsPerDoc.get(docId).get(termStr).doubleValue(), 2);
+//            }
+//            weightsPerDoc.put(docId, totalWeightPerDoc);
+//        }
+//
+//
+//
+//        StringBuilder sb = new StringBuilder();
+//
+//        for (String docId:weightsPerDoc.keySet()) {
+//            sb.append(docId + ":" + weightsPerDoc.get(docId) + "\n");
+//        }
+//
+//
+//        String weightPerDocPath;
+//        if (!withStemming){
+//            weightPerDocPath = "\\docsWeights";
+//        }
+//        else{
+//            weightPerDocPath = "\\docsWeights_stemming";
+//        }
+//        File weightPerDc = new File(path + weightPerDocPath + ".txt");
+//        try {
+//            weightPerDc.createNewFile();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        FileWriter fw = null;
+//        try {
+//            fw = new FileWriter(weightPerDc);
+//            fw.write(sb.toString());
+//            fw.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void finished(HashMap<String , Term> terms,HashMap <String, Integer> docsLengths, int docsInCollection, boolean withStemming) {
         index(terms,docsLengths, docsInCollection, withStemming);
         writeDictionaryToDisk();
-        writeWeigthsPerDocToDisk();
+//        writeWeigthsPerDocToDisk();
     }
 
 
@@ -687,29 +687,29 @@ public class Indexer {
         }
     }
 
-    public void loadWeightsPerDoc (File newWeightsPerDoc){
-        weightsPerDoc.clear();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(newWeightsPerDoc));
-            String line = "";
-            while ((line = (br.readLine())) != null) {
-                String [] splitLine = line.split(":");
-                weightsPerDoc.put(splitLine[0], Double.parseDouble(splitLine[1]));
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void loadWeightsPerDoc (File newWeightsPerDoc){
+//        weightsPerDoc.clear();
+//        BufferedReader br = null;
+//        try {
+//            br = new BufferedReader(new FileReader(newWeightsPerDoc));
+//            String line = "";
+//            while ((line = (br.readLine())) != null) {
+//                String [] splitLine = line.split(":");
+//                weightsPerDoc.put(splitLine[0], Double.parseDouble(splitLine[1]));
+//            }
+//            br.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public int getDicSize() {
         return dictionary.size();
     }
 
-    public HashMap<String, Double> getWeightsPerDoc() {
-        return weightsPerDoc;
-    }
+//    public HashMap<String, Double> getWeightsPerDoc() {
+//        return weightsPerDoc;
+//    }
 
     public HashMap<String, ArrayList<Integer>> getDictionary() {
         return dictionary;

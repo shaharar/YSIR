@@ -27,7 +27,7 @@ public class Ranker {
         b = 0.3;
         k = 1.2;
     }
-    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, HashMap <String, Double> weightsPerDoc, String queryId, String queryDescription, String saveInPath) {
+    public void rank(HashMap<String, HashMap<String, Integer>> docsResults, HashSet<String> docsOfChosenCities, HashMap<String, Integer> queryTerms, HashMap<String, ArrayList<Integer>> dictionary, HashMap<String, Integer> docsInfo, HashMap<String, HashMap<String, Integer>> entities, String queryId) {
         int totalDocsLengths = 0, N;
         double avdl;
         for (Integer docLength: docsInfo.values()) {
@@ -36,14 +36,17 @@ public class Ranker {
         N = docsInfo.size();
         avdl = totalDocsLengths / N;
         for (String docId: docsResults.keySet()) {
+            double rank = 0;
             if(docsOfChosenCities.isEmpty() || (!docsOfChosenCities.isEmpty() && docsOfChosenCities.contains(docId))) {
-                double rank = 0;
-                double cosSimilarity = 0;
-                double cosSimilarityNumerator = 0;
-                double docTermsWeights = 0;
-                if (weightsPerDoc.containsKey(docId)){
-                    docTermsWeights = weightsPerDoc.get(docId);
-                }
+                double bm25 = 0;
+                double entitiesScore = 1;
+//                double firstQueryTermScore = 0;
+//                double cosSimilarity = 0;
+//                double cosSimilarityNumerator = 0;
+//                double docTermsWeights = 0;
+//                if (weightsPerDoc.containsKey(docId)){
+//                    docTermsWeights = weightsPerDoc.get(docId);
+//                }
                 double queryTermsWeights = 0;
                 int docTf = 0, queryTf = 0, df = 0, docLength = 0;
                 for (String term : queryTerms.keySet()) {
@@ -52,21 +55,27 @@ public class Ranker {
                         queryTf = queryTerms.get(term);
                         df = dictionary.get(term).get(1);
                         docLength = docsInfo.get(docId);
-                        cosSimilarityNumerator += (docTf / docLength) * (Math.log10(N / df));
-                        queryTermsWeights += Math.pow(1, 2);
-                        rank += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log10((N + 1)/ df);
+//                        cosSimilarityNumerator += (docTf / docLength) * (Math.log10(N / df));
+//                        queryTermsWeights += Math.pow(1, 2);
+                        if (entities.containsKey(docId) && entities.get(docId).containsKey(term.toUpperCase()) && queryTf > 1){
+                            //----------------------------------------------------------------------------------------complete
+                            entitiesScore = entitiesScore * queryTf;
+                        }
+
+                        bm25 += queryTf * (((k + 1) * docTf) / (docTf + k * (1 - b + b * (docLength / avdl)))) * Math.log10((N + 1)/ df);
                     }
                 }
-                if (docTermsWeights == 0){
-                    cosSimilarity = 0;
-                }
-                else{
-                    cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
-                }
-                if (0.5 * rank + 0.5 * cosSimilarity > 0) {
-                    docsRanks.add(new Pair<>(docId, 0.5 * rank + 0.5 * cosSimilarity));
-//                    docsRanks.add(new Pair<>(docId, rank));
-                }
+//                if (docTermsWeights == 0){
+//                    cosSimilarity = 0;
+//                }
+//                else{
+//                    cosSimilarity = cosSimilarityNumerator / (Math.sqrt(docTermsWeights * queryTermsWeights));
+//                }
+//                if (0.5 * rank + 0.5 * cosSimilarity > 0) {
+//                    docsRanks.add(new Pair<>(docId, 0.5 * rank + 0.5 * cosSimilarity));
+                rank = 0.95 * bm25 + 0.05 * entitiesScore ;
+                docsRanks.add(new Pair<>(docId, rank));
+//                }
             }
         }
 
