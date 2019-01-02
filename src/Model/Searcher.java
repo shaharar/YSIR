@@ -57,27 +57,34 @@ public class Searcher {
             for(String semWord : semanticWords.keySet()) {
                 semanticWordsKeys.addAll(semanticWords.get(semWord));
             }
-            if(withStemming){
+/*            if(withStemming){
                 for(String word : semanticWordsKeys){
-                    ArrayList<String> wordValue = semanticWords.get(word);
+                //    ArrayList<String> wordValue = semanticWords.get(word);
                     String wordAfterStem = parser.stemming(word);
-                    semanticWords.remove(word);
-                    semanticWords.put(wordAfterStem,wordValue);
+
+                    //semanticWords.remove(word);
+                    //semanticWords.put(wordAfterStem,wordValue);
                     //  semanticWords.replace(newKey,wordValue);
                 }
-            }
+            }*/
 /*            ArrayList<String> queryTermsKeys = new ArrayList<>();
             for(String queryTerm : queryTerms.keySet()){
                 queryTermsKeys.add(queryTerm);
             }*/
             for (String term : originalQueryTerms) {
-                if (semanticWords.get(term) == null){
-                    System.out.println(queryId);
-                }
                 ArrayList<String> semWords = semanticWords.get(term);
                 for (String word : semWords) {
+                    String newWord = word;
+                    if(withStemming){
+                        newWord = parser.stemming(word);
+                    }
                     Integer tf = Integer.parseInt("1");
-                    queryTerms.put(word, tf);
+/*                    if (dictionary.containsKey(word)) {
+                        tf = dictionary.get(word).get(0);
+                    } else {
+                        tf = Integer.parseInt("0");
+                    }*/
+                    queryTerms.put(newWord, tf);
                 }
             }
         }
