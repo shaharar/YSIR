@@ -33,8 +33,19 @@ public class Searcher {
         if(withSemantic){
             semanticWords = ws.connectToApi(query);
         }*/
-        String originQuery = query;
         String[] originalQueryTerms = query.split(" ");
+        for(String orQterm : originalQueryTerms){
+            if(orQterm.contains("-")){
+                String leftTerm = orQterm.substring(0,orQterm.indexOf("-"));
+                String rightTerm = orQterm.substring(orQterm.indexOf("-") + 1);
+                query = "" + query + " " + leftTerm + " " + rightTerm;
+            }
+        }
+        String originQuery = query;
+//        String firstQueryTerm = originalQueryTerms[0];
+//        if(withStemming){
+//            firstQueryTerm = parser.stemming(firstQueryTerm);
+//        }
         docsResults = new HashMap<>();
         parser = new Parse(withStemming, saveInPath, saveInPath);
         HashSet<String> docsOfChosenCities = new HashSet<>();
@@ -116,6 +127,9 @@ public class Searcher {
             else {
                 term = term.toUpperCase();
             }
+//            if(originTerm.equals(firstQueryTerm)){
+//                firstQueryTerm = term;
+//            }
             queryTermsIgnoreCase.put(term,queryTerms.get(originTerm));
             pointer = dictionary.get(term).get(2);
             // char chunk = indexer.classifyToPosting(term).charAt(0);
@@ -219,7 +233,7 @@ public class Searcher {
         }
 
 
-        ranker.rank(docsResults, docsOfChosenCities, queryTermsIgnoreCase, dictionary, docsInfo,indexer.getWeightsPerDoc(), queryId, queryDescription, saveInPath);
+        ranker.rank(docsResults, docsOfChosenCities, queryTermsIgnoreCase, dictionary, docsInfo,entities, queryId);
     }
 
     private void findDocsFromLine(String line, String term) {

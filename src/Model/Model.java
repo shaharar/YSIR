@@ -67,11 +67,11 @@ public class Model {
         }
     }
 
-    public void loadDictionary(String savePath, File newDic, File newCitiesDic, File entitiesFile, File weightsPerDoc) {
+    public void loadDictionary(String savePath, File newDic, File newCitiesDic, File entitiesFile) {
         try {
             index = new Indexer(savePath, isStemSelected);
             index.loadDictionary(newDic);
-            index.loadWeightsPerDoc(weightsPerDoc);
+//            index.loadWeightsPerDoc(weightsPerDoc);
             cityIndexer = new CityIndexer(savePath);
             cityIndexer.loadDictionary(newCitiesDic);
             searcher.loadEntities(entitiesFile);
