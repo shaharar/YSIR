@@ -71,14 +71,12 @@ public class Searcher {
                 queryTermsKeys.add(queryTerm);
             }*/
             for (String term : originalQueryTerms) {
+                if (semanticWords.get(term) == null){
+                    System.out.println(queryId);
+                }
                 ArrayList<String> semWords = semanticWords.get(term);
                 for (String word : semWords) {
                     Integer tf = Integer.parseInt("1");
-/*                    if (dictionary.containsKey(word)) {
-                        tf = dictionary.get(word).get(0);
-                    } else {
-                        tf = Integer.parseInt("0");
-                    }*/
                     queryTerms.put(word, tf);
                 }
             }
