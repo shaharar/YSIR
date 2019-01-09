@@ -9,8 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Indexer {
 
     private HashMap <String, ArrayList <Integer>> dictionary;
-/*    private HashMap <String, HashMap <String, Double>> termsWeightsPerDoc;
-    private HashMap <String, Double> weightsPerDoc;*/
     String path;
     private boolean withStemming;
     String postingDir;
@@ -18,8 +16,7 @@ public class Indexer {
     // constructor
     public Indexer(String path, boolean withStemming) {
         dictionary = new HashMap<>();
-//        termsWeightsPerDoc = new HashMap<>();
-//        weightsPerDoc = new HashMap<>();
+
         this.path = path;
         this.withStemming = withStemming;
         new File(this.path + "\\indexResults").mkdir();
@@ -182,6 +179,14 @@ public class Indexer {
         terms.clear();
     }
 
+    /**
+     * the following function updates posting files
+     * @param listChunk
+     * @param docsLengths
+     * @param index
+     * @param terms
+     * @param docsInCollection
+     */
     private void updateChunk(ArrayList<String> listChunk,HashMap <String, Integer> docsLengths, int index, HashMap <String, Term> terms, int docsInCollection) {
         String chunk = getChunk(index);
         ArrayList <String> listPosting = new ArrayList<>();
@@ -214,26 +219,6 @@ public class Indexer {
             }catch (ArithmeticException e){
                 currIdf = 0;
             }
-//------------------------------------------------------------------------------------------------cossimilarity
-//            for (String docId:docsList.keySet()){
-//                double tf = ((docsList.get(docId).doubleValue()) / (docsLengths.get(docId)));
-//                if (!termsWeightsPerDoc.containsKey(docId)){
-//                    HashMap <String, Double> tfIdf = new HashMap<>();
-//                    tfIdf.put(termStr, tf * currIdf);
-//                    termsWeightsPerDoc.put(docId,tfIdf);
-//                }
-//                else if (!termsWeightsPerDoc.get(docId).containsKey(termStr)){
-//                    HashMap <String, Double> tfIdf = termsWeightsPerDoc.get(docId);
-//                    tfIdf.put(termStr, tf * currIdf);
-//                    termsWeightsPerDoc.replace(docId,termsWeightsPerDoc.get(docId), tfIdf);
-//                }
-//                else{
-//                    termsWeightsPerDoc.get(docId).replace(termStr,termsWeightsPerDoc.get(docId).get(termStr), tf * currIdf);
-//                }
-//
-//            }
-
-//------------------------------------------------------------------------------------------------
 
             for (String docId:docsList.keySet()) {
                 currTotalFreq += docsList.get(docId).intValue();
@@ -326,6 +311,11 @@ public class Indexer {
 
     }
 
+    /**
+     * the following function returns whether a string starts with a capital letter
+     * @param s
+     * @return
+     */
     private boolean isCapitalLetter (String s) {
         if (s.charAt(0) >= 'A' && s.charAt(0) <= 'Z') {
             return true;
@@ -334,6 +324,11 @@ public class Indexer {
         }
     }
 
+    /**
+     * the following function returns whether a string starts with a small letter
+     * @param s
+     * @return
+     */
     private boolean isSmallLetter (String s) {
         if (s.charAt(0) >= 'a' && s.charAt(0) <= 'z') {
             return true;
@@ -405,7 +400,11 @@ public class Indexer {
     }
 
 
-
+    /**
+     * the following function returns the suitable chunk in the posting files
+     * @param term
+     * @return
+     */
     public String classifyToPosting (String term){
         char firstLetter = term.charAt(0);
         if (firstLetter == 'a' || firstLetter == 'A'){
@@ -495,6 +494,11 @@ public class Indexer {
 
     }
 
+    /**
+     * the following function returns whether the string represents a numeric value
+     * @param str
+     * @return
+     */
     private boolean isNumeric(String str)
     {
         try {
@@ -507,6 +511,10 @@ public class Indexer {
     }
 
 
+    /**
+     * the following function write document information to disk
+     * @param sb
+     */
     public void writeDocsInfoToDisk (StringBuilder sb){
         String docsPath;
         if (!withStemming){
@@ -531,6 +539,10 @@ public class Indexer {
         }
     }
 
+    /**
+     * the following function writes entities information to disk
+     * @param entitiesSb
+     */
     public void writeEntitiesToDisk(StringBuilder entitiesSb) {
         String entitiesPath;
         if (!withStemming){
@@ -555,6 +567,9 @@ public class Indexer {
         }
     }
 
+    /**
+     * the following function writes dictionary to disk
+     */
     public void writeDictionaryToDisk() {
 
         StringBuilder sb = new StringBuilder();
@@ -604,60 +619,24 @@ public class Indexer {
         }
     }
     
-    
-    
-//    public void writeWeigthsPerDocToDisk (){
-//        for (String docId:termsWeightsPerDoc.keySet()) {
-//            double totalWeightPerDoc = 0;
-//            for (String termStr:termsWeightsPerDoc.get(docId).keySet()) {
-//                totalWeightPerDoc += Math.pow(termsWeightsPerDoc.get(docId).get(termStr).doubleValue(), 2);
-//            }
-//            weightsPerDoc.put(docId, totalWeightPerDoc);
-//        }
-//
-//
-//
-//        StringBuilder sb = new StringBuilder();
-//
-//        for (String docId:weightsPerDoc.keySet()) {
-//            sb.append(docId + ":" + weightsPerDoc.get(docId) + "\n");
-//        }
-//
-//
-//        String weightPerDocPath;
-//        if (!withStemming){
-//            weightPerDocPath = "\\docsWeights";
-//        }
-//        else{
-//            weightPerDocPath = "\\docsWeights_stemming";
-//        }
-//        File weightPerDc = new File(path + weightPerDocPath + ".txt");
-//        try {
-//            weightPerDc.createNewFile();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        FileWriter fw = null;
-//        try {
-//            fw = new FileWriter(weightPerDc);
-//            fw.write(sb.toString());
-//            fw.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
     public void finished(HashMap<String , Term> terms,HashMap <String, Integer> docsLengths, int docsInCollection, boolean withStemming) {
         index(terms,docsLengths, docsInCollection, withStemming);
         writeDictionaryToDisk();
-//        writeWeigthsPerDocToDisk();
     }
 
-
+    /**
+     * the following function clears dictionary from memory
+     */
     public void reset() {
         dictionary.clear();
     }
 
+    /**
+     * the following function reads data from dictionary
+     * @param newDic
+     */
     public void loadDictionary(File newDic) {
         dictionary.clear();
         BufferedReader br = null;
@@ -688,30 +667,20 @@ public class Indexer {
         }
     }
 
-//    public void loadWeightsPerDoc (File newWeightsPerDoc){
-//        weightsPerDoc.clear();
-//        BufferedReader br = null;
-//        try {
-//            br = new BufferedReader(new FileReader(newWeightsPerDoc));
-//            String line = "";
-//            while ((line = (br.readLine())) != null) {
-//                String [] splitLine = line.split(":");
-//                weightsPerDoc.put(splitLine[0], Double.parseDouble(splitLine[1]));
-//            }
-//            br.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
+    /**
+     * getter
+     * @return
+     */
     public int getDicSize() {
         return dictionary.size();
     }
 
-//    public HashMap<String, Double> getWeightsPerDoc() {
-//        return weightsPerDoc;
-//    }
 
+    /**
+     * getter
+     * @return
+     */
     public HashMap<String, ArrayList<Integer>> getDictionary() {
         return dictionary;
     }

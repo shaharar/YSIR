@@ -355,14 +355,38 @@ public class Gui {
         Gui gui = fxmlLoader.getController();
         gui.model = this.model;
         HashMap<String, ArrayList<String>> results = model.showResults();
-        PriorityQueue <String> sortedQueryIDs = new PriorityQueue<>();
-        for (String queryID: results.keySet()) {
-            sortedQueryIDs.add(queryID);
+      //  PriorityQueue <String> sortedQueryIDs = new PriorityQueue<>();
+        PriorityQueue <Integer> sortedQueryIDs = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        HashMap<String, ArrayList<String>> newResults = new HashMap<>();
+        for (String qID: results.keySet()) {
+            String queryIDStr = "";
+            for(char c : qID.toCharArray()){
+                if(Character.isDigit(c)){
+                    queryIDStr = queryIDStr + c;
+                }
+            }
+            newResults.put(queryIDStr, results.get(qID));
+/*            if(queryIDStr.contains(" "))
+                queryIDStr = queryIDStr.substring(queryIDStr.indexOf(" "));
+            Integer queryID = Integer.parseInt(queryIDStr);*/
+          //  sortedQueryIDs.add(Integer.parseInt(queryIDStr));
         }
+
+        for (String qID: newResults.keySet()) {
+            sortedQueryIDs.add(Integer.parseInt(qID));
+        }
+
         ArrayList<String> resultsList = new ArrayList<>();
+
         while(sortedQueryIDs.size() > 0) {
-            String queryID = sortedQueryIDs.poll();
-            String docs = results.get(queryID).toString();
+         //   String queryID = sortedQueryIDs.poll();
+            Integer queryID = sortedQueryIDs.poll();
+            String docs = newResults.get(queryID.toString()).toString();
             String lineInListView = "Query " + queryID + ":\n" + docs;
             resultsList.add(lineInListView);
         }

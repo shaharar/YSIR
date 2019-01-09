@@ -7,6 +7,9 @@ public class Stemmer {
 
     SnowballStemmer stemmer;
 
+    /**
+     * constructor
+     */
     public Stemmer() {
         stemmer = new englishStemmer();
     }

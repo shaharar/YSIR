@@ -73,7 +73,8 @@ public class CityIndexer {
                 for (int i = 0; i < docs.size(); i++){
                     docsListStr.append(docs.get(i) + "; ");
                 }
-                listPosting.set(pointer - 1, listPosting.get(pointer - 1) + "[" + docsListStr + "]");
+                String oldLine = listPosting.get(pointer - 1);
+                listPosting.set(pointer - 1, oldLine.substring(0,oldLine.indexOf("]")) + docsListStr + "]");
             }
         }
 

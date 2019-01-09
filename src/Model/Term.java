@@ -7,6 +7,9 @@ public class Term {
     String termStr;
     HashMap<String,AtomicInteger> docs;
 
+    /**
+     * constructor
+     */
     public Term(){
         termStr = "";
         docs = new HashMap<>();
